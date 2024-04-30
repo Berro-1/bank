@@ -5,9 +5,10 @@ const Schema = mongoose.Schema;
 const customerSchema = new Schema(
   {
     // Assuming customer_ID is a regular ObjectId primary key
-    customer_ID: {
+    customer_id: {
       type: Schema.Types.ObjectId,
       required: true,
+      unique:true
     },
     name: {
       type: String,
