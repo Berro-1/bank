@@ -10,7 +10,7 @@ const accountSchema = new Schema(
       required: true,
       unique: true,
     },
-    customer_ID: {
+    customer_id: {
       type: Schema.Types.ObjectId,
       ref: "Customer", // Refers to the Customer model (collection)
       required: true,
