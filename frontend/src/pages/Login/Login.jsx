@@ -1,22 +1,18 @@
 import React from "react";
-import Toastify from "toastify-js";
-import "toastify-js/src/toastify.css";
-import "react-toastify/dist/ReactToastify.css"; // Ensure CSS is imported
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Login() {
   const showToast = () => {
-    Toastify({
-      text: "u are trying to log in",
-      duration: 3000,
-      close: true,
-      gravity: "top", // Can be `top` or `bottom`
-      position: "right", // Can be `left`, `center`, or `right`
-      backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
-    }).showToast();
+    toast.error("Please fill in all the credentials", {
+      autoClose: 1500,
+      theme: "colored",
+
+    });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-800 to-green-400">
+    <div className="min-h-[100vh] flex items-center justify-center bg-gradient-to-r from-green-800 to-green-400">
       <div className="max-w-md w-full space-y-8 p-10 bg-white shadow-lg rounded-lg min-h-[400px]">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">

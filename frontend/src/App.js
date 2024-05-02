@@ -6,11 +6,12 @@ import {
   Outlet,
 } from "react-router-dom";
 import { RouterProvider } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+
 import Home from "./pages/Home/Home";
 import Test from "./pages/testing/test";
 import Login from "./pages/Login/Login";
 import Navbar from "./components/Navbar/Navbar";
-
 
 function App() {
   const router = createBrowserRouter(
@@ -25,6 +26,8 @@ function App() {
 
   return (
     <div className="App">
+      <ToastContainer position="top-right"></ToastContainer>
+
       <RouterProvider router={router} />
     </div>
   );
