@@ -1,14 +1,27 @@
 import React from "react";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
+import "react-toastify/dist/ReactToastify.css"; // Ensure CSS is imported
 
 export default function Login() {
+  const showToast = () => {
+    Toastify({
+      text: "u are trying to log in",
+      duration: 3000,
+      close: true,
+      gravity: "top", // Can be `top` or `bottom`
+      position: "right", // Can be `left`, `center`, or `right`
+      backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+    }).showToast();
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-800 to-green-400">
       <div className="max-w-md w-full space-y-8 p-10 bg-white shadow-lg rounded-lg min-h-[400px]">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
-          
         </div>
         <form className="mt-8 space-y-6" action="#" method="POST">
           <input type="hidden" name="remember" value="true" />
@@ -72,6 +85,7 @@ export default function Login() {
           <div>
             <button
               type="submit"
+              onClick={showToast}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-800 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
             >
               Sign in

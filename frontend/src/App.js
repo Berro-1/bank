@@ -11,6 +11,7 @@ import Test from "./pages/testing/test";
 import Login from "./pages/Login/Login";
 import Navbar from "./components/Navbar/Navbar";
 
+
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
