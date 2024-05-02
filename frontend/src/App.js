@@ -8,7 +8,8 @@ import {
 import { RouterProvider } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import Test from "./pages/testing/test";
-import Navbar from "./components/layout/Navbar";
+import Login from "./pages/Login/Login";
+import Navbar from "./components/Navbar/Navbar";
 
 function App() {
   const router = createBrowserRouter(
@@ -16,6 +17,7 @@ function App() {
       <Route path="/" element={<Root />}>
         <Route index element={<Home />} />
         <Route path="/test" element={<Test />} />
+        <Route path="/Login" element={<Login />} />
       </Route>
     )
   );
