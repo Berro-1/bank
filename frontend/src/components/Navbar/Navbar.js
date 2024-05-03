@@ -64,6 +64,7 @@ export default function Navbar() {
           className={`fixed top-0 right-0 h-full w-64 bg-green-900 bg-opacity-95 transform ${
             isOpen ? "translate-x-0" : "translate-x-full"
           } transition-transform duration-300 ease-in-out  flex flex-col items-center justify-start w-64 md:hidden py-7`}
+          style={{ zIndex: isOpen ? 2000 : -1 }}
         >
           <Link
             to="/"
