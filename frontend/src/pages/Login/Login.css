@@ -48,3 +48,14 @@ input[type="checkbox"]:checked + label::after {
   transform: translate(-50%, -50%); /* Adjusts position to true center based on its dimensions */
   pointer-events: none; /* Prevents the SVG from blocking checkbox functionality */
 }
+
+.small {
+    width: 100%; /* Default width */
+  }
+  
+  /* Media query for smaller screens */
+  @media screen and (max-width: 768px) {
+    .small {
+      width: 90%; /* Adjust width for smaller screens */
+    }
+  }
