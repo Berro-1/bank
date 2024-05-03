@@ -16,6 +16,11 @@ const checksSchema = new Schema(
       type: Number,
       required: true,
     },
+    status: {
+      type: String,
+      required: true,
+      enum: ["pending", "used"],
+    },
   },
   {
     timestamps: true,
