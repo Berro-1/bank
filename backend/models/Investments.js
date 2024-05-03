@@ -1,15 +1,9 @@
 const mongoose = require("mongoose");
-
 const Schema = mongoose.Schema;
 
 const investmentSchema = new Schema(
   {
-    investment_id: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      unique: true,
-    },
-    customer_id: {
+    customer: {
       type: Schema.Types.ObjectId,
       ref: "Customer",
       required: true,
@@ -17,6 +11,7 @@ const investmentSchema = new Schema(
     type: {
       type: String,
       required: true,
+      enum: ["Stocks", "Bonds", "Real Estate", "Mutual Funds"], // Assuming typical investment types
     },
     amount: {
       type: Number,

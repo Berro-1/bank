@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const Schema = mongoose.Schema;
 
 const creditCardsSchema = new Schema(
@@ -7,9 +6,8 @@ const creditCardsSchema = new Schema(
     card_name: {
       type: String,
       required: true,
-      unique: true,
     },
-    customer_id: {
+    customer: {
       type: Schema.Types.ObjectId,
       ref: "Customer",
       required: true,

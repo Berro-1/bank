@@ -1,23 +1,17 @@
 const mongoose = require("mongoose");
-
 const Schema = mongoose.Schema;
 
 const accountSchema = new Schema(
   {
-    // Other fields in the account schema
-    account_id: {
+    customer: {
       type: Schema.Types.ObjectId,
-      required: true,
-      unique: true,
-    },
-    customer_id: {
-      type: Schema.Types.ObjectId,
-      ref: "Customer", // Refers to the Customer model (collection)
+      ref: "Customer",
       required: true,
     },
     type: {
       type: String,
       required: true,
+      enum: ["Checking", "Savings", "Credit Card", "Loan"],
     },
     balance: {
       type: Number,
@@ -26,7 +20,8 @@ const accountSchema = new Schema(
     status: {
       type: String,
       required: true,
-        },
+      enum: ["Active", "Closed", "Suspended"],
+    },
   },
   {
     timestamps: true,

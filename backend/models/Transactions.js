@@ -1,17 +1,11 @@
 const mongoose = require("mongoose");
-
 const Schema = mongoose.Schema;
 
 const transactionSchema = new Schema(
   {
-    transaction_id: {
+    account: {
       type: Schema.Types.ObjectId,
-      required: true,
-      unique: true,
-    },
-    account_id: {
-      type: Schema.Types.ObjectId,
-      ref: "Account", 
+      ref: "Account",
       required: true,
     },
     amount: {
@@ -21,8 +15,8 @@ const transactionSchema = new Schema(
     type: {
       type: String,
       required: true,
+      enum: ["Deposit", "Withdrawal", "Transfer", "Payment"],
     },
-    
   },
   {
     timestamps: true,

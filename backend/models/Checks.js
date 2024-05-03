@@ -1,15 +1,9 @@
 const mongoose = require("mongoose");
-
 const Schema = mongoose.Schema;
 
 const checksSchema = new Schema(
   {
-    check_id: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      unique: true,
-    },
-    account_id: {
+    account: {
       type: Schema.Types.ObjectId,
       ref: "Account",
       required: true,

@@ -1,15 +1,9 @@
 const mongoose = require("mongoose");
-
 const Schema = mongoose.Schema;
 
 const loansSchema = new Schema(
   {
-    loan_id: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      unique: true,
-    },
-    customer_id: {
+    customer: {
       type: Schema.Types.ObjectId,
       ref: "Customer",
       required: true,
@@ -17,22 +11,24 @@ const loansSchema = new Schema(
     type: {
       type: String,
       required: true,
+      enum: ["Personal", "Mortgage", "Auto", "Education"],
     },
     amount: {
       type: Number,
       required: true,
     },
-    intrest_rate: {
+    interest_rate: {
       type: Number,
       required: true,
     },
     loan_term: {
-      type: Number,
+      type: Number, // in months or years, consider clarifying in documentation or field name
       required: true,
-        },
-    loan_status: {
+    },
+    status: {
       type: String,
       required: true,
+      enum: ["Active", "Closed", "In Default"],
     },
   },
   {
