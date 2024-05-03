@@ -16,6 +16,7 @@ app.use("/api/accounts", accountsRouter);
 app.use("/api/checks", checksRouter);
 app.use("/api/customers", customersRouter);
 
+
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     app.listen(process.env.PORT, () => {
