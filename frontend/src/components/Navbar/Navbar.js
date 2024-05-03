@@ -59,17 +59,40 @@ export default function Navbar() {
           </svg>
         </button>
         {/* Slide-out menu for small screens */}
+        {/* Slide-out menu for small screens */}
         <div
           ref={menuRef}
           className={`fixed top-0 right-0 h-full w-64 bg-green-900 bg-opacity-95 transform ${
             isOpen ? "translate-x-0" : "translate-x-full"
-          } transition-transform duration-300 ease-in-out  flex flex-col items-center justify-start w-64 md:hidden py-7`}
+          } transition-transform duration-300 ease-in-out flex flex-col items-center justify-start w-64 md:hidden py-7`}
           style={{ zIndex: isOpen ? 2000 : 1 }}
         >
+          {/* Close button */}
+          <button
+            onClick={() => setIsOpen(false)}
+            className="absolute top-3 right-3 stroke-current text-white hover:text-green-300 focus:outline-none"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+
+          {/* Menu Items */}
           <Link
             to="/"
             className="text-white text-lg mb-3 hover:text-green-300 hover:border-green-300 transition duration-300 ease-in-out border-b-2"
-            onClick={() => setIsOpen(false)} // Make sure this is applied consistently
+            onClick={() => setIsOpen(false)}
           >
             Home
           </Link>
@@ -88,6 +111,7 @@ export default function Navbar() {
             Login
           </Link>
         </div>
+
         {/* Normal display of links for large screens */}
         <div className="hidden md:flex gap-6 ml-auto">
           <Link

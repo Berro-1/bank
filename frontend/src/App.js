@@ -39,7 +39,7 @@ const Root = () => {
       <div>
         <Navbar />
       </div>
-      <div>
+      <div className="bg-green-400">
         <Outlet />
       </div>
     </div>
