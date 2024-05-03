@@ -41,8 +41,7 @@ const deleteCheck = async (req, res) => {
     res.status(200).json(check);
   };
   
-//update  an existing workout
-const updateCheck = async (req, res) => {
+    const updateCheck = async (req, res) => {
     const { id } = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(404).json({ error: "No check with that id" });

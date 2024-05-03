@@ -15,7 +15,7 @@ const customerSchema = new Schema(
       type: String,
       required: true,
       match: [
-        /^\+?[1-9]\d{1,14}$/,
+        /^\(01|03|71|81|70|76|79)/,
         "Please enter a valid international phone number",
       ],
     },
