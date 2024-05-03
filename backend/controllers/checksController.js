@@ -1,62 +1,72 @@
 const Check = require("../models/Checks");
 const mongoose = require("mongoose");
 
-//get all checks
-const getChecks = async (req, res) => {
-    try {
-      const checks = await Check.find({}).sort({ createdAt: -1 });
-      res.status(200).json(checks);
-    } catch (err) {
-      res.status(400).json({ error: 'Failed to fetch checks: ' + err.message });
+const getCreditCards = async (req, res) => {
+  try {
+    const creditCard = await CreditCard.findById(req.params.id);
+    if (!creditCard) {
+      return res.status(404).json({ error: "Credit card not found" });
     }
-  };
-  
-//create new check
-const createCheck = async (req, res) => {
-    const { accountId } = req.params;
-    const { payee, amount } = req.body;
-
-    try {
-        const check = await Check.create({ account: accountId, payee, amount });
-        res.status(201).json(check);
-    } catch (err) {
-        console.error(err);
-        res.status(400).json({ error: 'Unable to create check: ' + err.message });
-    }
+    res.status(200).json(creditCard);
+  } catch (error) {
+    res
+      .status(400)
+      .json({ error: "Failed to fetch credit card: " + error.message });
+  }
 };
 
-
+const createCreditCard = async (req, res) => {
+  try {
+    const newCreditCard = new CreditCard({
+      ...req.body,
+      customer: req.params.id,
+    });
+    const savedCreditCard = await newCreditCard.save();
+    res.status(201).json(savedCreditCard);
+  } catch (error) {
+    res
+      .status(400)
+      .json({ error: "Failed to create credit card: " + error.message });
+  }
+};
 
 //delete  a specific workout
-const deleteCheck = async (req, res) => {
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(404).json({ error: "No check with that id" });
+const deleteCreditCard = async (req, res) => {
+  try {
+    const deletedCreditCard = await CreditCard.findByIdAndDelete(req.params.id);
+    if (!deletedCreditCard) {
+      return res.status(404).json({ error: "Credit card not found" });
     }
-  
-    const check = await Check.findOneAndDelete({ _id: id });
-    if (!check) {
-      return res.status(404).json({ error: "No check found with that id" });
-    }
-    res.status(200).json(check);
-  };
-  
-    const updateCheck = async (req, res) => {
-    const { id } = req.params;
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(404).json({ error: "No check with that id" });
-    }
+    res.status(200).json({ message: "Credit card deleted successfully" });
+  } catch (error) {
+    res
+      .status(400)
+      .json({ error: "Failed to delete credit card: " + error.message });
+  }
+};
 
-    const check = await Check.findOneAndUpdate({ _id: id }, { ...req.body }, { new: true });
-    if (!check) {
-      return res.status(404).json({ error: "No check found with that id" });
+const updateCreditCard = async (req, res) => {
+  try {
+    const updatedCreditCard = await CreditCard.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    if (!updatedCreditCard) {
+      return res.status(404).json({ error: "Credit card not found" });
     }
-    res.status(200).json(check);
+    res.status(200).json(updatedCreditCard);
+  } catch (error) {
+    res
+      .status(400)
+      .json({ error: "Failed to update credit card: " + error.message });
+  }
 };
 
 module.exports = {
-    getChecks,
-    createCheck,
-    deleteCheck,
-    updateCheck
-  };
+  getCreditCards,
+  createCreditCard,
+  deleteCreditCard,
+  updateCreditCard,
+};
+
