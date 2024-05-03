@@ -1,24 +1,22 @@
 import React from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "./Login.css"; // Ensure this contains your custom checkbox styles
 
-export default function Login() {
+const Login = () => {
   const showToast = () => {
     toast.error("Please fill in all the credentials", {
       autoClose: 1500,
       theme: "colored",
-
     });
   };
 
   return (
     <div className="min-h-[100vh] flex items-center justify-center bg-gradient-to-r from-green-800 to-green-400">
       <div className="max-w-md w-full space-y-8 p-10 bg-white shadow-lg rounded-lg min-h-[400px]">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
-        </div>
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Sign in to your account
+        </h2>
         <form className="mt-8 space-y-6" action="#" method="POST">
           <input type="hidden" name="remember" value="true" />
           <div className="rounded-md shadow-sm -space-y-px">
@@ -51,23 +49,23 @@ export default function Login() {
               />
             </div>
           </div>
-
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-              />
-              <label
-                htmlFor="remember-me"
-                className="ml-2 block text-sm text-gray-900"
-              >
-                Remember me
-              </label>
+            <div className="form-group">
+              <div className="form-check flex items-center">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  className="form-check-input"
+                />
+                <label
+                  htmlFor="remember-me"
+                  className="form-check-label ml-2 block text-sm text-gray-900"
+                >
+                  Remember me
+                </label>
+              </div>
             </div>
-
             <div className="text-sm">
               <a
                 href="#"
@@ -77,7 +75,6 @@ export default function Login() {
               </a>
             </div>
           </div>
-
           <div>
             <button
               type="submit"
@@ -91,4 +88,6 @@ export default function Login() {
       </div>
     </div>
   );
-}
+};
+
+export default Login;

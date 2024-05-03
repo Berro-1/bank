@@ -1,0 +1,40 @@
+.form-check {
+  position: relative;
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  position: relative; /* Ensures proper positioning context for the pseudo-elements */
+  appearance: none; /* Removes default system styling */
+  background: white; /* Optional: sets a background color */
+  border: 2px solid gray; /* Styles the border */
+  border-radius: 3px; /* Rounds the corners */
+}
+
+/* Styling for when the checkbox is checked */
+input[type="checkbox"]:checked + label::before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 0; /* Aligns with the left edge of the checkbox */
+  top: 0; /* Aligns with the top edge of the checkbox */
+  background-color: #16A34A; /* Background color when checked */
+  border-radius: 2px; /* Optional: Rounds the corners of the colored background */
+}
+
+/* Adjustment for the checkmark to ensure it's centered */
+input[type="checkbox"]:checked + label::after {
+  content: url('data:image/svg+xml; utf8, <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z" fill="white"/></svg>');
+  display: block;
+  position: absolute;
+  width: 12px; /* Width of the SVG */
+  height: 12px; /* Height of the SVG */
+  left: 10px; /* Centers horizontally (20px width - 12px width) / 2 */
+  top: 6px; /* Adjusted to raise the checkmark slightly */
+  transform: translate(-50%, -50%); /* Adjusts position to true center based on its dimensions */
+  pointer-events: none; /* Prevents the SVG from blocking checkbox functionality */
+}
