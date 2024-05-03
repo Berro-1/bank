@@ -12,6 +12,16 @@ input[type="checkbox"] {
   border: 2px solid gray; /* Styles the border */
   border-radius: 3px; /* Rounds the corners */
 }
+input[type="checkbox"]:hover + label::before { content: "";
+    content: ""; 
+  display: block;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 0; /* Aligns with the left edge of the checkbox */
+  top: 0; /* Aligns with the top edge of the checkbox */
+  background-color: #81c784; /* Background color when checked */
+  border-radius: 2px;}
 
 /* Styling for when the checkbox is checked */
 input[type="checkbox"]:checked + label::before {
@@ -33,7 +43,7 @@ input[type="checkbox"]:checked + label::after {
   position: absolute;
   width: 12px; /* Width of the SVG */
   height: 12px; /* Height of the SVG */
-  left: 10px; /* Centers horizontally (20px width - 12px width) / 2 */
+  left: 9.75px; /* Centers horizontally (20px width - 12px width) / 2 */
   top: 6px; /* Adjusted to raise the checkmark slightly */
   transform: translate(-50%, -50%); /* Adjusts position to true center based on its dimensions */
   pointer-events: none; /* Prevents the SVG from blocking checkbox functionality */
