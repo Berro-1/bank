@@ -15,10 +15,11 @@ const customerSchema = new Schema(
       type: String,
       required: true,
       match: [
-        /^\+?[1-9]\d{1,14}$/,
-        "Please enter a valid international phone number",
+        /^(01|03|70|71|76|78|79|81)\d{6}$/, // Mobile numbers start with 03, 70, 71, 76, 78, or 79
+        "Please enter a valid Lebanese phone number",
       ],
     },
+    
     email: {
       type: String,
       required: true,
