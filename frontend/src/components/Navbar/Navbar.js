@@ -63,25 +63,26 @@ export default function Navbar() {
           ref={menuRef}
           className={`fixed top-0 right-0 h-full w-64 bg-green-900 bg-opacity-95 transform ${
             isOpen ? "translate-x-0" : "translate-x-full"
-          } transition-transform duration-300 ease-in-out flex flex-col items-start p-5 md:hidden`}
+          } transition-transform duration-300 ease-in-out  flex flex-col items-center justify-start w-64 md:hidden py-7`}
         >
           <Link
             to="/"
-            className="text-white text-lg mb-3 hover:text-green-300 transition duration-300 ease-in-out border-b-2"
+            className="text-white text-lg mb-3 hover:text-green-300 hover:border-green-300 transition duration-300 ease-in-out  border-b-2"
             onClick={() => setIsOpen(false)}
           >
             Home
           </Link>
+
           <Link
             to="/test"
-            className="text-white text-lg mb-3 hover:text-green-300 transition duration-300 ease-in-out border-b-2"
+            className="text-white text-lg mb-3 hover:text-green-300 hover:border-green-300 transition duration-300 ease-in-out  border-b-2"
             onClick={() => setIsOpen(false)}
           >
             Test
           </Link>
           <Link
             to="/login"
-            className="text-white text-lg mb-3 hover:text-green-300 transition duration-300 ease-in-out border-b-2"
+            className="text-white text-lg mb-3 hover:text-green-300 hover:border-green-300 transition duration-300 ease-in-out border-b-2"
             onClick={() => setIsOpen(false)}
           >
             Login
