@@ -1,15 +1,8 @@
 const mongoose = require("mongoose");
-
 const Schema = mongoose.Schema;
 
 const customerSchema = new Schema(
   {
-    // Assuming customer_ID is a regular ObjectId primary key
-    customer_id: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      unique:true
-    },
     name: {
       type: String,
       required: true,
@@ -21,10 +14,16 @@ const customerSchema = new Schema(
     phone_number: {
       type: String,
       required: true,
+      match: [
+        /^\+?[1-9]\d{1,14}$/,
+        "Please enter a valid international phone number",
+      ],
     },
     email: {
       type: String,
       required: true,
+      match: [/\S+@\S+\.\S+/, "Please provide a valid email"],
+      unique: true,
     },
   },
   {

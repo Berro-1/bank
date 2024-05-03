@@ -1,26 +1,14 @@
-const Workout = require("../models/WorkoutModel");
+const Account = require("../models/Accounts");
 const mongoose = require("mongoose");
 //get all workouts
-const getWorkouts = async (req, res) => {
-  const workouts = await Workout.find({}).sort({ createdAt: -1 });
+const getAccounts = async (req, res) => {
+  const accounts = await Account.find({}).sort({ createdAt: -1 });
   res.status(200).json(workouts);
 };
 
-//get single workout
-const getWorkout = async (req, res) => {
-  const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "No workout with that id" });
-  }
-  const workout = await Workout.findById(id);
-  if (!workout) {
-    return res.status(404).json({ err: "No workout with that id" });
-  }
-  res.status(200).json(workout);
-};
 //create  new workout
-const createWorkout = async (req, res) => {
-  const { title, load, reps } = req.body;
+const createAccount = async (req, res) => {
+  const { type, balance,  } = req.body;
 
   let emptyFields = []
   if (!title){
@@ -73,9 +61,8 @@ const updateWorkout = async (req, res) => {
   };
 
 module.exports = {
-  createWorkout,
-  getWorkouts,
-  getWorkout,
-  deleteWorkout,
-  updateWorkout
+  createAccount,
+  getAccounts,
+  deleteAccount,
+  updateAccount
 };
