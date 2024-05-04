@@ -25,17 +25,27 @@ const getCustomer = async (req, res) => {
   }
 };
 
-// Create a new customer
 const createCustomer = async (req, res) => {
   const { name, address, phone_number, email } = req.body;
+
   try {
     const customer = new Customer({ name, address, phone_number, email });
     await customer.save();
     res.status(201).json(customer);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    if (err.code === 11000) {
+      res
+        .status(400)
+        .json({ error: "Email already exists. Please use a different email." });
+    } else if (err.name === "ValidationError") {
+      let messages = Object.values(err.errors).map((val) => val.message);
+      res.status(400).json({ error: messages.join(", ") });
+    } else {
+      res.status(500).json({ error: "Server error: " + err.message });
+    }
   }
 };
+
 
 // Delete a customer
 const deleteCustomer = async (req, res) => {
