@@ -10,9 +10,9 @@ const {
 
 // get all workouts
 router.get("/", getAccounts);
-router.get("/customer/:id",getCustomerAccounts);
+router.get("/:id",getCustomerAccounts);
 // Post a workout
-router.post("/", createAccount);
+router.post("/:id", createAccount);
 //delete a workout
 router.delete("/:id", deleteAccount);
 
