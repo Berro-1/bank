@@ -22,7 +22,7 @@ const loansSchema = new Schema(
       required: true,
     },
     loan_term: {
-      type: Number, // in months or years, consider clarifying in documentation or field name
+      type: Number, 
       required: true,
     },
     status: {

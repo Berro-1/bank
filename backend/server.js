@@ -27,12 +27,12 @@ app.use("/api/transaction", transactionRouter);
 
 
 
-
+const Port = process.env.PORT
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
-    app.listen(process.env.PORT, () => {
-      console.log(" connected to MongoDB & listening on port 4000");
+    app.listen(Port || 4001, () => {
+      console.log(" connected to MongoDB & listening on port {Port}");
     });
   
   })

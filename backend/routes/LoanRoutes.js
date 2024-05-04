@@ -11,7 +11,7 @@ const {
 router.get("/", getLoans);
 
 router.get("/:id", getLoan);
-router.post("/id", createLoan);
+router.post("/:id", createLoan);
 router.delete("/:id", deleteLoan);
 
 router.patch("/:id", updateLoan);
