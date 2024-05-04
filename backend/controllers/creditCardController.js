@@ -15,16 +15,42 @@ const getCreditCards = async (req, res) => {
   }
 };
 const createCreditCard = async (req, res) => {
+  const { card_name, expiry_date, credit_limit, available_credit } = req.body;
+  const customer = req.params.id; // customer ID from URL parameter
+
+  // Validate expiry date
+  const expiry = new Date(expiry_date);
+  if (expiry <= new Date()) {
+    return res
+      .status(400)
+      .json({ error: "Expiry date must be in the future." });
+  }
+
+  // Validate credit limits
+  if (
+    credit_limit < 0 ||
+    available_credit < 0 ||
+    available_credit > credit_limit
+  ) {
+    return res
+      .status(400)
+      .json({ error: "Invalid credit limit or available credit." });
+  }
+
   try {
     const newCreditCard = new CreditCard({
-      ...req.body,
-      customer: req.params.id, // assuming customer ID is passed as a parameter
+      card_name,
+      customer,
+      expiry_date: expiry,
+      credit_limit,
+      available_credit,
     });
     const savedCreditCard = await newCreditCard.save();
     res.status(201).json(savedCreditCard);
   } catch (error) {
+    console.error("Failed to create credit card:", error);
     res
-      .status(400)
+      .status(500)
       .json({ error: "Failed to create credit card: " + error.message });
   }
 };

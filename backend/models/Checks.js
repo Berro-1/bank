@@ -20,11 +20,10 @@ const checksSchema = new Schema(
       type: String,
       required: true,
       enum: ["pending", "used"],
+      default: "pending",
     },
   },
   {
     timestamps: true,
   }
 );
-
-module.exports = mongoose.model("Checks", checksSchema);

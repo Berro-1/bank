@@ -17,18 +17,49 @@ const getCustomerAccounts = async (req, res) => {
   res.status(200).json(account);
 };
 
-//create  new workout
 const createAccount = async (req, res) => {
-  const { type, balance, status } = req.body;
+  const { customer, type, balance, status } = req.body;
+
+  if (!customer || !type || balance === undefined || !status) {
+    return res
+      .status(400)
+      .json({
+        error: "All fields are required: customer, type, balance, status.",
+      });
+  }
+
+  const validTypes = ["Checking", "Savings", "Credit Card", "Loan"];
+  if (!validTypes.includes(type)) {
+    return res.status(400).json({ error: "Invalid account type provided." });
+  }
+
+  const validStatuses = ["Active", "Closed", "Suspended"];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ error: "Invalid account status provided." });
+  }
+
+  if (type === "Credit Card" && balance < 0) {
+    return res
+      .status(400)
+      .json({
+        error: "Credit Card accounts cannot have a negative opening balance.",
+      });
+  }
+
   try {
-    const account = await Account.create({ type, balance, status });
-    res.status(200).json(account);
+    const account = await Account.create({ customer, type, balance, status });
+    res.status(201).json(account);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    if (err.name === "ValidationError") {
+      res.status(400).json({ error: "Validation Error: " + err.message });
+    } else {
+      console.error("Failed to create account:", err);
+      res.status(500).json({ error: "Server error: " + err.message });
+    }
   }
 };
 
-//delete  a specific workout
+
 const deleteAccount = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -40,7 +71,6 @@ const deleteAccount = async (req, res) => {
   }
   res.status(200).json(account);
 };
-//update  an existing workout
 const updateAccount = async (req, res) => {
   const { id } = req.params;
 

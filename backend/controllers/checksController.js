@@ -1,7 +1,6 @@
 const Check = require("../models/Checks");
 const mongoose = require("mongoose");
 
-//get all checks
 const getChecks = async (req, res) => {
   try {
     const checks = await Check.find({}).sort({ createdAt: -1 });
@@ -11,13 +10,25 @@ const getChecks = async (req, res) => {
   }
 };
 
-//create new check
 const createCheck = async (req, res) => {
   const { accountId } = req.params;
   const { payee, amount } = req.body;
 
+  if (typeof amount !== "number" || amount <= 0) {
+    return res
+      .status(400)
+      .json({
+        error: "Invalid amount specified. Amount must be a positive number.",
+      });
+  }
+
   try {
-    const check = await Check.create({ account: accountId, payee, amount });
+    const check = await Check.create({
+      account: accountId,
+      payee,
+      amount,
+      status: "pending",
+    });
     res.status(201).json(check);
   } catch (err) {
     console.error(err);
@@ -25,7 +36,6 @@ const createCheck = async (req, res) => {
   }
 };
 
-//delete  a specific workout
 const deleteCheck = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -39,7 +49,6 @@ const deleteCheck = async (req, res) => {
   res.status(200).json(check);
 };
 
-//update  an existing workout
 const updateCheck = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
