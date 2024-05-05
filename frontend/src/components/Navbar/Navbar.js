@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import Container from "react-bootstrap/Container";
-import { Row } from "react-bootstrap";
-import Col from "react-bootstrap/Col";
-import { NavLink } from "react-router-dom";
+import'./Navbar.css'
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
