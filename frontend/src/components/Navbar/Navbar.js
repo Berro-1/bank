@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
-
+import './Navbar.css'
+import Button from "react-bootstrap/Button";
+import 'react-bootstrap'
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef();
@@ -23,8 +25,8 @@ export default function Navbar() {
   }, [isOpen]); // Dependency array includes isOpen to re-run effect when it changes
 
   return (
-    <nav className="bg-gray-900 px-14 py-3 shadow-lg relative">
-      <div className="container mx-auto flex justify-between items-center">
+    <nav className="bg-gray-900  py-3 shadow-lg relative">
+      <div className="container flex justify-between align-middle px-20">
         <div className="flex items-center gap-3">
           <img
             src="logo_investmint-removebg.png"
@@ -35,13 +37,13 @@ export default function Navbar() {
             Investmint
           </span>
         </div>
-        {/* Hamburger button */}
+        {/* Hamburger button for small screens */}
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="md:hidden text-white focus:outline-none focus:ring-2 focus:ring-green-500 p-2"
         >
           <svg
-            className="w-6 h-6  hover:stroke-green-500"
+            className="w-6 h-6 hover:stroke-green-500"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -60,7 +62,7 @@ export default function Navbar() {
           ref={menuRef}
           className={`fixed top-0 right-0 h-full w-64 bg-gray-800 bg-opacity-95 transform ${
             isOpen ? "translate-x-0" : "translate-x-full"
-          } transition-transform duration-300 ease-in-out flex flex-col items-center justify-start w-64 md:hidden py-7`}
+          } transition-transform duration-300 ease-in-out flex flex-col items-center justify-start py-7 md:hidden`}
           style={{ zIndex: isOpen ? 2000 : 1 }}
         >
           {/* Close button */}
@@ -83,7 +85,6 @@ export default function Navbar() {
               />
             </svg>
           </button>
-
           {/* Menu Items */}
           <Link
             to="/"
@@ -97,37 +98,44 @@ export default function Navbar() {
             className="text-white text-lg mb-3 hover:text-green-300 hover:border-green-300 transition duration-300 ease-in-out border-b-2"
             onClick={() => setIsOpen(false)}
           >
-            Test
+            About
           </Link>
           <Link
-            to="/login"
+            to=""
             className="text-white text-lg mb-3 hover:text-green-300 hover:border-green-300 transition duration-300 ease-in-out border-b-2"
             onClick={() => setIsOpen(false)}
           >
-            Login
+            Services
           </Link>
+          <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 border border-green-700 rounded px-6">
+            Login
+          </button>
         </div>
-
         {/* Normal display of links for large screens */}
-        <div className="hidden md:flex gap-6 ml-auto">
-          <Link
-            to="/"
-            className="text-white text-lg hover:text-green-300 transition duration-300 ease-in-out hover:underline underline-offset-4"
-          >
-            Home
-          </Link>
-          <Link
-            to="/test"
-            className="text-white text-lg hover:text-green-300 transition duration-300 ease-in-out hover:underline underline-offset-4"
-          >
-            Test
-          </Link>
-          <Link
-            to="/login"
-            className="text-white text-lg hover:text-green-300 transition duration-300 ease-in-out hover:underline underline-offset-4"
-          >
+        <div className="flex align-middle justify-between">
+          <div className="hidden md:flex justify-between  items-center gap-4">
+            <Link
+              to="/"
+              className="text-white text-lg hover:text-green-300 transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
+            >
+              Home
+            </Link>
+            <Link
+              to="/test"
+              className="text-white text-lg hover:text-green-300 transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
+            >
+              About
+            </Link>
+            <Link
+              to=""
+              className="text-white text-lg hover:text-green-300 transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
+            >
+              Services
+            </Link>
+          </div>
+          <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 border border-green-700 rounded px-6">
             Login
-          </Link>
+          </button>
         </div>
       </div>
     </nav>
