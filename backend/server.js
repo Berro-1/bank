@@ -5,16 +5,16 @@ const accountsRouter = require("./routes/AccountRoutes");
 const checksRouter = require("./routes/CheckRoutes");
 const customersRouter = require("./routes/CustomerRoutes");
 const creditCardRouter = require("./routes/CreditCardRoutes");
-const investmentRouter =require("./routes/InvestmentRoutes")
+const investmentRouter = require("./routes/InvestmentRoutes");
 const loanRouter = require("./routes/LoanRoutes");
 const transactionRouter = require("./routes/TransactionRoutes");
-const qrRoutes = require('./routes/qrRoutes');
+const qrRoutes = require("./routes/qrRoutes");
 
 const app = express();
 
 app.use(express.json());
 app.use((req, res, next) => {
-  console.log(req.path, req.method);
+  console.log(`${req.method} ${req.path}`);
   next();
 });
 
@@ -25,20 +25,17 @@ app.use("/api/creditCards", creditCardRouter);
 app.use("/api/investment", investmentRouter);
 app.use("/api/loan", loanRouter);
 app.use("/api/transaction", transactionRouter);
-app.use('/api', qrRoutes);
+app.use("/api", qrRoutes);
 
+const PORT = process.env.PORT || 4001;
 
-
-const Port = process.env.PORT
-
-mongoose.connect(process.env.MONGO_URI)
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => {
-    app.listen(Port || 4001, () => {
-      console.log(" connected to MongoDB & listening on port {Port}");
+    app.listen(PORT, () => {
+      console.log(`Server connected to MongoDB & listening on port ${PORT}`);
     });
-  
   })
   .catch((err) => {
     console.error(err);
   });
- 
