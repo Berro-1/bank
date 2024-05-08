@@ -30,4 +30,4 @@ const creditCardsSchema = new Schema(
   }
 );
 
-module.exports = mongoose.model("CreditCards", creditCardsSchema);
+module.exports = mongoose.model("CreditCard", creditCardsSchema);

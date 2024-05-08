@@ -7,12 +7,12 @@ const {
     updateCheck
 } = require("../controllers/checksController");
 
-router.get("/:id", getChecks);
+router.get("/:accountId", getChecks);
 
-router.post("/:id", createCheck);
+router.post("/:accountId", createCheck);
 
-router.delete("/:id", deleteCheck);
+router.delete("/:checkId", deleteCheck);
 
-router.patch("/:id", updateCheck);
+router.patch("/:checkId", updateCheck);
 
 module.exports = router;

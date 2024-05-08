@@ -1,14 +1,16 @@
 const Check = require("../models/Checks");
 const mongoose = require("mongoose");
 
-const getChecks = async (req, res) => {
+const getChecks= async (req, res) => {
+  const { accountId } = req.params;
   try {
-    const checks = await Check.find({}).sort({ createdAt: -1 });
+    const checks = await Check.find({ account: accountId }).sort({ createdAt: -1 });
     res.status(200).json(checks);
   } catch (err) {
     res.status(400).json({ error: "Failed to fetch checks: " + err.message });
   }
 };
+
 
 const createCheck = async (req, res) => {
   const { accountId } = req.params;
@@ -35,28 +37,38 @@ const createCheck = async (req, res) => {
     res.status(400).json({ error: "Unable to create check: " + err.message });
   }
 };
-
 const deleteCheck = async (req, res) => {
-  const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+  const { checkId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(checkId)) {
     return res.status(404).json({ error: "No check with that id" });
   }
 
-  const check = await Check.findOneAndDelete({ _id: id });
-  if (!check) {
-    return res.status(404).json({ error: "No check found with that id" });
+  try {
+    const check = await Check.findById(checkId);
+    console.log(check);
+    if (!check) {
+      return res.status(404).json({ error: "No check found with that id" });
+    }
+
+    if (check.status === "pending") {
+      const deletedCheck = await Check.findOneAndDelete({ _id: checkId });
+      res.status(200).json(deletedCheck);
+    } else {
+      res.status(400).json({ error: "Check has been withdrawn. Cannot delete check." });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Server error: " + err.message });
   }
-  res.status(200).json(check);
 };
 
 const updateCheck = async (req, res) => {
-  const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+  const { checkId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(checkId)) {
     return res.status(404).json({ error: "No check with that id" });
   }
 
   const check = await Check.findOneAndUpdate(
-    { _id: id },
+    { _id: checkId },
     { ...req.body },
     { new: true }
   );

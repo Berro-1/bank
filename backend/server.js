@@ -20,7 +20,7 @@ app.use((req, res, next) => {
 app.use("/api/accounts", accountsRouter);
 app.use("/api/checks", checksRouter);
 app.use("/api/customers", customersRouter);
-app.use("/api/creditCards", creditCardRouter);
+app.use("/api/creditCard", creditCardRouter);
 app.use("/api/investment", investmentRouter);
 app.use("/api/loan", loanRouter);
 app.use("/api/transaction", transactionRouter);

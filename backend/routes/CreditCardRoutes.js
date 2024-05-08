@@ -7,12 +7,12 @@ const {
   updateCreditCard,
 } = require("../controllers/creditCardController");
 
-router.get("/:id", getCreditCards);
+router.get("/:customerId", getCreditCards);
 
-router.post("/:id", createCreditCard);
+router.post("/:customerId", createCreditCard);
 
-router.delete("/:id", deleteCreditCard);
+router.delete("/:cardId", deleteCreditCard);
 
-router.patch("/:id", updateCreditCard);
+router.patch("/:cardId", updateCreditCard);
 
 module.exports = router;

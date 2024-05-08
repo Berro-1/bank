@@ -24,56 +24,44 @@ const createTransaction = async (req, res) => {
   }
 };
 
-const getTransaction = async (req, res) => {
-  const { id } = req.params;
 
+
+const getAllTransactions = async (req, res) => {
+  const { accountId } = req.params;
   try {
-    const transaction = await Transaction.findById(id);
-    if (!transaction) {
-      return res.status(404).json({ error: "Transaction not found" });
+    const transactions = await Transaction.find({ account: accountId });
+    if (!transactions || transactions.length === 0) {
+      return res.status(404).json({ error: "No transactions found for this account" });
     }
-    res.status(200).json(transaction);
+    res.status(200).json(transactions);
   } catch (err) {
-    console.error("Error finding transaction:", err);
+    console.error("Error finding transactions:", err);
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
 
-const deleteTransaction = async (req, res) => {
-  const { id } = req.params;
 
-  try {
-    const transaction = await Transaction.findByIdAndDelete(id);
-    if (!transaction) {
-      return res.status(404).json({ error: "Transaction not found" });
-    }
-    res.status(200).json({ message: "Transaction deleted successfully" });
-  } catch (err) {
-    console.error("Error deleting transaction:", err);
-    res.status(500).json({ error: "Server error: " + err.message });
-  }
-};
 
-const updateTransaction = async (req, res) => {
-  const { id } = req.params;
-  const updates = req.body;
 
-  try {
-    const transaction = await Transaction.findByIdAndUpdate(id, updates, {
-      new: true,
-    });
-    if (!transaction) {
-      return res.status(404).json({ error: "Transaction not found" });
-    }
-    res.status(200).json(transaction);
-  } catch (err) {
-    console.error("Error updating transaction:", err);
-    res.status(500).json({ error: "Server error: " + err.message });
-  }
-};
+
+// const updateTransaction = async (req, res) => {
+//   const { id } = req.params;
+//   const updates = req.body;
+
+//   try {
+//     const transaction = await Transaction.findByIdAndUpdate(id, updates, {
+//       new: true,
+//     });
+//     if (!transaction) {
+//       return res.status(404).json({ error: "Transaction not found" });
+//     }
+//     res.status(200).json(transaction);
+//   } catch (err) {
+//     console.error("Error updating transaction:", err);
+//     res.status(500).json({ error: "Server error: " + err.message });
+//   }
+// };
 module.exports = {
   createTransaction,
-  getTransaction,
-  deleteTransaction,
-  updateTransaction,
+  getAllTransactions,
 };

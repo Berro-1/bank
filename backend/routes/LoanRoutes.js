@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {
   createLoan,
-  getLoan,
+  getCustomerLoans,
   getLoans,
   deleteLoan,
   updateLoan,
@@ -10,7 +10,7 @@ const {
 
 router.get("/", getLoans);
 
-router.get("/:id", getLoan);
+router.get("/:id", getCustomerLoans);
 router.post("/:id", createLoan);
 router.delete("/:id", deleteLoan);
 

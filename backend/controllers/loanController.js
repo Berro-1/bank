@@ -10,18 +10,19 @@ const getLoans = async (req, res) => {
   }
 };
 
-const getLoan = async (req, res) => {
+const getCustomerLoans = async (req, res) => {
   const { id } = req.params;
   try {
-    const loan = await Loan.findById(id);
-    if (!loan) {
-      return res.status(404).json({ error: "No loan found" });
+    const loans = await Loans.find({ customer: id });
+    if (!loans || loans.length === 0) {
+      return res.status(404).json({ error: "No loans found for this customer" });
     }
-    res.status(200).json(loan);
+    res.status(200).json(loans);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 const createLoan = async (req, res) => {
   const { customer, type, amount, interest_rate, loan_term, status } = req.body;
@@ -102,11 +103,11 @@ const createLoan = async (req, res) => {
 const deleteLoan = async (req, res) => {
   const { id } = req.params;
   try {
-    const loan = await Loan.findByIdAndDelete(id);
+    const loan = await Loans.findByIdAndDelete(id);
     if (!loan) {
       return res.status(404).json({ error: "No loan found" });
     }
-    res.status(200).json({ message: "Loan deleted successfully" });
+    res.status(200).json(loan);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -116,7 +117,7 @@ const updateLoan = async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
   try {
-    const loan = await Loan.findByIdAndUpdate(id, updates, {
+    const loan = await Loans.findByIdAndUpdate(id, updates, {
       new: true,
     });
     if (!loan) {
@@ -130,7 +131,7 @@ const updateLoan = async (req, res) => {
 
 module.exports = {
   createLoan,
-  getLoan,
+  getCustomerLoans,
   getLoans,
   deleteLoan,
   updateLoan,
