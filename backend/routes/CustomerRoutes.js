@@ -6,7 +6,7 @@ const {
   getCustomers,
   deleteCustomer,
   updateCustomer
-} = require("../controllers/customerController");
+} = require("../controllers/userController");
 
 // get all workouts
 router.get("/", getCustomers);

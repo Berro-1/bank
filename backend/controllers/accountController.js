@@ -16,48 +16,67 @@ const getCustomerAccounts = async (req, res) => {
   }
   res.status(200).json(account);
 };
+const getAccountByQr = async (req, res) => {
+  // Extract account ID from query parameters
+  const { accountId } = req.query;
+
+  // Validate the account ID
+  if (!mongoose.Types.ObjectId.isValid(accountId)) {
+    return res.status(404).json({ error: "Invalid account ID provided" });
+  }
+
+  // Fetch the account from the database
+  const account = await Account.findById(accountId);
+  if (!account) {
+    return res.status(404).json({ error: "No account found with that ID" });
+  }
+
+  // Return the account details
+  res.status(200).json(account);
+};
+
 
 const createAccount = async (req, res) => {
   const { customer, type, balance, status } = req.body;
 
   if (!customer || !type || balance === undefined || !status) {
-    return res
-      .status(400)
-      .json({
-        error: "All fields are required: customer, type, balance, status.",
-      });
+    console.log("Create Account Error: Missing fields");
+    return res.status(400).json({
+      error: "All fields are required: customer, type, balance, status.",
+    });
   }
 
   const validTypes = ["Checking", "Savings", "Credit Card", "Loan"];
-  if (!validTypes.includes(type)) {
-    return res.status(400).json({ error: "Invalid account type provided." });
-  }
-
   const validStatuses = ["Active", "Closed", "Suspended"];
-  if (!validStatuses.includes(status)) {
-    return res.status(400).json({ error: "Invalid account status provided." });
+
+  if (!validTypes.includes(type) || !validStatuses.includes(status)) {
+    console.log(
+      `Create Account Error: Invalid type or status - Type: ${type}, Status: ${status}`
+    );
+    return res.status(400).json({
+      error: "Invalid account type or status provided.",
+    });
   }
 
   if (type === "Credit Card" && balance < 0) {
-    return res
-      .status(400)
-      .json({
-        error: "Credit Card accounts cannot have a negative opening balance.",
-      });
+    console.log("Create Account Error: Negative balance for Credit Card");
+    return res.status(400).json({
+      error: "Credit Card accounts cannot have a negative opening balance.",
+    });
   }
 
   try {
     const account = await Account.create({ customer, type, balance, status });
+    console.log(`Account Created: ID ${account._id}`);
     res.status(201).json(account);
   } catch (err) {
-    if (err.name === "ValidationError") {
-      res.status(400).json({ error: "Validation Error: " + err.message });
-    } else {
-      console.error("Failed to create account:", err);
-      res.status(500).json({ error: "Server error: " + err.message });
-    }
+    console.error("Failed to create account:", err);
+    res.status(500).json({
+      error: "Server error: " + err.message,
+    });
   }
 };
+
 
 
 const deleteAccount = async (req, res) => {
@@ -95,4 +114,5 @@ module.exports = {
   getCustomerAccounts,
   deleteAccount,
   updateAccount,
+  getAccountByQr
 };
