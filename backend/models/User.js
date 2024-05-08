@@ -31,6 +31,10 @@ const userSchema = new Schema(
       enum: ["user", "admin"], // Allowed types are 'user' or 'admin'
       default: "user", // Default type is 'user'
     },
+    isFirstLogin: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,
