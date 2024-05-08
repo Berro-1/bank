@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const qrController = require("../controllers/qrController");
+const accountController = require("../controllers/accountController");
 
-router.get("/generate-qr/:accountID", qrController.generateQrCode);
+router.get("/account-by-qr", accountController.getAccountByQr);
 
 module.exports = router;

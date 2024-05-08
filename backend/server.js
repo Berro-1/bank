@@ -8,6 +8,7 @@ const creditCardRouter = require("./routes/CreditCardRoutes");
 const investmentRouter =require("./routes/InvestmentRoutes")
 const loanRouter = require("./routes/LoanRoutes");
 const transactionRouter = require("./routes/TransactionRoutes");
+const qrRoutes = require('./routes/qrRoutes');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use("/api/creditCards", creditCardRouter);
 app.use("/api/investment", investmentRouter);
 app.use("/api/loan", loanRouter);
 app.use("/api/transaction", transactionRouter);
+app.use('/api', qrRoutes);
 
 
 
