@@ -36,8 +36,10 @@ function App() {
 const Root = () => {
   return (
     <div>
-      <div>{/* <Navbar /> */}</div>
-      <div className="">
+      <div>
+        <Navbar />
+      </div>
+      <div className="bg-green-400">
         <Outlet />
       </div>
     </div>
