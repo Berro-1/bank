@@ -3,9 +3,9 @@ const Schema = mongoose.Schema;
 
 const loansSchema = new Schema(
   {
-    customer: {
+    user: {
       type: Schema.Types.ObjectId,
-      ref: "Customer",
+      ref: "User",
       required: true,
     },
     type: {

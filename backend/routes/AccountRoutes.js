@@ -3,14 +3,14 @@ const router = express.Router();
 const {
   createAccount,
   getAccounts,
-  getCustomerAccounts,
+  getUserAccounts,
   deleteAccount,
   updateAccount
 } = require("../controllers/accountController");
 
 // get all workouts
 router.get("/", getAccounts);
-router.get("/:id",getCustomerAccounts);
+router.get("/:id",getUserAccounts);
 // Post a workout
 router.post("/:id", createAccount);
 //delete a workout

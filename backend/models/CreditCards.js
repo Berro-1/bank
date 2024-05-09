@@ -7,9 +7,9 @@ const creditCardsSchema = new Schema(
       type: String,
       required: true,
     },
-    customer: {
+    user: {
       type: Schema.Types.ObjectId,
-      ref: "Customer",
+      ref: "User",
       required: true,
     },
     expiry_date: {

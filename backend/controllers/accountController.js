@@ -5,7 +5,7 @@ const getAccounts = async (req, res) => {
   const accounts = await Account.find({}).sort({ createdAt: -1 });
   res.status(200).json(accounts);
 };
-const getCustomerAccounts = async (req, res) => {
+const getUserAccounts = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "No account with that id" });
@@ -37,12 +37,12 @@ const getAccountByQr = async (req, res) => {
 
 
 const createAccount = async (req, res) => {
-  const { customer, type, balance, status } = req.body;
+  const { user, type, balance, status } = req.body;
 
-  if (!customer || !type || balance === undefined || !status) {
+  if (!user || !type || balance === undefined || !status) {
     console.log("Create Account Error: Missing fields");
     return res.status(400).json({
-      error: "All fields are required: customer, type, balance, status.",
+      error: "All fields are required: user, type, balance, status.",
     });
   }
 
@@ -66,7 +66,7 @@ const createAccount = async (req, res) => {
   }
 
   try {
-    const account = await Account.create({ customer, type, balance, status });
+    const account = await Account.create({ user, type, balance, status });
     console.log(`Account Created: ID ${account._id}`);
     res.status(201).json(account);
   } catch (err) {
@@ -111,7 +111,7 @@ const updateAccount = async (req, res) => {
 module.exports = {
   createAccount,
   getAccounts,
-  getCustomerAccounts,
+  getUserAccounts,
   deleteAccount,
   updateAccount,
   getAccountByQr
