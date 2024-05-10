@@ -10,15 +10,14 @@ import { motion } from "framer-motion";
 
 export default function MainPage() {
   return (
-    <div className="flex h-screen">
+    <div className="flex ">
       <div className='w-1/5	'>
         <Sidebar/>
-
       </div>
 
-    <div>
+   
       <motion.div
-        className="container mx-auto py-8 px-4 text-gray-100"
+        className="container mx-auto p-10 text-gray-100 "
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -49,7 +48,6 @@ export default function MainPage() {
         </div>
         <LatestActivities />
       </motion.div>
-    </div>
     </div>
   )
 }
