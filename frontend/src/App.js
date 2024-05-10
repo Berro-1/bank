@@ -12,6 +12,7 @@ import Home from "./pages/Home/Home";
 import Test from "./pages/testing/test";
 import Login from "./pages/Login/Login";
 import Navbar from "./components/Navbar/Navbar";
+import MainPage from "./pages/userDashboard/mainPage/mainPage";
 
 function App() {
   const router = createBrowserRouter(
@@ -20,6 +21,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path="/test" element={<Test />} />
         <Route path="/Login" element={<Login />} />
+        <Route path="/main" element={<MainPage />} />
       </Route>
     )
   );
@@ -35,11 +37,11 @@ function App() {
 
 const Root = () => {
   return (
-    <div>
+    <div className="bg-gray-800 text-gray-200">
       <div>
         <Navbar />
       </div>
-      <div className="bg-green-400">
+      <div>
         <Outlet />
       </div>
     </div>
