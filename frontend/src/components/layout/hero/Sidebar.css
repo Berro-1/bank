@@ -1,0 +1,14 @@
+.icon-size {
+    width: 24px;
+    /* Ensures all icons have the same width */
+    height: 24px;
+    /* Ensures all icons have the same height */
+    display: flex;
+    /* Aligns the svg icon properly */
+    align-items: center;
+    /* Centers the icon vertically */
+    justify-content: center;
+    /* Centers the icon horizontally */
+    font-size: 24px;
+    /* Sets the font size for consistent icon sizing */
+}

@@ -12,7 +12,7 @@ import Home from "./pages/Home/Home";
 import Test from "./pages/testing/test";
 import Login from "./pages/Login/Login";
 import Navbar from "./components/Navbar/Navbar";
-
+import MainPage from "./pages/userDashboard/mainPage/mainPage.jsx";
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -20,6 +20,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path="/test" element={<Test />} />
         <Route path="/Login" element={<Login />} />
+        <Route path="/mainPage" element={<MainPage/>}/>
       </Route>
     )
   );
