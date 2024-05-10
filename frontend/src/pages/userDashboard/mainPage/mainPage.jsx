@@ -1,6 +1,5 @@
 import React from 'react'
 import Sidebar from "../../../components/layout/hero/Sidebar";
-import React from "react";
 import DashboardItem from "./DashboardItem/DashboardItem";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";

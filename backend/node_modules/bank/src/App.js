@@ -36,11 +36,11 @@ function App() {
 
 const Root = () => {
   return (
-    <div>
+    <div className="bg-gray-800 text-gray-200">
       <div>
         <Navbar />
       </div>
-      <div className="bg-green-400">
+      <div>
         <Outlet />
       </div>
     </div>
