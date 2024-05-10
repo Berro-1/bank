@@ -1,109 +1,158 @@
-import React, { useState } from 'react';
-import Container from "react-bootstrap/Container";
-import './Navbar.css';
+import React, { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
+import "./Navbar.css";
+import Button from "react-bootstrap/Button";
+import "react-bootstrap";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef();
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(event.target) &&
+        isOpen
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
-    <Container
-      className="px-4 py-4 dark:bg-gray-900 fixed top-0 left-0 right-0 z-50"
-      fluid
-    >
-      <nav className=" dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b dark:border-gray-600">
-        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-          <a
-            href="https://flowbite.com/"
-            className="flex items-center space-x-3 rtl:space-x-reverse"
-          >
-            <img
-              src="logo_investmint-removebg.png"
-              className="h-20"
-              alt="Flowbite Logo"
-            />
-            <span className="self-center text-3xl font-semibold whitespace-nowrap dark:text-white">
-              Investmint
-            </span>
-          </a>
-          <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-            <button
-              type="button"
-              className="text-white bg-green-700 hover:bg-green-500 focus:ring-1 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-            >
-              Get started
-            </button>
-            <button
-              onClick={toggleMenu}
-              data-collapse-toggle="navbar-sticky"
-              type="button"
-              className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-              aria-controls="navbar-sticky"
-              aria-expanded={isOpen}
-            >
-              <span className="sr-only">Open main menu</span>
-              <svg
-                className="w-5 h-5"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 17 14"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M1 1h15M1 7h15M1 13h15"
-                />
-              </svg>
-            </button>
-          </div>
-          <div
-            className={`items-center justify-between ${isOpen ? 'flex' : 'hidden'} w-full md:flex md:w-auto md:order-1`}
-            id="navbar-sticky"
-          >
-            <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-900 md:dark:bg-gray-900 dark:border-gray-700">
-              <li>
-                <a
-                  href="#"
-                  className="block py-2 px-3 text-white dark:text-white rounded md:bg-transparent md:text-green-700 md:p-0 md:dark:hover:text-green-500 dark:hover:text-green-500"
-                  aria-current="page"
-                >
-                  Home
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-green-700 md:p-0 md:dark:hover:text-green-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-green-500 md:dark:hover:bg-transparent dark:border-gray-700"
-                >
-                  About
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-green-700 md:p-0 md:dark:hover:text-green-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-green-500 md:dark:hover:bg-transparent dark:border-gray-700"
-                >
-                  Services
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-green-700 md:p-0 md:dark:hover:text-green-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-green-500 md:dark:hover:bg-transparent dark:border-gray-700"
-                >
-                  Contact
-                </a>
-              </li>
-            </ul>
-          </div>
+    <nav className="bg-gray-900 py-3 shadow-lg relative">
+      <div className="container flex justify-between items-center pl-10 pr-20">
+        <div className="flex items-center gap-3">
+          <img
+            src="logo_investmint-removebg.png"
+            alt="Investmint Logo"
+            className="h-12 w-auto object-cover"
+          />
+          <span className="text-white text-2xl font-bold leading-none">
+            Investmint
+          </span>
         </div>
-      </nav>
-    </Container>
+
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="lg:hidden text-white focus:outline-none focus:ring-2 focus:ring-green-500 p-2"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 6h16M4 12h16m-7 6h7"
+            />
+          </svg>
+        </button>
+
+        <div
+          ref={menuRef}
+          className={`fixed top-0 right-0 h-full w-64 bg-gray-800 bg-opacity-95 transform ${
+            isOpen ? "translate-x-0" : "translate-x-full"
+          } transition-transform duration-300 ease-in-out flex flex-col items-center justify-start py-7 lg:hidden`}
+          style={{ zIndex: isOpen ? 2000 : 1 }}
+        >
+          <button
+            onClick={() => setIsOpen(false)}
+            className="absolute top-3 right-3 text-white hover:text-green-300 focus:outline-none"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+          <Link
+            to="/"
+            className="text-green-400 text-lg mb-3 hover:text-white border-green-400 hover:border-white transition duration-300 ease-in-out border-b-2"
+            onClick={() => setIsOpen(false)}
+          >
+            Home
+          </Link>
+          <Link
+            to="/test"
+            className="text-white text-lg mb-3 hover:text-green-400 hover:border-green-400 transition duration-300 ease-in-out border-b-2"
+            onClick={() => setIsOpen(false)}
+          >
+            About
+          </Link>
+          <Link
+            to=""
+            className="text-white text-lg mb-3 hover:text-green-400 hover:border-green-400 transition duration-300 ease-in-out border-b-2"
+            onClick={() => setIsOpen(false)}
+          >
+            Services
+          </Link>
+          <Link
+            to=""
+            className="text-white text-lg mb-3 hover:text-green-400 hover:border-green-400 transition duration-300 ease-in-out border-b-2"
+            onClick={() => setIsOpen(false)}
+          >
+            Contact
+          </Link>
+          <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 border border-green-700 rounded">
+            Login
+          </button>
+        </div>
+
+        <div className="hidden lg:flex gap-6 ml-[-5rem]">
+          <Link
+            to="/"
+            className="text-green-400 text-lg hover:text-white transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
+          >
+            Home
+          </Link>
+          <Link
+            to="/test"
+            className="text-white text-lg hover:text-green-400 transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
+          >
+            About
+          </Link>
+          <Link
+            to=""
+            className="text-white text-lg hover:text-green-400 transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
+          >
+            Services
+          </Link>
+          <Link
+            to=""
+            className="text-white text-lg hover:text-green-400 transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
+          >
+            Contact
+          </Link>
+        </div>
+
+        <div className="hidden lg:flex items-center">
+          <a href="/Login">
+            <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 border border-green-700 rounded">
+              Login
+            </button>
+          </a>
+        </div>
+      </div>
+    </nav>
   );
 }
