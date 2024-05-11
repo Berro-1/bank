@@ -1,59 +1,86 @@
-// components/Sidebar.js
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faCreditCard } from "@fortawesome/free-regular-svg-icons";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import RequestQuoteOutlinedIcon from "@mui/icons-material/RequestQuoteOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import "./Sidebar.css";
 
 const Sidebar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <div className="h-full bg-gray-900 text-white z-20 flex flex-col items-center">
-      <div className="px-2 pt-3 text-center text-2xl font-bold pb-16">
-        <h1>Ajinkya</h1>
+    <div className="relative min-h-screen md:flex">
+      {/* Overlay to click out of the menu */}
+      {isOpen && (
+        <div
+          className="bg-black bg-opacity-50 fixed inset-0 z-20"
+          onClick={toggleSidebar}
+        ></div>
+      )}
+
+      {/* Sidebar */}
+      <div
+        className={`bg-gray-900 text-white w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform ${
+          !isOpen ? "-translate-x-full" : ""
+        } md:relative md:translate-x-0 transition duration-200 ease-in-out z-30`}
+      >
+        <h1 className="text-2xl font-bold text-center">Investmint</h1>
+        <ul className="text-center mx-3">
+          <li>
+            <Link to="/" className="block py-2 hover:text-custom-purple">
+              <FontAwesomeIcon icon={faUser} className="text-lg" /> All Accounts
+            </Link>
+          </li>
+          <li>
+            <Link to="/content" className="block py-2 hover:text-custom-purple">
+              <ReceiptLongOutlinedIcon className="text-lg" /> Transactions
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/analytics"
+              className="block py-2 hover:text-custom-purple"
+            >
+              <FontAwesomeIcon icon={faCreditCard} className="text-lg" /> Cards
+            </Link>
+          </li>
+          <li>
+            <Link to="/likes" className="block py-2 hover:text-custom-purple border-b-0.5 pb-10 ">
+              <RequestQuoteOutlinedIcon className="text-lg" /> Loans
+            </Link>
+          </li>
+          <li>
+            <Link to="/logout" className="block py-2 hover:text-custom-purple pt-6">
+              <LogoutOutlinedIcon className="text-lg" /> Logout
+            </Link>
+          </li>
+        </ul>
       </div>
-      <ul className="w-full">
-        {[
-          {
-            icon: <FontAwesomeIcon icon={faUser} className="text-lg" />,
-            label: "All Accounts",
-            to: "/",
-          },
-          {
-            icon: <ReceiptLongOutlinedIcon className="text-lg" />,
-            label: "Transactions",
-            to: "/content",
-          },
-          {
-            icon: <FontAwesomeIcon icon={faCreditCard} className="text-lg" />,
-            label: "Cards",
-            to: "/analytics",
-          },
-          {
-            icon: <RequestQuoteOutlinedIcon className="text-lg" />,
-            label: "Loans",
-            to: "/likes",
-          },
-          {
-            icon: <LogoutOutlinedIcon className="text-lg" />,
-            label: "Logout",
-            to: "/logout",
-          },
-        ].map((item, index) => (
-          <Link
-            key={index}
-            to={item.to}
-            className="flex justify-center py-2 hover:text-custom-purple text-white"
-          >
-            <div className="flex items-center space-x-2 justify-start max-w-max mx-auto">
-              {item.icon}
-              <span>{item.label}</span>
-            </div>
-          </Link>
-        ))}
-      </ul>
+
+      {/* Burger Icon */}
+      <button
+        onClick={toggleSidebar}
+        className="text-white md:hidden z-40 fixed top-20 left-0 p-4"
+      >
+        <svg
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M4 6h16M4 12h16m-7 6h7"
+          />
+        </svg>
+      </button>
     </div>
   );
 };
