@@ -32,7 +32,10 @@ const Sidebar = () => {
         <h1 className="text-2xl font-bold text-center">Investmint</h1>
         <ul className="text-center mx-3">
           <li>
-            <Link to="/" className="block py-2 hover:text-custom-purple">
+            <Link
+              to="/allAccounts"
+              className="block py-2 hover:text-custom-purple"
+            >
               <FontAwesomeIcon icon={faUser} className="text-lg" /> All Accounts
             </Link>
           </li>
@@ -50,12 +53,18 @@ const Sidebar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/likes" className="block py-2 hover:text-custom-purple border-b-0.5 pb-10 ">
+            <Link
+              to="/likes"
+              className="block py-2 hover:text-custom-purple border-b-0.5 pb-10 "
+            >
               <RequestQuoteOutlinedIcon className="text-lg" /> Loans
             </Link>
           </li>
           <li>
-            <Link to="/logout" className="block py-2 hover:text-custom-purple pt-6">
+            <Link
+              to="/logout"
+              className="block py-2 hover:text-custom-purple pt-6"
+            >
               <LogoutOutlinedIcon className="text-lg" /> Logout
             </Link>
           </li>
@@ -65,7 +74,7 @@ const Sidebar = () => {
       {/* Burger Icon */}
       <button
         onClick={toggleSidebar}
-        className="text-white md:hidden z-40 fixed top-20 left-0 p-4"
+        className="text-white md:hidden z-40 absolute top-30 p-3"
       >
         <svg
           className="h-6 w-6"

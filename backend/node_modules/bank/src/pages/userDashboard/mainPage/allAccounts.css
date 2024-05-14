@@ -36,14 +36,16 @@
 }
 
 .expandOpen {
-    max-height: 100px;
-    /* Adjust based on content size */
+    max-height: 200px;
+    /* Increase or adjust based on your content's needs */
     opacity: 1;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
 }
 
 .expandClose {
     max-height: 0;
     opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
 }
 
 .cardActions {
@@ -61,7 +63,6 @@
     width: 100%;
 }
 
-/* Additional styles to make the expanded card larger */
 .card.expanded {
     transition: all 0.5s ease;
     max-height: 300px;
