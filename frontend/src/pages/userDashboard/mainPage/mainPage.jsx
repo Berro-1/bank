@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 export default function MainPage() {
   return (
     <div className="flex ">
-      <div className='w-1/5	'>
+      <div className='w-1/5'>
         <Sidebar/>
       </div>
 

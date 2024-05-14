@@ -1,0 +1,69 @@
+.font-extrabold {
+    font-weight: 800 !important;
+}
+
+.font-bold {
+    font-weight: 700 !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fadeIn {
+    animation: fadeIn 1s ease-out;
+}
+
+.scale {
+    transition: transform 0.3s ease;
+}
+
+.scale:hover {
+    transform: scale(1.1);
+}
+
+.expandableContent {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+}
+
+.expandOpen {
+    max-height: 100px;
+    /* Adjust based on content size */
+    opacity: 1;
+}
+
+.expandClose {
+    max-height: 0;
+    opacity: 0;
+}
+
+.cardActions {
+    visibility: hidden;
+}
+
+.card:hover .cardActions {
+    visibility: visible;
+}
+
+.centered-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+/* Additional styles to make the expanded card larger */
+.card.expanded {
+    transition: all 0.5s ease;
+    max-height: 300px;
+    /* Adjust based on the content size */
+}
