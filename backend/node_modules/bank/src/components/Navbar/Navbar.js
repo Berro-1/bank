@@ -41,7 +41,7 @@ export default function Navbar() {
 
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="lg:hidden text-white focus:outline-none focus:ring-2 focus:ring-green-500 p-2"
+          className="lg:hidden text-white focus:outline-none focus:ring-2 focus:ring-custom-purple p-2"
         >
           <svg
             className="w-6 h-6"
@@ -68,7 +68,7 @@ export default function Navbar() {
         >
           <button
             onClick={() => setIsOpen(false)}
-            className="absolute top-3 right-3 text-white hover:text-green-300 focus:outline-none"
+            className="absolute top-3 right-3 text-white hover:text-custom-purple focus:outline-none"
           >
             <svg
               className="w-6 h-6"
@@ -87,33 +87,33 @@ export default function Navbar() {
           </button>
           <Link
             to="/"
-            className="text-green-400 text-lg mb-3 hover:text-white border-green-400 hover:border-white transition duration-300 ease-in-out border-b-2"
+            className="text-custom-purple text-lg mb-3 hover:text-white border-custom-purple hover:border-white transition duration-300 ease-in-out border-b-2"
             onClick={() => setIsOpen(false)}
           >
             Home
           </Link>
           <Link
             to="/test"
-            className="text-white text-lg mb-3 hover:text-green-400 hover:border-green-400 transition duration-300 ease-in-out border-b-2"
+            className="text-white text-lg mb-3 hover:text-custom-purple hover:border-custom-purple transition duration-300 ease-in-out border-b-2"
             onClick={() => setIsOpen(false)}
           >
             About
           </Link>
           <Link
             to=""
-            className="text-white text-lg mb-3 hover:text-green-400 hover:border-green-400 transition duration-300 ease-in-out border-b-2"
+            className="text-white text-lg mb-3 hover:text-custom-purple hover:border-custom-purple transition duration-300 ease-in-out border-b-2"
             onClick={() => setIsOpen(false)}
           >
             Services
           </Link>
           <Link
             to=""
-            className="text-white text-lg mb-3 hover:text-green-400 hover:border-green-400 transition duration-300 ease-in-out border-b-2"
+            className="text-white text-lg mb-3 hover:text-custom-purple hover:border-custom-purple transition duration-300 ease-in-out border-b-2"
             onClick={() => setIsOpen(false)}
           >
             Contact
           </Link>
-          <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 border border-green-700 rounded">
+          <button className="bg-custom-purple hover:bg-custom-purple text-white font-bold py-2 px-4 border border-custom-purple rounded">
             Login
           </button>
         </div>
@@ -121,25 +121,25 @@ export default function Navbar() {
         <div className="hidden lg:flex gap-6 ml-[-5rem]">
           <Link
             to="/"
-            className="text-green-400 text-lg hover:text-white transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
+            className="text-custom-purple text-lg hover:text-white transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
           >
             Home
           </Link>
           <Link
             to="/test"
-            className="text-white text-lg hover:text-green-400 transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
+            className="text-white text-lg hover:text-custom-purple transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
           >
             About
           </Link>
           <Link
             to=""
-            className="text-white text-lg hover:text-green-400 transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
+            className="text-white text-lg hover:text-custom-purple transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
           >
             Services
           </Link>
           <Link
             to=""
-            className="text-white text-lg hover:text-green-400 transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
+            className="text-white text-lg hover:text-custom-purple transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
           >
             Contact
           </Link>
@@ -147,7 +147,7 @@ export default function Navbar() {
 
         <div className="hidden lg:flex items-center">
           <a href="/Login">
-            <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 border border-green-700 rounded">
+            <button className="bg-custom-purple hover:bg-custom-purple text-white font-bold py-2 px-4 border border-custom-purple rounded">
               Login
             </button>
           </a>
