@@ -10,19 +10,19 @@ import { motion } from "framer-motion";
 
 export default function MainPage() {
   return (
-    <div className="flex ">
-      <div className='w-1/5	'>
+    <div className="flex h-full">
+      <div className='w-1/5	h-full'>
         <Sidebar/>
       </div>
 
    
       <motion.div
-        className="container mx-auto p-10 text-gray-100 "
+        className="container mx-auto p-10 text-gray-100 h-full bg-gray-800"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="mb-8 flex items-center gap-3">
+        <div className="mb-8 flex items-center gap-3 ">
           <GridViewOutlinedIcon className="text-4xl text-blue-500" />
           <h1 className="text-2xl font-bold">Dashboard</h1>
         </div>
@@ -46,7 +46,7 @@ export default function MainPage() {
             value="789"
           />
         </div>
-        <LatestActivities />
+        <LatestActivities accountId={'66368f2c4a2af0ab45a53625'} />
       </motion.div>
     </div>
   )

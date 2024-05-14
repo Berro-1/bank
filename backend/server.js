@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require('cors');
 const accountsRouter = require("./routes/AccountRoutes");
 const checksRouter = require("./routes/CheckRoutes");
 const userRouter = require("./routes/UsersRoutes");
@@ -12,10 +13,15 @@ const qrRoutes = require("./routes/qrRoutes");
 
 const app = express();
 
+app.use(cors({
+    origin: 'http://localhost:3000', // Adjust based on your frontend URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.path}`);
-  next();
+    console.log(`${req.method} ${req.path}`);
+    next();
 });
 
 app.use("/api/accounts", accountsRouter);
@@ -29,13 +35,6 @@ app.use("/api", qrRoutes);
 
 const PORT = process.env.PORT || 4001;
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server connected to MongoDB & listening on port ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error(err);
-  });
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => app.listen(PORT, () => console.log(`Server connected to MongoDB & listening on port ${PORT}`)))
+  .catch((err) => console.error(err));

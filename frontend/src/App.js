@@ -26,7 +26,7 @@ function App() {
   );
 
   return (
-    <div className="App">
+    <div className="App h-full">
       <ToastContainer position="top-right"></ToastContainer>
 
       <RouterProvider router={router} />
@@ -36,11 +36,11 @@ function App() {
 
 const Root = () => {
   return (
-    <div className="bg-gray-800 text-gray-200">
+    <div className="bg-gray-800 text-gray-200 h-full">
       <div>
         <Navbar />
       </div>
-      <div>
+      <div className="h-full">
         <Outlet />
       </div>
     </div>

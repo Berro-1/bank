@@ -1,9 +1,10 @@
 import { combineReducers } from "redux";
-import TestsSlice from './testing/testReducers'
+import TestsSlice from './testing/testReducers';
+import transactionSlice from "./Transactions/transactionSlice";
 
-
-const RootReducer = combineReducers({
-    Tests: TestsSlice.reducer,
+const rootReducer = combineReducers({
+  Tests: TestsSlice.reducer,
+  transactions: transactionSlice.reducer,
 });
 
-export default RootReducer;
+export default rootReducer;
