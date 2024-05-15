@@ -25,11 +25,11 @@ const getCustomerLoans = async (req, res) => {
 
 
 const createLoan = async (req, res) => {
-  const { customer, type, amount, interest_rate, loan_term, status } = req.body;
+  const { user, type, amount, interest_rate, loan_term, status } = req.body;
 
   // Validate required fields
   if (
-    !customer ||
+    !user ||
     !type ||
     !amount ||
     !interest_rate ||
@@ -84,7 +84,7 @@ const createLoan = async (req, res) => {
 
   try {
     const loan = new Loans({
-      customer,
+      user,
       type,
       amount,
       interest_rate,

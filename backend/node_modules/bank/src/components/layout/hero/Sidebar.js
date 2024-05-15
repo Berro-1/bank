@@ -14,7 +14,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="relative min-h-screen md:flex">
+    <div className="relative md:flex h-full bg-gray-800">
       {/* Overlay to click out of the menu */}
       {isOpen && (
         <div
@@ -25,9 +25,9 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <div
-        className={`bg-gray-900 text-white w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform ${
+        className={`bg-gray-900 text-white  h-full w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform ${
           !isOpen ? "-translate-x-full" : ""
-        } md:relative md:translate-x-0 transition duration-200 ease-in-out z-30`}
+        } md:relative md:translate-x-0 transition duration-200 ease-in-out z-30 h-full`}
       >
         <h1 className="text-2xl font-bold text-center">Investmint</h1>
         <ul className="text-center mx-3">
