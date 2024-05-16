@@ -1,26 +1,32 @@
 const CreditCard = require("../models/CreditCards");
 const mongoose = require("mongoose");
 
-const getCreditCards  = async (req, res) => {
-  const customerId = req.params.cutomerId;
+const getCreditCards = async (req, res) => {
+  const userId = req.params.userId;
 
   try {
-    if (!mongoose.Types.ObjectId.isValid(creditCardId)) {
-      return res.status(400).json({ error: "Invalid credit card ID format" });
+    // Validate the userId format if necessary
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: "Invalid user ID format" });
     }
 
-    const creditCard = await CreditCard.find({customer: customerId});
-    
-    if (!creditCard) {
-      return res.status(404).json({ error: "Credit card not found" });
+    // Fetch credit cards that are linked to the userId
+    const creditCards = await CreditCard.find({ user: userId });
+
+    // If no credit cards found, return an appropriate message
+    if (!creditCards.length) {
+      return res
+        .status(404)
+        .json({ message: "No credit cards found for this user" });
     }
 
-    res.status(200).json(creditCard);
+    res.status(200).json(creditCards);
   } catch (error) {
-    console.error("Error fetching credit card:", error);
-    res.status(500).json({ error: "Failed to fetch credit card" });
+    console.error("Error fetching credit cards:", error);
+    res.status(500).json({ error: "Failed to fetch credit cards" });
   }
 };
+
 
 const createCreditCard = async (req, res) => {
   const { card_name, expiry_date, credit_limit, available_credit } = req.body;

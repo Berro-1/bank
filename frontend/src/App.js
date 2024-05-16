@@ -14,6 +14,7 @@ import Login from "./pages/Login/Login";
 import Navbar from "./components/Navbar/Navbar";
 import MainPage from "./pages/userDashboard/mainPage/mainPage.jsx";
 import AllAccounts from "./pages/userDashboard/allAccounts/allAccounts.js"
+import Cards from "./pages/userDashboard/cards/cards"
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -23,6 +24,7 @@ function App() {
         <Route path="/Login" element={<Login />} />
         <Route path="/mainPage" element={<MainPage />} />
         <Route path="/allAccounts" element={<AllAccounts />} />
+        <Route path="/cards" element={<Cards />} />
       </Route>
     )
   );

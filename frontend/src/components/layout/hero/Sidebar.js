@@ -46,7 +46,7 @@ const Sidebar = () => {
           </li>
           <li>
             <Link
-              to="/analytics"
+              to="/cards"
               className="block py-2 hover:text-custom-purple"
             >
               <FontAwesomeIcon icon={faCreditCard} className="text-lg" /> Cards
