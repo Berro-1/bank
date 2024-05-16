@@ -13,7 +13,7 @@ const getLoans = async (req, res) => {
 const getCustomerLoans = async (req, res) => {
   const { id } = req.params;
   try {
-    const loans = await Loans.find({ customer: id });
+    const loans = await Loans.find({ user: id });
     if (!loans || loans.length === 0) {
       return res.status(404).json({ error: "No loans found for this customer" });
     }

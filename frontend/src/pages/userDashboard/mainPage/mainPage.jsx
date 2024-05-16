@@ -10,14 +10,12 @@ import { motion } from "framer-motion";
 
 export default function MainPage() {
   return (
-    <div className="flex h-full">
-      <div className='w-1/5	h-full'>
+    <div className="flex ">
+      <div className='w-1/5	'>
         <Sidebar/>
       </div>
-
-   
       <motion.div
-        className="container mx-auto p-10 text-gray-100 h-full bg-gray-800"
+        className="container mx-auto p-10 text-gray-100  bg-gray-800"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -28,19 +26,19 @@ export default function MainPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <DashboardItem
-            backgroundColor="#2D3748" // Darker background
+            backgroundColor="#2D3748" 
             icon={PersonOutlineOutlinedIcon}
             title="Total Accounts"
             value="123"
           />
           <DashboardItem
-            backgroundColor="#4A5568" // Slightly lighter for contrast
+            backgroundColor="#4A5568" 
             icon={ReceiptLongOutlinedIcon}
             title="Total Transactions"
             value="456"
           />
           <DashboardItem
-            backgroundColor="#2D3748" // Darker background for uniformity
+            backgroundColor="#2D3748" 
             icon={AccountBalanceWalletOutlinedIcon}
             title="Current Balance"
             value="789"
