@@ -2,14 +2,14 @@ const CreditCard = require("../models/CreditCards");
 const mongoose = require("mongoose");
 
 const getCreditCards  = async (req, res) => {
-  const customerId = req.params.cutomerId;
+  const userId = req.params.userId;
 
   try {
-    if (!mongoose.Types.ObjectId.isValid(creditCardId)) {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ error: "Invalid credit card ID format" });
     }
 
-    const creditCard = await CreditCard.find({customer: customerId});
+    const creditCard = await CreditCard.find({user: userId});
     
     if (!creditCard) {
       return res.status(404).json({ error: "Credit card not found" });
@@ -24,7 +24,7 @@ const getCreditCards  = async (req, res) => {
 
 const createCreditCard = async (req, res) => {
   const { card_name, expiry_date, credit_limit, available_credit } = req.body;
-  const customerId = req.params.customerId;
+  const userId = req.params.userId;
   // Validate expiry date
   const expiry = new Date(expiry_date);
   if (expiry <= new Date()) {
@@ -46,8 +46,8 @@ const createCreditCard = async (req, res) => {
 
   try {
     const newCreditCard = await CreditCard.create({
+      user: userId,
       card_name,
-      customer: customerId,
       expiry_date: expiry,
       credit_limit,
       available_credit,
