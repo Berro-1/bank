@@ -31,7 +31,11 @@ const userSchema = new Schema(
       enum: ["user", "admin"], // Allowed types are 'user' or 'admin'
       default: "user", // Default type is 'user'
     },
-    isFirstLogin: {
+    is_eligible_for_loan:{
+      type: Boolean,
+      default: true,
+    },
+    is_first_login: {
       type: Boolean,
       default: true,
     },

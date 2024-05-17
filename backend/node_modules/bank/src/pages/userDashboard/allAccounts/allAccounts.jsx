@@ -1,14 +1,13 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  Card,
-  CardActions,
-  CardContent,
-  CardMedia,
-  CardActionArea,
-  Button,
-  Typography,
-} from "@mui/material";
+import { CircularProgress } from "@mui/material";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import CardActionArea from "@mui/material/CardActionArea";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import Sidebar from "../../../components/layout/hero/Sidebar";
 import "./allAccounts.css";
 import { getAllAccounts } from "../../../store/allAccounts/allAccountsActions";
@@ -39,13 +38,16 @@ export default function AllAccounts() {
     console.log("Accounts state updated:", accounts); // This logs the accounts when they change.
   }, [accounts]);
 
-  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="flex">
       <Sidebar />
+      
       <div className="flex-grow p-10">
         <div className="flex justify-center">
+        {loading ? (
+        <CircularProgress color="primary" />
+      ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-4xl mx-auto">
             {accounts.map((account) => (
               <Card
@@ -57,7 +59,7 @@ export default function AllAccounts() {
                   <CardMedia
                     component="img"
                     height="140"
-                    image={accountTypeToImage[account.type]} // Dynamically set image based on account type
+                    image={accountTypeToImage[account.type] || 'default_image_path'} // Use a default image path if type is not found
                     alt={account.type}
                   />
                   <CardContent>
@@ -86,6 +88,8 @@ export default function AllAccounts() {
               </Card>
             ))}
           </div>
+                )}
+
         </div>
       </div>
     </div>
