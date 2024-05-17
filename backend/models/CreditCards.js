@@ -3,9 +3,19 @@ const Schema = mongoose.Schema;
 
 const creditCardsSchema = new Schema(
   {
+    card_number:{
+      type: String,
+      required: true,
+      unique: true,
+      match: [
+        /^\d{16}$/,
+        "Please enter a valid credit card number",
+      ],
+    },
     card_name: {
       type: String,
       required: true,
+      enum: ["Platinum Card", "Gold Card", "Silver Card"],
     },
     user: {
       type: Schema.Types.ObjectId,
