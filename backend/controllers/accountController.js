@@ -10,7 +10,7 @@ const getUserAccounts = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "No account with that id" });
   }
-  const account = await Account.findById(id);
+  const account = await Account.find({user:id});
   if (!account) {
     return res.status(404).json({ err: "No account with that id" });
   }

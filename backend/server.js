@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 
 app.use("/api/accounts", accountsRouter);
 app.use("/api/checks", checksRouter);
-app.use("/api/customers", userRouter);
+app.use("/api/users", userRouter);
 app.use("/api/creditCard", creditCardRouter);
 app.use("/api/investment", investmentRouter);
 app.use("/api/loan", loanRouter);

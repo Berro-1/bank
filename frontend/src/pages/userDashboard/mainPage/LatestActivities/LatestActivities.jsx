@@ -11,7 +11,22 @@ import {
   Paper,
 } from "@mui/material";
 import { getAllTransactions } from "../../../../store/Transactions/transactionActions";
+import { styled } from "@mui/material/styles"; // Add this import
 
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  fontWeight: 'bold',
+  backgroundColor: '#4727eb', 
+  color: theme.palette.common.white,
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+'&:nth-of-type(odd)': {
+  backgroundColor: theme.palette.action.hover,
+},
+'&:hover': {
+  backgroundColor: theme.palette.action.selected,
+},
+}));
 const LatestActivities = ({ accountId }) => {
   const dispatch = useDispatch();
   const { transactions, loading } = useSelector(
@@ -20,7 +35,7 @@ const LatestActivities = ({ accountId }) => {
 
   useEffect(() => {
     dispatch(getAllTransactions(accountId));
-    console.log(transactions); // Optionally log transactions to see what's being loaded
+    console.log('transactions',transactions);
   }, [dispatch, accountId]);
 
   return (
@@ -38,20 +53,20 @@ const LatestActivities = ({ accountId }) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell className="font-semibold">Date</TableCell>
-                <TableCell className="font-semibold">Type</TableCell>
-                <TableCell className="font-semibold">Amount</TableCell>
+                <StyledTableCell className="font-semibold">Date</StyledTableCell>
+                <StyledTableCell className="font-semibold">Type</StyledTableCell>
+                <StyledTableCell className="font-semibold">Amount</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {transactions.map((transaction) => (
-                <TableRow key={transaction._id}>
+                <StyledTableRow key={transaction._id}>
                   <TableCell>
                     {new Date(transaction.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell>{transaction.type}</TableCell>
                   <TableCell>{`$${transaction.amount}`}</TableCell>
-                </TableRow>
+                </StyledTableRow>
               ))}
             </TableBody>
           </Table>

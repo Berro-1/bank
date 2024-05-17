@@ -14,7 +14,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="relative md:flex h-full bg-gray-800">
+    <div className="relative md:flex bg-gray-800">
       {/* Overlay to click out of the menu */}
       {isOpen && (
         <div
@@ -25,7 +25,7 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <div
-        className={`bg-gray-900 text-white  h-full w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform ${
+        className={`bg-gray-900 text-white  w-64 space-y-6 py-7 px-2 absolute inset-y-0 left-0 transform ${
           !isOpen ? "-translate-x-full" : ""
         } md:relative md:translate-x-0 transition duration-200 ease-in-out z-30 h-full`}
       >
@@ -40,13 +40,13 @@ const Sidebar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/content" className="block py-2 hover:text-custom-purple">
+            <Link to="/transactions" className="block py-2 hover:text-custom-purple">
               <ReceiptLongOutlinedIcon className="text-lg" /> Transactions
             </Link>
           </li>
           <li>
             <Link
-              to="/analytics"
+              to="/cards"
               className="block py-2 hover:text-custom-purple"
             >
               <FontAwesomeIcon icon={faCreditCard} className="text-lg" /> Cards
@@ -54,7 +54,7 @@ const Sidebar = () => {
           </li>
           <li>
             <Link
-              to="/likes"
+              to="/loans"
               className="block py-2 hover:text-custom-purple border-b-0.5 pb-10 "
             >
               <RequestQuoteOutlinedIcon className="text-lg" /> Loans
