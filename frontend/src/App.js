@@ -13,10 +13,10 @@ import Test from "./pages/testing/test";
 import Login from "./pages/Login/Login";
 import Navbar from "./components/Navbar/Navbar";
 import MainPage from "./pages/userDashboard/mainPage/mainPage.jsx";
-import AllAccounts from "./pages/userDashboard/mainPage/allAccounts.js"
+import AllAccounts from "./pages/userDashboard/allAccounts/allAccounts.js"
 import AllTransactionsPage from "./pages/userDashboard/allTransactions/allTransactions.jsx";
 import LoansPage from "./pages/userDashboard/Loans/Loans.jsx";
-import Cards from "./pages/userDashboard/cards/cards"
+import Cards from "./pages/userDashboard/cards/cards";
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
