@@ -30,7 +30,7 @@ const getCreditCards = async (req, res) => {
 
 const createCreditCard = async (req, res) => {
   const { card_name, expiry_date, credit_limit, available_credit } = req.body;
-  const customerId = req.params.customerId;
+  const userId = req.params.userId;
   // Validate expiry date
   const expiry = new Date(expiry_date);
   if (expiry <= new Date()) {
@@ -52,8 +52,8 @@ const createCreditCard = async (req, res) => {
 
   try {
     const newCreditCard = await CreditCard.create({
+      user: userId,
       card_name,
-      customer: customerId,
       expiry_date: expiry,
       credit_limit,
       available_credit,
