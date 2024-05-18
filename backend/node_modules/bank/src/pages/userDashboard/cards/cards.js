@@ -50,12 +50,12 @@ export default function CreditCards() {
     <div className="flex">
       <Sidebar />
 
-      <div className="flex-grow p-10">
+      <div className="flex-grow p-8">
         <Typography
           variant="h4"
           component="h1"
           gutterBottom
-          className="font-bold pt-10"
+          className="font-bold pt-6"
         >
           Cards
         </Typography>
