@@ -5,7 +5,7 @@ import { faUser, faCreditCard } from "@fortawesome/free-regular-svg-icons";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import RequestQuoteOutlinedIcon from "@mui/icons-material/RequestQuoteOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -55,11 +55,20 @@ const Sidebar = () => {
           <li>
             <Link
               to="/loans"
-              className="block py-2 hover:text-custom-purple border-b-0.5 pb-10 "
+              className="block py-2 hover:text-custom-purple"
             >
               <RequestQuoteOutlinedIcon className="text-lg" /> Loans
             </Link>
           </li>
+          <li>
+            <Link
+              to="/submissions"
+              className="block py-2 hover:text-custom-purple border-b-0.5 pb-10 "
+            >
+              <DescriptionOutlinedIcon className="text-lg" /> Applications
+            </Link>
+          </li>
+
           <li>
             <Link
               to="/logout"

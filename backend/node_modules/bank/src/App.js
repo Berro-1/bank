@@ -17,6 +17,8 @@ import AllAccounts from "./pages/userDashboard/allAccounts/allAccounts";
 import AllTransactionsPage from "./pages/userDashboard/allTransactions/allTransactions.jsx";
 import LoansPage from "./pages/userDashboard/Loans/Loans.jsx";
 import Cards from "./pages/userDashboard/cards/cards";
+import Submissions from "./pages/userDashboard/submissions/submissions.jsx";
+
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -29,6 +31,7 @@ function App() {
         <Route path="/transactions" element={<AllTransactionsPage />} />
         <Route path="/loans" element={<LoansPage />} />
         <Route path="/cards" element={<Cards />} />
+        <Route path="/submissions" element={<Submissions />} />
       </Route>
     )
   );

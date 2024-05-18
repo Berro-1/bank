@@ -32,7 +32,7 @@ app.use("/api/investment", investmentRouter);
 app.use("/api/loan", loanRouter);
 app.use("/api/transaction", transactionRouter);
 app.use("/api", qrRoutes);
-app.use("/api", submissionRoutes);
+app.use("/api/submissions", submissionRoutes);
 const PORT = process.env.PORT || 4001;
 
 mongoose.connect(process.env.MONGO_URI)
