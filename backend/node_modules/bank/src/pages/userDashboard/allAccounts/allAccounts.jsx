@@ -44,7 +44,11 @@ export default function AllAccounts() {
       <Sidebar />
       
       <div className="flex-grow p-10">
+      <Typography variant="h4" component="h1" gutterBottom className="font-bold pt-10">
+          Accounts
+        </Typography>
         <div className="flex justify-center">
+        
         {loading ? (
         <CircularProgress color="primary" />
       ) : (

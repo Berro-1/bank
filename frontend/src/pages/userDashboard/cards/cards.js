@@ -51,6 +51,14 @@ export default function CreditCards() {
       <Sidebar />
 
       <div className="flex-grow p-10">
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          className="font-bold pt-10"
+        >
+          Cards
+        </Typography>
         <div className="flex justify-center">
           {loading ? (
             <CircularProgress color="primary" />

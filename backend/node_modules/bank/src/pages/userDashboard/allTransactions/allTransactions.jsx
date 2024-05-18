@@ -41,7 +41,7 @@ const AllTransactionsPage = () => {
         transition={{ duration: 0.5 }}
         style={{ padding: 20, flexGrow: 1 }}
       >
-        <Typography variant="h4" component="h1" gutterBottom className="font-bold" color="white">
+        <Typography variant="h4" component="h1" gutterBottom className="font-bold pt-10">
           All Transactions
         </Typography>
    
