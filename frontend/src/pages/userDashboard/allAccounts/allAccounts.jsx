@@ -43,7 +43,7 @@ export default function AllAccounts() {
     <div className="flex">
       <Sidebar />
       
-      <div className="flex-grow p-8">
+      <div className="flex-grow py-8 px-6">
       <Typography variant="h4" component="h1" gutterBottom className="font-bold pt-6">
           Accounts
         </Typography>

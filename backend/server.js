@@ -10,7 +10,7 @@ const investmentRouter = require("./routes/InvestmentRoutes");
 const loanRouter = require("./routes/LoanRoutes");
 const transactionRouter = require("./routes/TransactionRoutes");
 const qrRoutes = require("./routes/qrRoutes");
-
+const submissionRoutes =require("./routes/SubmissionRoutes")
 const app = express();
 
 app.use(cors({
@@ -32,7 +32,7 @@ app.use("/api/investment", investmentRouter);
 app.use("/api/loan", loanRouter);
 app.use("/api/transaction", transactionRouter);
 app.use("/api", qrRoutes);
-
+app.use("/api", submissionRoutes);
 const PORT = process.env.PORT || 4001;
 
 mongoose.connect(process.env.MONGO_URI)
