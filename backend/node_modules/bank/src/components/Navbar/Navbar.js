@@ -27,7 +27,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-gray-900 py-3 shadow-lg relative">
-      <div className="container flex justify-between items-center pl-10 pr-20">
+      <div className="container flex justify-between items-center px-10">
         <div className="flex items-center gap-3">
           <img
             src="logo_investmint-removebg.png"
@@ -118,7 +118,7 @@ export default function Navbar() {
           </button>
         </div>
 
-        <div className="hidden lg:flex gap-6 ml-[-5rem]">
+        <div className="hidden lg:flex gap-6 ml">
           <Link
             to="/"
             className="text-custom-purple text-lg hover:text-white transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
