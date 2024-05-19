@@ -6,6 +6,7 @@ import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import RequestQuoteOutlinedIcon from "@mui/icons-material/RequestQuoteOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import SyncAltOutlinedIcon from "@mui/icons-material/SyncAltOutlined";
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -53,6 +54,14 @@ const Sidebar = () => {
               className="block py-2 hover:text-custom-purple"
             >
               <ReceiptLongOutlinedIcon className="text-lg" /> Transactions
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/transfers"
+              className="block py-2 hover:text-custom-purple"
+            >
+              <SyncAltOutlinedIcon className="text-lg" /> Transfers
             </Link>
           </li>
           <li>
