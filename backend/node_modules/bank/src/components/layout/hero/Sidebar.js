@@ -41,6 +41,14 @@ const Sidebar = () => {
           </li>
           <li>
             <Link
+              to="/submissions"
+              className="block py-2 hover:text-custom-purple "
+            >
+              <DescriptionOutlinedIcon className="text-lg" /> Applications
+            </Link>
+          </li>
+          <li>
+            <Link
               to="/transactions"
               className="block py-2 hover:text-custom-purple"
             >
@@ -55,20 +63,11 @@ const Sidebar = () => {
           <li>
             <Link
               to="/loans"
-              className="block py-2 hover:text-custom-purple"
+              className="block py-2 hover:text-custom-purple border-b-0.5 pb-10 "
             >
               <RequestQuoteOutlinedIcon className="text-lg" /> Loans
             </Link>
           </li>
-          <li>
-            <Link
-              to="/submissions"
-              className="block py-2 hover:text-custom-purple border-b-0.5 pb-10 "
-            >
-              <DescriptionOutlinedIcon className="text-lg" /> Applications
-            </Link>
-          </li>
-
           <li>
             <Link
               to="/logout"

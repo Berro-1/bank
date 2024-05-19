@@ -1,13 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { 
   Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
-  Typography, CircularProgress 
+  Typography, CircularProgress, Button 
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Sidebar from "../../../components/layout/hero/Sidebar";
-import { getSubmissions } from "../../../store/submissions/submissionsActions";
+import { getSubmissions, submitNewSubmission } from "../../../store/submissions/submissionsActions";
+import ApplySubmissionModal from "./popupModal"; // Import the ApplySubmissionModal component
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   fontWeight: 'bold',
@@ -42,6 +43,17 @@ const Submissions = () => {
     console.log("Submissions state updated:", submissions);
   }, [submissions]);
 
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const toggleModal = () => {
+    setModalOpen(!isModalOpen);
+  };
+
+  const handleFormSubmit = (formDetails) => {
+    dispatch(submitNewSubmission(formDetails, userId));
+    toggleModal();
+  };
+
   return (
     <div className="flex w-full">
       <Sidebar />
@@ -51,9 +63,33 @@ const Submissions = () => {
         transition={{ duration: 0.5 }}
         style={{ padding: 20, flexGrow: 1 }}
       >
-        <Typography variant="h4" component="h1" gutterBottom className="font-bold pt-10">
-          Submissions
-        </Typography>
+        <div className="flex items-center justify-between">
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
+            className="font-bold"
+          >
+            Submissions
+          </Typography>
+          <Button
+            sx={{
+              backgroundColor: '#111827',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: '#333A45',
+              },
+              fontSize: "14px",
+              fontWeight: "bold",
+              padding: "8px 16px",
+              borderRadius: "4px",
+              textTransform: 'none',
+            }}
+            onClick={toggleModal} // Open the modal when this button is clicked
+          >
+            Apply
+          </Button>
+        </div>
         {loading ? (
           <CircularProgress color="primary" />
         ) : (
@@ -81,6 +117,11 @@ const Submissions = () => {
           </TableContainer>
         )}
       </motion.div>
+      <ApplySubmissionModal
+        isOpen={isModalOpen}
+        toggle={toggleModal}
+        onSubmit={handleFormSubmit}
+      />
     </div>
   );
 };
