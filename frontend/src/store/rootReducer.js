@@ -13,7 +13,7 @@ const rootReducer = combineReducers({
   cards:cardsSlice.reducer,
   loans: loanSlice.reducer,
   submissions: submissionSlice.reducer,
-  transfers: transfersSlice.reducer
+  transfers: transfersSlice.reducer,
   users: userSlice.reducer,
 
 });
