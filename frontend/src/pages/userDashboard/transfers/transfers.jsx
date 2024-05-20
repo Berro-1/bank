@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   Button,
@@ -10,10 +11,12 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  CircularProgress,
 } from "@mui/material";
 import Sidebar from "../../../components/layout/hero/Sidebar";
 import { getAllAccounts } from "../../../store/allAccounts/allAccountsActions";
 import { useSelector, useDispatch } from "react-redux";
+import { createTransfer } from "../../../store/transfers/transfersActions";
 
 export default function Transfers() {
   const [accountId, setAccountId] = useState("");
@@ -23,8 +26,11 @@ export default function Transfers() {
   const userId = "6644dcb9c16b269cf9bae998";
 
   const dispatch = useDispatch();
-  const { loading, accounts } = useSelector(
+  const { loading: accountsLoading, accounts } = useSelector(
     (state) => state.accounts || { accounts: [], loading: false }
+  );
+  const { loading: transferLoading, error: transferError } = useSelector(
+    (state) => state.transfers || { loading: false, error: null }
   );
 
   useEffect(() => {
@@ -34,16 +40,13 @@ export default function Transfers() {
   const mappedAccounts = useMemo(() => {
     return accounts
       .filter((account) => account.type !== "Loan")
-      .map((account) => {
-        console.log("Account item:", account); // Log account items
-        return (
-          <MenuItem key={account._id} value={account._id}>
-            {account.type
-              ? `${account.type} - ${account._id}`
-              : `ID: ${account._id}`}
-          </MenuItem>
-        );
-      });
+      .map((account) => (
+        <MenuItem key={account._id} value={account._id}>
+          {account.type
+            ? `${account.type} - ${account._id}`
+            : `ID: ${account._id}`}
+        </MenuItem>
+      ));
   }, [accounts]);
 
   const handleSubmit = (event) => {
@@ -56,28 +59,25 @@ export default function Transfers() {
     }
 
     setError("");
-
-    console.log(
-      `Sending ${amount} from account ID: ${accountId} to account ID: ${recipientAccountId}`
-    );
+    dispatch(createTransfer(accountId, recipientAccountId, amount));
   };
 
   return (
     <div className="flex min-h-screen">
       <Sidebar />
-      <Container component="main" maxWidth="xs" className="mt-16">
+      <Container component="main" maxWidth="xs" sx={{ mt: 4 }}>
         <CssBaseline />
         <Box
           sx={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            padding: "24px",
+            padding: 3,
             backgroundColor: "white",
-            borderRadius: "8px",
-            border: "2px  #333",
+            borderRadius: 2,
+            border: "2px solid #333",
+            boxShadow: 3,
           }}
-          className="shadow-lg"
         >
           <h2 className="text-2xl font-bold text-black md:text-3xl">
             Send Money
@@ -101,8 +101,7 @@ export default function Transfers() {
           <Box
             component="form"
             onSubmit={handleSubmit}
-            sx={{ mt: 2 }} // Adjusted margin to fix the gap
-            className="w-full"
+            sx={{ mt: 2, width: "100%" }}
           >
             <TextField
               variant="outlined"
@@ -131,18 +130,29 @@ export default function Transfers() {
               margin="normal"
             />
             {error && (
-              <Alert severity="error" className="mt-2">
+              <Alert severity="error" sx={{ mt: 2 }}>
                 {error}
+              </Alert>
+            )}
+            {transferError && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {transferError}
               </Alert>
             )}
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              color="primary"
-              className="mt-3 mb-2"
+              sx={{
+                mt: 3,
+                mb: 2,
+                backgroundColor: "#000",
+                color: "#fff",
+                "&:hover": { backgroundColor: "#333" },
+              }}
+              disabled={transferLoading}
             >
-              Send
+              {transferLoading ? <CircularProgress size={24} /> : "Send"}
             </Button>
           </Box>
         </Box>
@@ -150,3 +160,14 @@ export default function Transfers() {
     </div>
   );
 }
+
+Transfers.propTypes = {
+  accounts: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      type: PropTypes.string,
+    })
+  ),
+  loading: PropTypes.bool,
+  dispatch: PropTypes.func.isRequired,
+};

@@ -6,6 +6,7 @@ module.exports = {
       borderWidth: {
         '0.5': '0.5px'},
       colors: {
+        'custom-black':'#111827',
         'custom-purple': '#4727eb',}
     },
   },
