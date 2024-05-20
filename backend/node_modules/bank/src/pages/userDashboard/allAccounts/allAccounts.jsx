@@ -14,7 +14,6 @@ import { getAllAccounts } from "../../../store/allAccounts/allAccountsActions";
 
 // Mapping of account types to image paths
 const accountTypeToImage = {
-  "Credit Card": "./creditcards.webp",
   Loan: "./loans.webp",
   Savings: "./savings.webp",
   Checking: "./checking.webp",

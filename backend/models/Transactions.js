@@ -8,14 +8,23 @@ const transactionSchema = new Schema(
       ref: "Account",
       required: true,
     },
+    receiver_acc: {
+      type: String,
+      required: true,
+    },
     amount: {
       type: Number,
       required: true,
     },
+    transfer_type: {
+      type: String,
+      required: true,
+      enum: [ "Received", "Sent"],
+    },
     type: {
       type: String,
       required: true,
-      enum: ["Deposit", "Withdrawal", "Transfer", "Payment"],
+      enum: [ "Withdrawal", "Transfer", "Payment"],
     },
   },
   {

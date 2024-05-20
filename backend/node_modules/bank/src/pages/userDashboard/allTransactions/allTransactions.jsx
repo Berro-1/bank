@@ -29,7 +29,7 @@ const AllTransactionsPage = () => {
   const { transactions, loading } = useSelector(state => state.transactions);
 
   useEffect(() => {
-    dispatch(getAllTransactions('66368f2c4a2af0ab45a53625'));
+    dispatch(getAllTransactions("664b946008de1704abfe328b"));
   }, [dispatch]);
 
   return (
@@ -41,29 +41,39 @@ const AllTransactionsPage = () => {
         transition={{ duration: 0.5 }}
         style={{ padding: 20, flexGrow: 1 }}
       >
-        <Typography variant="h4" component="h1" gutterBottom className="font-bold pt-10">
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          className="font-bold pt-10"
+        >
           All Transactions
         </Typography>
-   
-       
+
         {loading ? (
           <CircularProgress color="primary" />
         ) : (
-          <TableContainer component={Paper} style={{ width: '100%' }}>
-            <Table style={{ width: '100%' }}>
+          <TableContainer component={Paper} style={{ width: "100%" }}>
+            <Table style={{ width: "100%" }}>
               <TableHead>
                 <TableRow>
                   <StyledTableCell>Date</StyledTableCell>
                   <StyledTableCell>Type</StyledTableCell>
                   <StyledTableCell>Amount</StyledTableCell>
+                  <StyledTableCell>transfer_type</StyledTableCell>
+                  <StyledTableCell>Account</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {transactions.map((transaction) => (
                   <StyledTableRow key={transaction._id}>
-                    <TableCell>{new Date(transaction.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      {new Date(transaction.createdAt).toLocaleDateString()}
+                    </TableCell>
                     <TableCell>{transaction.type}</TableCell>
                     <TableCell>{`$${transaction.amount}`}</TableCell>
+                    <TableCell>{transaction.transfer_type}</TableCell>
+                    <TableCell>{transaction.receiver_acc}</TableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>
