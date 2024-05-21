@@ -51,18 +51,20 @@ const AdminSidebar = () => {
           </li>
           <li>
             <Link
-              to="/admin/transactions"
-              className="block py-2 hover:text-custom-purple"
-            >
-              <ReceiptLongOutlinedIcon className="text-lg" /> Transactions
-            </Link>
-          </li>
-          <li>
-            <Link
               to="/admin/loans"
               className="block py-2 hover:text-custom-purple"
             >
               <AttachMoneyOutlinedIcon className="text-lg" /> Loans
+            </Link>
+          </li>
+
+          <li>
+            <Link
+              to="/admin/credit-cards"
+              className="block py-2 hover:text-custom-purple border-b-0.5 pb-10"
+            >
+              <FontAwesomeIcon icon={faCreditCard} className="text-lg" /> Credit
+              Cards
             </Link>
           </li>
           <li>
@@ -75,13 +77,13 @@ const AdminSidebar = () => {
           </li>
           <li>
             <Link
-              to="/admin/credit-cards"
-              className="block py-2 hover:text-custom-purple border-b-0.5 pb-10"
+              to="/admin/transactions"
+              className="block py-2 hover:text-custom-purple"
             >
-              <FontAwesomeIcon icon={faCreditCard} className="text-lg" /> Credit
-              Cards
+              <ReceiptLongOutlinedIcon className="text-lg" /> Transactions
             </Link>
           </li>
+
           <li>
             <Link
               to="/logout"

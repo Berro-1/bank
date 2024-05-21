@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
 import transactionSlice from "./Transactions/transactionSlice";
-import allAccountsSlice from "./allAccounts/allAccountsSlice";
+import allAccountsSlice from "./accounts/accountsSlice";
 import cardsSlice from "./cards/cardsSlice";
 import loanSlice from "./Loans/loansSlice";
 import submissionSlice from "./submissions/submissionsSlice";

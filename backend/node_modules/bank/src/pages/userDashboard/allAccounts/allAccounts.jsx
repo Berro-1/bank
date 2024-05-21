@@ -10,7 +10,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Sidebar from "../../../components/layout/hero/Sidebar";
 import "./allAccounts.css";
-import { getAllAccounts } from "../../../store/allAccounts/allAccountsActions";
+import { getAllAccounts } from "../../../store/accounts/accountsActions";
 
 // Mapping of account types to image paths
 const accountTypeToImage = {

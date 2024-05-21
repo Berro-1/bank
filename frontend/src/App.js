@@ -20,6 +20,8 @@ import Cards from "./pages/userDashboard/cards/cards";
 import Submissions from "./pages/userDashboard/submissions/submissions.jsx";
 import Transfers from "./pages/userDashboard/transfers/transfers.jsx";
 import AdminDashboard from "./pages/adminDashboard/mainPage/mainPage.jsx";
+import AllUsers from "./pages/adminDashboard/allUsers/allUsers.jsx";
+import ManageAccountPage from "./pages/adminDashboard/manageAccount/manageAccount.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -36,6 +38,8 @@ function App() {
         <Route path="/submissions" element={<Submissions />} />
         <Route path="/transfers" element={<Transfers />} />
         <Route path="/admin/dashboard" element={<AdminDashboard/>} />
+        <Route path="/admin/users" element={<AllUsers/>} />
+        <Route path="/admin/manage-account/:accountId" element={<ManageAccountPage />} />
 
       </Route>
     )

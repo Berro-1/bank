@@ -10,7 +10,7 @@ const allAccountsSlice = createSlice({
   name: "accounts",
   initialState,
   reducers: {
-    fetchRequest: (state) => {
+    accountRequest: (state) => {
       console.log("Fetch request started");
       state.loading = true;
       state.error = null;
@@ -21,7 +21,15 @@ const allAccountsSlice = createSlice({
       state.accounts = action.payload;
       state.error = null;
     },
-    fetchFail: (state, action) => {
+    editAccountSuccess: (state, action) => {
+      state.loading = false;
+      state.error = null;
+  },
+  deleteAccountSuccess: (state, action) => {
+    state.loading = false;
+    state.error = null;
+},
+    accountFail: (state, action) => {
       console.log("Fetch failed with error:", action.payload);
       state.loading = false;
       state.error = action.payload;
