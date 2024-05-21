@@ -8,7 +8,7 @@ import CardMedia from "@mui/material/CardMedia";
 import CardActionArea from "@mui/material/CardActionArea";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import Sidebar from "../../../components/layout/hero/Sidebar";
+import Sidebar from "../../../components/layout/Sidebar/Sidebar";
 import "./allAccounts.css";
 import { getAllAccounts } from "../../../store/accounts/accountsActions";
 

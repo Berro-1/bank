@@ -32,6 +32,14 @@ const Sidebar = () => {
       >
         <h1 className="text-2xl font-bold text-center">Investmint</h1>
         <ul className="text-center mx-3">
+        <li>
+            <Link
+              to="/mainPage"
+              className="block py-2 hover:text-custom-purple"
+            >
+              <FontAwesomeIcon icon={faUser} className="text-lg" /> Home
+            </Link>
+          </li>
           <li>
             <Link
               to="/allAccounts"

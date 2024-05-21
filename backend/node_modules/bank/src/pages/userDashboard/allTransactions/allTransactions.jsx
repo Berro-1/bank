@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { getAllTransactions } from '../../../store/Transactions/transactionActions';
-import Sidebar from '../../../components/layout/hero/Sidebar';
+import Sidebar from '../../../components/layout/Sidebar/Sidebar';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     fontWeight: 'bold',

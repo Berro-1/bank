@@ -13,7 +13,7 @@ import {
   FormControl,
   CircularProgress,
 } from "@mui/material";
-import Sidebar from "../../../components/layout/hero/Sidebar";
+import Sidebar from "../../../components/layout/Sidebar/Sidebar";
 import { getAllAccounts } from "../../../store/accounts/accountsActions";
 import { useSelector, useDispatch } from "react-redux";
 import { createTransfer } from "../../../store/transfers/transfersActions";

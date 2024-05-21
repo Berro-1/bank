@@ -6,7 +6,7 @@ import {
   Typography, CircularProgress, Button 
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import Sidebar from "../../../components/layout/hero/Sidebar";
+import Sidebar from "../../../components/layout/Sidebar/Sidebar";
 import { getSubmissions, submitNewSubmission } from "../../../store/submissions/submissionsActions";
 import ApplySubmissionModal from "./popupModal"; // Import the ApplySubmissionModal component
 

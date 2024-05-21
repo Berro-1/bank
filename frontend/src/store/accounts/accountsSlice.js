@@ -37,5 +37,5 @@ const allAccountsSlice = createSlice({
   },
 });
 
-export const allAccountsActions = allAccountsSlice.actions;
+export const accountsActions = allAccountsSlice.actions;
 export default allAccountsSlice;

@@ -6,7 +6,7 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import { styled } from "@mui/material/styles";
-import { getAllAccounts } from "../../../../store/allAccounts/allAccountsActions";
+import { getAllAccounts } from "../../../../store/accounts/accountsActions";
 
 const DarkListItemButton = styled(ListItemButton)(({ theme }) => ({
   color: theme.palette.common.white,

@@ -10,7 +10,7 @@ import {
   CircularProgress,
   Typography,
 } from "@mui/material";
-import Sidebar from "../../../components/layout/hero/Sidebar";
+import Sidebar from "../../../components/layout/Sidebar/Sidebar";
 import "./cards.css"; // Make sure to have appropriate CSS styles
 import { getcards } from "../../../store/cards/cardsActions";
 

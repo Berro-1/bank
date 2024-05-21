@@ -14,7 +14,7 @@ import {
   Button,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import Sidebar from "../../../components/layout/hero/Sidebar";
+import Sidebar from "../../../components/layout/Sidebar/Sidebar";
 import { getAllLoans } from "../../../store/Loans/loansActions";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
