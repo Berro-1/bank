@@ -116,6 +116,25 @@ const createTransaction = async (req, res) => {
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
+const getLatestTransactions = async (req, res) => {
+  const { accountId } = req.params;
+  try {
+    const transactions = await Transaction.find({ account: accountId }).sort({
+      createdAt: -1,
+
+    })
+    .limit(5);
+    if (!transactions || transactions.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "No transactions found for this account" });
+    }
+    res.status(200).json(transactions);
+  } catch (err) {
+    console.error("Error finding transactions:", err);
+    res.status(500).json({ error: "Server error: " + err.message });
+  }
+};
 
 const getAllTransactions = async (req, res) => {
   const { accountId } = req.params;
@@ -138,4 +157,5 @@ const getAllTransactions = async (req, res) => {
 module.exports = {
   createTransaction,
   getAllTransactions,
+  getLatestTransactions,
 };
