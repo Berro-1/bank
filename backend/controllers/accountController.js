@@ -34,7 +34,22 @@ const getAccountByQr = async (req, res) => {
   // Return the account details
   res.status(200).json(account);
 };
-
+// Fetch a single account by ID
+const getAccountById = async (req, res) => {
+  const { id } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ error: "Invalid account ID provided" });
+  }
+  try {
+    const account = await Account.findById(id);
+    if (!account) {
+      return res.status(404).json({ error: "No account found with that ID" });
+    }
+    res.status(200).json(account);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 const createAccount = async (req, res) => {
   const { user, type, balance, status } = req.body;
@@ -90,6 +105,7 @@ const deleteAccount = async (req, res) => {
   }
   res.status(200).json(account);
 };
+
 const updateAccount = async (req, res) => {
   const { id } = req.params;
 
@@ -114,5 +130,6 @@ module.exports = {
   getUserAccounts,
   deleteAccount,
   updateAccount,
-  getAccountByQr
+  getAccountByQr,
+  getAccountById
 };

@@ -5,12 +5,14 @@ const {
   getAccounts,
   getUserAccounts,
   deleteAccount,
-  updateAccount
+  updateAccount,
+  getAccountById
 } = require("../controllers/accountController");
 
 // get all workouts
 router.get("/", getAccounts);
 router.get("/:id",getUserAccounts);
+router.get("/singleAccount/:accountId",getAccountById);
 // Post a workout
 router.post("/:id", createAccount);
 //delete a workout

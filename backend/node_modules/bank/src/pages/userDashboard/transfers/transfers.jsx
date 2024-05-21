@@ -14,7 +14,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import Sidebar from "../../../components/layout/hero/Sidebar";
-import { getAllAccounts } from "../../../store/allAccounts/allAccountsActions";
+import { getAllAccounts } from "../../../store/accounts/accountsActions";
 import { useSelector, useDispatch } from "react-redux";
 import { createTransfer } from "../../../store/transfers/transfersActions";
 
