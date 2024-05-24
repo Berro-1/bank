@@ -9,16 +9,16 @@ const {
   getAccountById
 } = require("../controllers/accountController");
 
-// get all workouts
+// get all accounts
 router.get("/", getAccounts);
 router.get("/:id",getUserAccounts);
 router.get("/singleAccount/:accountId",getAccountById);
-// Post a workout
-router.post("/:id", createAccount);
-//delete a workout
+// Post a account
+router.post("/", createAccount);
+//delete a account
 router.delete("/:id", deleteAccount);
 
-//patch a workout
+//patch a account
 router.patch("/:id", updateAccount);
 
 module.exports = router;

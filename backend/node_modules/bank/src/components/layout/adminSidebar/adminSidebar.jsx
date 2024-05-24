@@ -31,65 +31,62 @@ const AdminSidebar = () => {
           !isOpen ? "-translate-x-full" : ""
         } md:relative md:translate-x-0 transition duration-200 ease-in-out z-30 h-full`}
       >
-        <h1 className="text-2xl font-bold text-center">Admin Panel</h1>
-        <ul className="text-center mx-3">
+        <h1 className="text-2xl font-bold text-center mb-10">Admin Panel</h1>
+        <ul className="text-center mx-3 space-y-6">
           <li>
             <Link
               to="/admin/dashboard"
-              className="block py-2 hover:text-custom-purple"
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <HomeOutlinedIcon className="text-lg" /> Dashboard
+              <HomeOutlinedIcon className="mr-3" /> Dashboard
             </Link>
           </li>
           <li>
             <Link
               to="/admin/users"
-              className="block py-2 hover:text-custom-purple"
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <FontAwesomeIcon icon={faUser} className="text-lg" /> Users
+              <FontAwesomeIcon icon={faUser} className="mr-3" /> Users
             </Link>
           </li>
           <li>
             <Link
               to="/admin/loans"
-              className="block py-2 hover:text-custom-purple"
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <AttachMoneyOutlinedIcon className="text-lg" /> Loans
+              <AttachMoneyOutlinedIcon className="mr-3" /> Loans
             </Link>
           </li>
-
           <li>
             <Link
               to="/admin/credit-cards"
-              className="block py-2 hover:text-custom-purple border-b-0.5 pb-10"
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <FontAwesomeIcon icon={faCreditCard} className="text-lg" /> Credit
-              Cards
+              <FontAwesomeIcon icon={faCreditCard} className="mr-3" /> Credit Cards
             </Link>
           </li>
           <li>
             <Link
               to="/admin/investments"
-              className="block py-2 hover:text-custom-purple"
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <CategoryOutlinedIcon className="text-lg" /> Investments
+              <CategoryOutlinedIcon className="mr-3" /> Investments
             </Link>
           </li>
           <li>
             <Link
               to="/admin/transactions"
-              className="block py-2 hover:text-custom-purple"
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <ReceiptLongOutlinedIcon className="text-lg" /> Transactions
+              <ReceiptLongOutlinedIcon className="mr-3" /> Transactions
             </Link>
           </li>
-
           <li>
             <Link
               to="/logout"
-              className="block py-2 hover:text-custom-purple pt-6"
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <ExitToAppOutlinedIcon className="text-lg" /> Logout
+              <ExitToAppOutlinedIcon className="mr-3" /> Logout
             </Link>
           </li>
         </ul>

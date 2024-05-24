@@ -1,46 +1,84 @@
 const Submission = require("../models/Submission");
 const mongoose = require("mongoose");
 
-// Create a new submission
-const createSubmission = async (req, res) => {
-  const { user, requestType, details } = req.body;
+const createCreditCardSubmission = async (req, res) => {
+  const userId = req.params.userId; 
+  const { details } = req.body;      
 
-  if (!user || !requestType || !details) {
-    return res.status(400).json({
-      error: "All fields are required: user, requestType, details.",
-    });
-  }
-
-  const validRequestTypes = [
-    "Credit Card",
-    "Loan",
-    "New Account",
-    "New Checkbook",
-  ];
-
-  if (!validRequestTypes.includes(requestType)) {
-    return res.status(400).json({
-      error: "Invalid request type provided.",
-    });
+  if (!userId || !details) {
+      return res.status(400).json({ message: "Missing user ID or details" });
   }
 
   try {
-    const submission = await Submission.create({ user, requestType, details });
-    res.status(201).json(submission);
-  } catch (err) {
-    console.error("Failed to create submission:", err);
-    res.status(500).json({
-      error: "Server error: " + err.message,
-    });
+      const submission = new Submission({
+          user: userId,
+          requestType: 'Credit Card',
+          status: 'Pending',
+          details
+      });
+      await submission.save();
+      res.status(201).json(submission);
+  } catch (error) {
+      console.error("Error while processing the request:", error);
+      res.status(500).json({ message: "Server error: " + error.message, errorDetails: error.errors });
   }
 };
+
+
+
+// const createLoanSubmission = async (req, res) => {
+//   const { user, details } = req.body;
+//   try {
+//     const submission = new Submission({
+//       user,
+//       requestType: 'Loan',
+//       details,
+//       status: 'Pending'
+//     });
+//     await submission.save();
+//     res.status(201).json(submission);
+//   } catch (err) {
+//     res.status(500).json({ message: "Server error: " + err.message });
+//   }
+// };
+const createNewAccountSubmission = async (req, res) => {
+  const { user, details } = req.body;
+  try {
+    const submission = new Submission({
+      user,
+      requestType: 'New Account',
+      details,
+      status: 'Pending'
+    });
+    await submission.save();
+    res.status(201).json(submission);
+  } catch (err) {
+    res.status(500).json({ message: "Server error: " + err.message });
+  }
+};
+
+
+// const createNewCheckbookSubmission = async (req, res) => {
+//   const { user, details } = req.body;
+//   try {
+//     const submission = new Submission({
+//       user,
+//       requestType: 'New Checkbook',
+//       details,
+//       status: 'Pending'
+//     });
+//     await submission.save();
+//     res.status(201).json(submission);
+//   } catch (err) {
+//     res.status(500).json({ message: "Server error: " + err.message });
+//   }
+// };
 
 // Get all submissions
 const getSubmissions = async (req, res) => {
   try {
     const submissions = await Submission.find({})
       .sort({ createdAt: -1 })
-      .populate("user");
     res.status(200).json(submissions);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -108,7 +146,8 @@ const deleteSubmission = async (req, res) => {
 };
 
 module.exports = {
-  createSubmission,
+  createCreditCardSubmission,
+  createNewAccountSubmission,
   getSubmissions,
   getSubmissionById,
   getUserSubmissions,
