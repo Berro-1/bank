@@ -11,149 +11,191 @@ const style = {
 };
 
 const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
-  const [formDetails, setFormDetails] = useState({
+  const initialFormState = {
     requestType: '',
-    details: '',
-    amount: '',
-    loanType: '',
+  };
+
+  const initialCreditCardState = {
     cardName: '',
     expiryDate: '',
     creditLimit: '',
+  };
+
+  const initialAccountState = {
     accountType: '',
-    accountNumber: '',
-  });
+    loanType: '',
+    amount: '',
+    loanTerm: '',
+  };
+
+  const [formDetails, setFormDetails] = useState(initialFormState);
+  const [creditCardDetails, setCreditName] = useState(initialCreditCardState);
+  const [accountDetails, setAccountDetails] = useState(initialAccountState);
+
+  const resetForm = () => {
+    setFormDetails(initialFormState);
+    setCreditName(initialCreditCardState);
+    setAccountDetails(initialAccountState);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormDetails({ ...formDetails, [name]: value });
   };
 
+  const handleCreditCardChange = (e) => {
+    const { name, value } = e.target;
+    let creditLimit = '';
+  
+    switch (value) {
+      case 'Silver Card':
+        creditLimit = 5000;
+        break;
+      case 'Gold Card':
+        creditLimit = 10000;
+        break;
+      case 'Platinum Card':
+        creditLimit = 20000;
+        break;
+      default:
+        break;
+    }
+  
+    setCreditName({ ...creditCardDetails, [name]: value, creditLimit });
+  };
+
+  const handleAccountChange = (e) => {
+    const { name, value } = e.target;
+    setAccountDetails({ ...accountDetails, [name]: value });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formDetails);
-    clearForm();
+    if (formDetails.requestType === 'Credit Card') {
+      onSubmit({ ...creditCardDetails, requestType: 'Credit Card' });
+    } else if (formDetails.requestType === 'New Account') {
+      onSubmit({ ...accountDetails, requestType: 'New Account' });
+    }
     toggle();
+    resetForm(); // Reset form after submission
   };
 
-  const clearForm = () => {
-    setFormDetails({
-      requestType: '',
-      details: '',
-      amount: '',
-      loanType: '',
-      cardName: '',
-      expiryDate: '',
-      creditLimit: '',
-      accountType: '',
-      accountNumber: '',
-    });
-  };
-
-  const handleClose = () => {
-    clearForm();
+  const handleCancel = () => {
     toggle();
+    resetForm(); // Reset form after canceling
   };
 
+  const renderLoanOptions = () => {
+    let options = [];
+    for (let i = 6; i <= 36; i += 6) {
+      options.push(<MenuItem key={i} value={i}>{`${i} months`}</MenuItem>);
+    }
+    return options;
+  };
+  
   const renderConditionalInputs = () => {
     switch (formDetails.requestType) {
       case 'Credit Card':
         return (
           <>
             <TextField
+              select
               fullWidth
               label="Card Name"
               name="cardName"
-              value={formDetails.cardName}
-              onChange={handleInputChange}
+              value={creditCardDetails.cardName}
+              onChange={handleCreditCardChange}
               margin="normal"
               required
-            />
-            <TextField
-              fullWidth
-              type="date"
-              label="Expiry Date"
-              name="expiryDate"
-              value={formDetails.expiryDate}
-              onChange={handleInputChange}
-              margin="normal"
-              InputLabelProps={{ shrink: true }}
-              required
-            />
-            <TextField
-              fullWidth
-              type="number"
-              label="Credit Limit"
-              name="creditLimit"
-              value={formDetails.creditLimit}
-              onChange={handleInputChange}
-              margin="normal"
-              required
-            />
+            >
+              <MenuItem value="Silver Card">Silver Card</MenuItem>
+              <MenuItem value="Gold Card">Gold Card</MenuItem>
+              <MenuItem value="Platinum Card">Platinum Card</MenuItem>
+            </TextField>
+            {creditCardDetails.cardName && (
+              <TextField
+                fullWidth
+                label="Credit Limit"
+                name="creditLimit"
+                value={creditCardDetails.creditLimit}
+                onChange={handleCreditCardChange}
+                margin="normal"
+                required
+                disabled
+              />
+            )}
           </>
         );
-      case 'Loan':
+      case 'New Account':
         return (
           <>
             <TextField
               select
               fullWidth
-              label="Loan Type"
-              name="loanType"
-              value={formDetails.loanType}
-              onChange={handleInputChange}
-              margin="normal"
+              label="Account Type"
+              name="accountType"
+              value={accountDetails.accountType}
+              onChange={handleAccountChange}
+              margin="plain"
               required
             >
-              <MenuItem value="Personal">Personal</MenuItem>
-              <MenuItem value="Mortgage">Mortgage</MenuItem>
-              <MenuItem value="Auto">Auto</MenuItem>
-              <MenuItem value="Education">Education</MenuItem>
+              <MenuItem value="Checking">Checking</MenuItem>
+              <MenuItem value="Savings">Savings</MenuItem>
+              <MenuItem value="Loan">Loan</MenuItem>
             </TextField>
-            <TextField
-              fullWidth
-              type="number"
-              label="Amount"
-              name="amount"
-              value={formDetails.amount}
-              onChange={handleInputChange}
-              margin="normal"
-              required
-            />
+            {accountDetails.accountType === 'Loan' && (
+              <>
+                <TextField
+                  fullWidth
+                  type="number"
+                  label="Amount"
+                  name="amount"
+                  value={accountDetails.amount}
+                  onChange={handleAccountChange}
+                  margin="normal"
+                  required
+                />
+                <TextField
+                  select
+                  fullWidth
+                  label="Loan Type"
+                  name="loanType"
+                  value={accountDetails.loanType}
+                  onChange={handleAccountChange}
+                  margin="tall"
+                  required
+                >
+                  <MenuItem value="Personal">Personal</MenuItem>
+                  <MenuItem value="Mortgage">Mortgage</MenuItem>
+                  <MenuItem value="Auto">Auto</MenuItem>
+                  <MenuItem value="Education">Education</MenuItem>
+                </TextField>
+                <TextField
+                  select
+                  fullWidth
+                  label="Loan Term"
+                  name="loanTerm"
+                  value={accountDetails.loanTerm}
+                  onChange={handleAccountChange}
+                  margin="normal"
+                  required
+                >
+                  {renderLoanOptions()}
+                </TextField>
+              </>
+            )}
           </>
-        );
-      case 'New Account':
-        return (
-          <TextField
-            fullWidth
-            label="Account Type"
-            name="accountType"
-            value={formDetails.accountType}
-            onChange={handleInputChange}
-            margin="normal"
-            required
-          />
-        );
-      case 'New Checkbook':
-        return (
-          <TextField
-            fullWidth
-            label="Account Number"
-            name="accountNumber"
-            value={formDetails.accountNumber}
-            onChange={handleInputChange}
-            margin="normal"
-            required
-          />
         );
       default:
         return null;
     }
   };
+  
 
   return (
     <Dialog
       open={isOpen}
-      onClose={handleClose}
+      onClose={toggle}
       aria-labelledby="dialog-title"
       aria-describedby="dialog-description"
     >
@@ -173,20 +215,9 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
             required
           >
             <MenuItem value="Credit Card">Credit Card</MenuItem>
-            <MenuItem value="Loan">Loan</MenuItem>
             <MenuItem value="New Account">New Account</MenuItem>
-            <MenuItem value="New Checkbook">New Checkbook</MenuItem>
           </TextField>
           {renderConditionalInputs()}
-          <TextField
-            fullWidth
-            label="Details"
-            name="details"
-            value={formDetails.details}
-            onChange={handleInputChange}
-            margin="normal"
-            required
-          />
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
             <Button
               type="submit"
@@ -203,7 +234,7 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
               Submit
             </Button>
             <Button
-              onClick={handleClose}
+              onClick={handleCancel}
               sx={{
                 backgroundColor: '#6c757d',
                 color: 'white',

@@ -19,6 +19,11 @@ const submissionSlice = createSlice({
       state.submissions = action.payload;
       state.error = null;
     },
+    createSubmissionSuccess: (state, action) => {
+      state.loading = false;
+      state.submissions = [...state.submissions,action.payload];
+      state.error = null;
+    },
     fetchFail: (state, action) => {
       state.loading = false;
       state.error = action.payload;
