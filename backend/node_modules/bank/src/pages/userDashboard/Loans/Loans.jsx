@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import {
   Paper,
@@ -15,7 +15,11 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Sidebar from "../../../components/layout/Sidebar/Sidebar";
-import { getAllLoans } from "../../../store/Loans/loansActions";
+import {
+  getAllLoans,
+  createLoanPayment,
+} from "../../../store/Loans/loansActions";
+import LoanPaymentDialog from "./LoanPaymentDialog";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   fontWeight: "bold",
@@ -32,17 +36,48 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+const StatusIndicator = styled("span")(({ status, theme }) => ({
+  height: "10px",
+  width: "10px",
+  borderRadius: "50%",
+  display: "inline-block",
+  marginLeft: "10px",
+  marginRight: "5px",
+
+  backgroundColor:
+    status === "Active"
+      ? "#4CAF50" // Green
+      : status === "Closed"
+      ? "#F44336" // Red
+      : "#F6B000", // Default color (yellow)
+}));
+
+const userId = "6644dcb9c16b269cf9bae998";
+
 const LoansPage = () => {
   const dispatch = useDispatch();
   const { loans, loading } = useSelector(
     (state) => state.loans || { loans: [], loading: false }
   );
-
-  const [modalOpen, setModalOpen] = useState(false);
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
+  const [selectedLoan, setSelectedLoan] = useState(null);
 
   useEffect(() => {
-    dispatch(getAllLoans("6644dcb9c16b269cf9bae998"));
+    dispatch(getAllLoans(userId));
   }, [dispatch]);
+
+  const handleOpenPaymentDialog = (loan) => {
+    setSelectedLoan(loan);
+    setPaymentDialogOpen(true);
+  };
+
+  const handleClosePaymentDialog = () => {
+    setPaymentDialogOpen(false);
+  };
+
+  const handleConfirmPayment = (loanId, amount, accountId) => {
+    dispatch(createLoanPayment(loanId, amount, accountId, userId));
+  };
 
   return (
     <div className="flex w-full">
@@ -53,33 +88,15 @@ const LoansPage = () => {
         transition={{ duration: 0.5 }}
         style={{ padding: 20, flexGrow: 1 }}
       >
-        <div className="flex items-center justify-between">
-          <Typography
-            variant="h4"
-            component="h1"
-            gutterBottom
-            className="font-bold"
-          >
-            Loans
-          </Typography>
-          {/* <Button
-            sx={{
-              backgroundColor: '#111827',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: '#333A45',
-              },
-              fontSize: "14px",
-              fontWeight: "bold",
-              padding: "8px 16px",
-              borderRadius: "4px",
-              textTransform: "none",
-            }}
-            // onClick={handleModalOpen} // Open the modal when this button is clicked
-          >
-            Apply For Loan
-          </Button> */}
-        </div>
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          className="font-bold pt-10"
+        >
+          Loans
+        </Typography>
+
         {loading ? (
           <CircularProgress color="primary" />
         ) : (
@@ -92,6 +109,7 @@ const LoansPage = () => {
                   <StyledTableCell>Interest Rate</StyledTableCell>
                   <StyledTableCell>Loan Term</StyledTableCell>
                   <StyledTableCell>Status</StyledTableCell>
+                  <StyledTableCell>Actions</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -101,16 +119,36 @@ const LoansPage = () => {
                     <TableCell>{`$${loan.amount}`}</TableCell>
                     <TableCell>{`${loan.interest_rate}%`}</TableCell>
                     <TableCell>{loan.loan_term}</TableCell>
-                    <TableCell>{loan.status}</TableCell>
+                    <TableCell>
+                      <StatusIndicator status={loan.status} />
+                      {loan.status}
+                    </TableCell>
+                    <TableCell>
+                      {loan.status === "Active" && (
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={() => handleOpenPaymentDialog(loan)}
+                        >
+                          Make Payment
+                        </Button>
+                      )}
+                    </TableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
         )}
+        {selectedLoan && (
+          <LoanPaymentDialog
+            open={paymentDialogOpen}
+            handleClose={handleClosePaymentDialog}
+            handlePayment={handleConfirmPayment}
+            loan={selectedLoan}
+          />
+        )}
       </motion.div>
-
-      {/* <ApplyLoanModal isOpen={modalOpen} onClose={handleModalClose} /> */}
     </div>
   );
 };

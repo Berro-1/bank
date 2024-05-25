@@ -41,10 +41,10 @@ export default function Transfers() {
     return accounts
       .filter((account) => account.type !== "Loan")
       .map((account) => (
-        <MenuItem key={account._id} value={account._id}>
+        <MenuItem key={account.balance} value={account.balance}>
           {account.type
-            ? `${account.type} - ${account._id}`
-            : `ID: ${account._id}`}
+            ? `${account.type}(Balance: $${account.balance})`
+            : `ID: ${account.balance}`}
         </MenuItem>
       ));
   }, [accounts]);

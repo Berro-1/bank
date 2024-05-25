@@ -1,8 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
-  createSavingsAccount,
-  createCheckingAccount,
+  createAccount,
   createLoanAccount,
   getAccounts,
   getUserAccounts,
@@ -16,8 +15,9 @@ router.get("/:id",getUserAccounts);
 router.get("/singleAccount/:accountId",getAccountById);
 
 router.post("/loan/:id", createLoanAccount);
-router.post("/checking/:id", createCheckingAccount);
-router.post("/savings/:id", createSavingsAccount);
+router.post("/account/:id", createAccount);
+
+
 
 router.delete("/:id", deleteAccount);
 

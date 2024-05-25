@@ -1,6 +1,6 @@
 const Loans = require("../models/Loans");
-const Submission = require("../models/Submission");
-
+const User =require("../models/User");
+const Accounts=require("../models/Accounts")
 const mongoose = require("mongoose");
 
 const getLoans = async (req, res) => {
@@ -15,15 +15,89 @@ const getLoans = async (req, res) => {
 const getCustomerLoans = async (req, res) => {
   const { id } = req.params;
   try {
-    const loans = await Loans.find({ user: id });
+    // Find loans for the specified user and sort them by createdAt in descending order
+    const loans = await Loans.find({ user: id }).sort({ createdAt: -1 });
     if (!loans || loans.length === 0) {
-      return res.status(404).json({ error: "No loans found for this customer" });
+      return res
+        .status(404)
+        .json({ error: "No loans found for this customer" });
     }
     res.status(200).json(loans);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+const createLoanPayment = async (req, res) => {
+  const { loanId, paymentAmount, accountId } = req.body;
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    // Validate the input parameters
+    if (!loanId || !paymentAmount || !accountId) {
+      throw new Error("All fields are required.");
+    }
+
+    // Find the loan by ID
+    const loan = await Loans.findById(loanId).session(session);
+    if (!loan) {
+      return res.status(404).json({ mssg: "Loan not found" });
+
+    }
+
+    // Find the account by ID
+    const account = await Accounts.findById(accountId).session(session);
+    if (!account) {
+      return res.status(404).json({mssg: 'Account not found'})
+    }
+
+    // Check if the account has enough balance
+    if (account.balance < paymentAmount) {
+      return res.status(404).json({mssg: 'Insufficient funds'})
+
+    }
+
+    // Check if the payment amount is greater than the remaining loan amount
+    if (paymentAmount > loan.amount) {
+      return res
+        .status(404)
+        .json({ mssg: "Payment amount exceeds the remaining loan amount." });
+    }
+
+    // Deduct the payment amount from the account balance
+    account.balance -= paymentAmount;
+    await account.save({ session });
+
+    // Update the loan amount
+    loan.amount -= paymentAmount;
+
+    // Check if the loan is fully paid
+    if (loan.amount <= 0) {
+      loan.amount = 0;
+      loan.status = "Closed";
+      await User.findByIdAndUpdate(loan.user, {
+      is_eligible_for_loan: true,
+       });
+    }
+
+    // Save the updated loan
+    await loan.save({ session });
+
+    // Commit the transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({ message: "Payment successful", loan, account });
+  } catch (error) {
+    // Abort the transaction and end the session
+    await session.abortTransaction();
+    session.endSession();
+
+    console.error("Error processing payment:", error);
+    res.status(500).json({ error: "Server error: " + error.message });
+  }
+};
+
 
 
 
@@ -102,60 +176,102 @@ const createLoan = async (req, res) => {
 
 
 
-const deleteLoan = async (req, res) => {
-  const { id } = req.params;
+const updateLoanStatus = async (req, res) => {
+  const { id } = req.params; // This is the loan ID
+  const { status } = req.body;
+
+  const validStatuses = ["Active", "Closed", "In Default"];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({
+      error: "Invalid status. Valid statuses are: Active, Closed, In Default.",
+    });
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
-    const loan = await Loans.findByIdAndDelete(id);
+    // Find the loan by ID
+    const loan = await Loans.findById(id).session(session);
     if (!loan) {
-      return res.status(404).json({ error: "No loan found" });
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(404).json({ error: "No loan found with provided ID." });
     }
-    res.status(200).json(loan);
+
+    // Find the user associated with the loan
+    const user = await User.findById(loan.user).session(session);
+    if (!user) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(404).json({ error: "No user found for this loan." });
+    }
+
+    // Check if the status is being set to "Active" or "In Default"
+    if (["Active", "In Default"].includes(status)) {
+      // Check if the user has any other active or in default loans
+      const otherLoans = await Loans.find({
+        user: user._id,
+        _id: { $ne: loan._id },
+        status: { $in: ["Active", "In Default"] },
+      }).session(session);
+
+      if (otherLoans.length > 0) {
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(400).json({
+          error:
+            "User has other loans that are Active or In Default. Cannot set this loan to Active or In Default.",
+        });
+      }
+    }
+
+    // If the loan is being closed, ensure the amount is zero
+    if (status === "Closed" && loan.amount > 0) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({
+        error: "Cannot close a non-fully paid loan.",
+      });
+    }
+
+    // Update the loan status
+    loan.status = status;
+    await loan.save({ session });
+
+    // If the loan is closed, check if the user is eligible for a new loan
+    if (status === "Closed") {
+      const remainingLoans = await Loans.find({
+        user: user._id,
+        status: { $in: ["Active", "In Default"] },
+      }).session(session);
+
+      if (remainingLoans.length === 0) {
+        user.is_eligible_for_loan = true;
+      }
+    } else {
+      user.is_eligible_for_loan = false;
+    }
+
+    await user.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({
+      loan: loan,
+      message: "Loan status updated successfully.",
+    });
   } catch (err) {
+    await session.abortTransaction();
+    session.endSession();
     res.status(500).json({ error: err.message });
   }
 };
-
-const updateLoan = async (req, res) => {
-  const { id } = req.params; // This is the user ID
-  const updates = req.body;
-
-  try {
-    // Find and update the loan by user ID
-    const loan = await Loans.findOneAndUpdate(
-      { user: id },
-      updates,
-      { new: true }
-    );
-
-    if (!loan) {
-      return res.status(404).json({ error: "No loan found" });
-    }
-
-    // Access the user._id from the loan document
-    const userId = loan.user._id;
-
-    // Find and update the corresponding submission
-    // const submission = await Submission.findOneAndUpdate(
-    //   { user: userId, requestType: "Loan" },
-    //   { status: updates.status },
-    //   { new: true }
-    // );
-
-    // if (!submission) {
-    //   return res.status(404).json({ error: "No corresponding submission found" });
-    // }
-
-    res.status(200).json({ loan });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-
 module.exports = {
+  createLoanPayment,
   createLoan,
   getCustomerLoans,
   getLoans,
-  deleteLoan,
-  updateLoan,
+  updateLoanStatus
 };
