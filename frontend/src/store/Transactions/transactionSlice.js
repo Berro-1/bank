@@ -16,7 +16,7 @@ const transactionSlice = createSlice({
     },
     fetchSuccess: (state, action) => {
       state.loading = false;
-      state.transactions = action.payload;  // Ensure payload is correctly assigned
+      state.transactions = action.payload;
       state.error = null;
     },
     fetchFail: (state, action) => {
