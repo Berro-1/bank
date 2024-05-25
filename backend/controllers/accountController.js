@@ -1,4 +1,6 @@
+const User = require("../models/User");
 const Account = require("../models/Accounts");
+const Loans = require("../models/Loans");
 const mongoose = require("mongoose");
 
 const getAccounts = async (req, res) => {
@@ -10,7 +12,7 @@ const getUserAccounts = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "No account with that id" });
   }
-  const account = await Account.find({user:id});
+  const account = await Account.find({ user: id });
   if (!account) {
     return res.status(404).json({ err: "No account with that id" });
   }
@@ -51,48 +53,74 @@ const getAccountById = async (req, res) => {
   }
 };
 
-const createAccount = async (req, res) => {
-  const { user, type, balance, status } = req.body;
-
-  if (!user || !type || balance === undefined || !status) {
-    console.log("Create Account Error: Missing fields");
-    return res.status(400).json({
-      error: "All fields are required: user, type, balance, status.",
-    });
-  }
-
-  const validTypes = ["Checking", "Savings", "Credit Card", "Loan"];
-  const validStatuses = ["Active", "Closed", "Suspended"];
-
-  if (!validTypes.includes(type) || !validStatuses.includes(status)) {
-    console.log(
-      `Create Account Error: Invalid type or status - Type: ${type}, Status: ${status}`
-    );
-    return res.status(400).json({
-      error: "Invalid account type or status provided.",
-    });
-  }
-
-  if (type === "Credit Card" && balance < 0) {
-    console.log("Create Account Error: Negative balance for Credit Card");
-    return res.status(400).json({
-      error: "Credit Card accounts cannot have a negative opening balance.",
-    });
-  }
-
+const createLoanAccount = async (req, res) => {
+  const session = await mongoose.startSession(); // Start a new session
+  session.startTransaction(); // Start a transaction
   try {
-    const account = await Account.create({ user, type, balance, status });
-    console.log(`Account Created: ID ${account._id}`);
-    res.status(201).json(account);
-  } catch (err) {
-    console.error("Failed to create account:", err);
-    res.status(500).json({
-      error: "Server error: " + err.message,
+    const { user, type, amount, loan_term } = req.body;
+    if (!user || !type || !amount || !loan_term) {
+      throw new Error("All fields are required.");
+    }
+
+    const interest_rate = (loan_term / 12) * 4;
+
+    const newLoan = new Loans({
+      user,
+      type,
+      amount,
+      interest_rate,
+      loan_term,
+      status: "Active",
     });
+
+    await newLoan.save({ session }); // Save using the session to include this in the transaction
+
+    await session.commitTransaction(); // Commit the transaction
+    session.endSession(); // End the session
+
+    res.status(201).json(newLoan);
+  } catch (error) {
+    await session.abortTransaction(); // Abort the transaction
+    session.endSession(); // End the session
+    res.status(500).json({ error: error.message });
   }
 };
 
 
+const createSavingsAccount = async (req, res) => {
+  try {
+    const { user, balance, interest_rate } = req.body;
+    if (!user || !balance || !interest_rate) {
+      return res.status(400).json({ error: "All fields are required." });
+    }
+
+    const newSavings = new Savings({
+      user,
+      balance,
+      interest_rate,
+      status: "Active",
+    });
+    await newSavings.save();
+    res.status(201).json(newSavings);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const createCheckingAccount = async (req, res) => {
+  try {
+    const { user, balance } = req.body;
+    if (!user || !balance) {
+      return res.status(400).json({ error: "All fields are required." });
+    }
+
+    const newChecking = new Checking({ user, balance, status: "Active" });
+    await newChecking.save();
+    res.status(201).json(newChecking);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 const deleteAccount = async (req, res) => {
   const { id } = req.params;
@@ -125,11 +153,13 @@ const updateAccount = async (req, res) => {
 };
 
 module.exports = {
-  createAccount,
+  createSavingsAccount,
+  createCheckingAccount,
+  createLoanAccount,
   getAccounts,
   getUserAccounts,
   deleteAccount,
   updateAccount,
   getAccountByQr,
-  getAccountById
+  getAccountById,
 };
