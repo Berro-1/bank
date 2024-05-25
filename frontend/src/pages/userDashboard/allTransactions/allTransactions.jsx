@@ -29,7 +29,7 @@ const AllTransactionsPage = () => {
   const { transactions, loading } = useSelector(state => state.transactions);
 
   useEffect(() => {
-    dispatch(getAllTransactions("664b946008de1704abfe328b"));
+    dispatch(getAllTransactions("664f053fee2114220f466c03"));
   }, [dispatch]);
 
   return (

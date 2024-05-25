@@ -8,9 +8,16 @@ import {
   TextField,
   Button,
   Container,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllAccounts, updateAccount, deleteAccount } from '../../../store/accounts/accountsActions';
+import { getAllAccounts, updateAccount, deleteAccount } from '../../../../store/accounts/accountsActions';
+import DeleteConfirmationDialog from './ConfirmationDialog';
+
+const statusOptions = ["Active", "Closed", "Suspended"];
 
 const ManageAccountPage = () => {
   const { accountId } = useParams();
@@ -18,6 +25,7 @@ const ManageAccountPage = () => {
   const dispatch = useDispatch();
   const { accounts, loading, error } = useSelector((state) => state.accounts);
   const [status, setStatus] = useState('');
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (accounts.length === 0) {
@@ -38,16 +46,24 @@ const ManageAccountPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(updateAccount(accountId, status,navigate ));
+    dispatch(updateAccount(accountId, { status }));
   };
 
   const handleDelete = () => {
+    setOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
     dispatch(deleteAccount(accountId));
-    navigate(-1);
+    navigate(-1); // Navigate back to the previous page
   };
 
   const handleCancel = () => {
-    navigate(-1);
+    navigate(-1); // Navigate back to the previous page
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   if (loading) {
@@ -72,14 +88,21 @@ const ManageAccountPage = () => {
         </Typography>
         {account && (
           <form onSubmit={handleSubmit}>
-            <TextField
-              fullWidth
-              label="Status"
-              name="status"
-              value={status}
-              onChange={handleChange}
-              sx={{ mb: 2 }}
-            />
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <InputLabel>Status</InputLabel>
+              <Select
+                label="Status"
+                name="status"
+                value={status}
+                onChange={handleChange}
+              >
+                {statusOptions.map((statusOption) => (
+                  <MenuItem key={statusOption} value={statusOption}>
+                    {statusOption}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Button type="submit" variant="contained" color="primary">
                 Update Status
@@ -94,6 +117,11 @@ const ManageAccountPage = () => {
           </form>
         )}
       </Paper>
+      <DeleteConfirmationDialog
+        open={open}
+        handleClose={handleClose}
+        handleConfirm={handleConfirmDelete}
+      />
     </Container>
   );
 };

@@ -19,6 +19,11 @@ const loanSlice = createSlice({
       state.loans = action.payload;  
       state.error = null;
     },
+    updateLoanSuccess: (state, action) => {
+      state.loading = false;
+      state.loans = action.payload;  
+      state.error = null;
+    },
     fetchFail: (state, action) => {
       state.loading = false;
       state.error = action.payload;

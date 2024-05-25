@@ -20,28 +20,32 @@ export const getSubmissions = (userId) => async (dispatch) => {
 };
 
 
-export const submitNewSubmission = (formDetails, userId) => async (dispatch) => {
+export const submitCreditCardDetails = (details, userId) => async (dispatch) => {
   dispatch(submissionsActions.fetchRequest());
   try {
-    await axios.post(
-      `http://localhost:4000/api/submissions/user-submissions/${userId}`,
-      {
-        ...formDetails,
-        user: userId,
-        status: 'Pending',
-      },
-    );
-    dispatch(submissionsActions.fetchSuccess());
-    toast.success("Submission Added Successfully", {
-      autoClose: 1000,
-      theme: "colored",
+    console.log('ac: ',details,userId);
+    const response = await axios.post('/api/submissions/credit-card/'+userId, {
+      user: userId,
+      details
     });
-    dispatch(getSubmissions(userId));
-  } catch (e) {
-    dispatch(submissionsActions.fetchFail(e.response.data));
-    toast.error(e.response.data.message, {
-      autoClose: 1000,
-      theme: "colored",
-    });
+    dispatch(submissionsActions.addSubmissionSuccess(response.data));
+  } catch (error) {
+    dispatch(submissionsActions.fetchFail(error.response ? error.response.data : "Network error or no response"));
   }
 };
+
+
+export const submitNewAccountDetails = (details, userId) => async (dispatch) => {
+  dispatch(submissionsActions.fetchRequest());
+  try {
+    const response = await axios.post('/api/submissions/new-account', {
+      user: userId,
+      details
+    });
+    dispatch(submissionsActions.addSubmissionSuccess(response.data));
+  } catch (error) {
+    dispatch(submissionsActions.fetchFail(error.response ? error.response.data : "Network error or no response"));
+  }
+};
+
+

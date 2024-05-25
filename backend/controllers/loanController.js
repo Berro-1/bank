@@ -1,4 +1,6 @@
 const Loans = require("../models/Loans");
+const Submission = require("../models/Submission");
+
 const mongoose = require("mongoose");
 
 const getLoans = async (req, res) => {
@@ -24,24 +26,15 @@ const getCustomerLoans = async (req, res) => {
 };
 
 
+
 const createLoan = async (req, res) => {
   const { user, type, amount, interest_rate, loan_term, status } = req.body;
 
   // Validate required fields
-  if (
-    !user ||
-    !type ||
-    !amount ||
-    !interest_rate ||
-    !loan_term ||
-    !status
-  ) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "All fields are required: customer, type, amount, interest rate, loan term, status.",
-      });
+  if (!user || !type || !amount || !interest_rate || !loan_term || !status) {
+    return res.status(400).json({
+      error: "All fields are required: user, type, amount, interest rate, loan term, status."
+    });
   }
 
   // Validate loan type
@@ -52,28 +45,17 @@ const createLoan = async (req, res) => {
 
   // Validate amount
   if (typeof amount !== "number" || amount <= 0) {
-    return res
-      .status(400)
-      .json({ error: "Invalid amount. Amount must be a positive number." });
+    return res.status(400).json({ error: "Invalid amount. Amount must be a positive number." });
   }
 
   // Validate interest rate
   if (typeof interest_rate !== "number" || interest_rate < 0) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "Invalid interest rate. Interest rate must be a non-negative number.",
-      });
+    return res.status(400).json({ error: "Invalid interest rate. Interest rate must be a non-negative number." });
   }
 
   // Validate loan term
   if (typeof loan_term !== "number" || loan_term <= 0) {
-    return res
-      .status(400)
-      .json({
-        error: "Invalid loan term. Loan term must be a positive number.",
-      });
+    return res.status(400).json({ error: "Invalid loan term. Loan term must be a positive number." });
   }
 
   // Validate status
@@ -83,21 +65,41 @@ const createLoan = async (req, res) => {
   }
 
   try {
+    // Create the loan
     const loan = new Loans({
       user,
       type,
       amount,
       interest_rate,
       loan_term,
-      status,
+      status
     });
     await loan.save();
-    res.status(201).json(loan);
+
+    // // Create a submission record
+    // const submissionDetails = `Loan created with amount: ${amount} and type: ${type}`;
+    // const submission = new Submission({
+    //   user, 
+    //   requestType: 'Loan',
+    //   details: submissionDetails,
+    //   status: 'Pending' 
+    // });
+
+    // await submission.save();  
+
+    // Return the created loan and submission information
+    res.status(201).json({
+      loan,
+      message: "Loan created successfully"
+    });
+
   } catch (err) {
-    console.error("Failed to create loan:", err);
+    console.error("Failed to create loan or submission:", err);
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
+
+
 
 
 const deleteLoan = async (req, res) => {
@@ -114,20 +116,41 @@ const deleteLoan = async (req, res) => {
 };
 
 const updateLoan = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; // This is the user ID
   const updates = req.body;
+
   try {
-    const loan = await Loans.findByIdAndUpdate(id, updates, {
-      new: true,
-    });
+    // Find and update the loan by user ID
+    const loan = await Loans.findOneAndUpdate(
+      { user: id },
+      updates,
+      { new: true }
+    );
+
     if (!loan) {
       return res.status(404).json({ error: "No loan found" });
     }
-    res.status(200).json(loan);
+
+    // Access the user._id from the loan document
+    const userId = loan.user._id;
+
+    // Find and update the corresponding submission
+    // const submission = await Submission.findOneAndUpdate(
+    //   { user: userId, requestType: "Loan" },
+    //   { status: updates.status },
+    //   { new: true }
+    // );
+
+    // if (!submission) {
+    //   return res.status(404).json({ error: "No corresponding submission found" });
+    // }
+
+    res.status(200).json({ loan });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 module.exports = {
   createLoan,

@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import { Box, Modal, Typography, TextField, Button, MenuItem } from '@mui/material';
+import { Box, Dialog, Typography, TextField, Button, MenuItem } from '@mui/material';
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
   width: 400,
   bgcolor: 'background.paper',
   border: '2px solid #000',
@@ -18,6 +14,13 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
   const [formDetails, setFormDetails] = useState({
     requestType: '',
     details: '',
+    amount: '',
+    loanType: '',
+    cardName: '',
+    expiryDate: '',
+    creditLimit: '',
+    accountType: '',
+    accountNumber: '',
   });
 
   const handleInputChange = (e) => {
@@ -28,18 +31,134 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formDetails);
+    clearForm();
     toggle();
   };
 
+  const clearForm = () => {
+    setFormDetails({
+      requestType: '',
+      details: '',
+      amount: '',
+      loanType: '',
+      cardName: '',
+      expiryDate: '',
+      creditLimit: '',
+      accountType: '',
+      accountNumber: '',
+    });
+  };
+
+  const handleClose = () => {
+    clearForm();
+    toggle();
+  };
+
+  const renderConditionalInputs = () => {
+    switch (formDetails.requestType) {
+      case 'Credit Card':
+        return (
+          <>
+            <TextField
+              fullWidth
+              label="Card Name"
+              name="cardName"
+              value={formDetails.cardName}
+              onChange={handleInputChange}
+              margin="normal"
+              required
+            />
+            <TextField
+              fullWidth
+              type="date"
+              label="Expiry Date"
+              name="expiryDate"
+              value={formDetails.expiryDate}
+              onChange={handleInputChange}
+              margin="normal"
+              InputLabelProps={{ shrink: true }}
+              required
+            />
+            <TextField
+              fullWidth
+              type="number"
+              label="Credit Limit"
+              name="creditLimit"
+              value={formDetails.creditLimit}
+              onChange={handleInputChange}
+              margin="normal"
+              required
+            />
+          </>
+        );
+      case 'Loan':
+        return (
+          <>
+            <TextField
+              select
+              fullWidth
+              label="Loan Type"
+              name="loanType"
+              value={formDetails.loanType}
+              onChange={handleInputChange}
+              margin="normal"
+              required
+            >
+              <MenuItem value="Personal">Personal</MenuItem>
+              <MenuItem value="Mortgage">Mortgage</MenuItem>
+              <MenuItem value="Auto">Auto</MenuItem>
+              <MenuItem value="Education">Education</MenuItem>
+            </TextField>
+            <TextField
+              fullWidth
+              type="number"
+              label="Amount"
+              name="amount"
+              value={formDetails.amount}
+              onChange={handleInputChange}
+              margin="normal"
+              required
+            />
+          </>
+        );
+      case 'New Account':
+        return (
+          <TextField
+            fullWidth
+            label="Account Type"
+            name="accountType"
+            value={formDetails.accountType}
+            onChange={handleInputChange}
+            margin="normal"
+            required
+          />
+        );
+      case 'New Checkbook':
+        return (
+          <TextField
+            fullWidth
+            label="Account Number"
+            name="accountNumber"
+            value={formDetails.accountNumber}
+            onChange={handleInputChange}
+            margin="normal"
+            required
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <Modal
+    <Dialog
       open={isOpen}
-      onClose={toggle}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
+      onClose={handleClose}
+      aria-labelledby="dialog-title"
+      aria-describedby="dialog-description"
     >
       <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
+        <Typography id="dialog-title" variant="h6" component="h2">
           New Submission
         </Typography>
         <form onSubmit={handleSubmit}>
@@ -58,6 +177,7 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
             <MenuItem value="New Account">New Account</MenuItem>
             <MenuItem value="New Checkbook">New Checkbook</MenuItem>
           </TextField>
+          {renderConditionalInputs()}
           <TextField
             fullWidth
             label="Details"
@@ -83,7 +203,7 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
               Submit
             </Button>
             <Button
-              onClick={toggle}
+              onClick={handleClose}
               sx={{
                 backgroundColor: '#6c757d',
                 color: 'white',
@@ -98,7 +218,7 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
           </Box>
         </form>
       </Box>
-    </Modal>
+    </Dialog>
   );
 };
 

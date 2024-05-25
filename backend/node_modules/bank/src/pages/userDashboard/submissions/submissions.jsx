@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Sidebar from "../../../components/layout/Sidebar/Sidebar";
-import { getSubmissions, submitNewSubmission } from "../../../store/submissions/submissionsActions";
+import { getSubmissions, submitNewAccountDetails,submitCreditCardDetails } from "../../../store/submissions/submissionsActions";
 import ApplySubmissionModal from "./popupModal"; // Import the ApplySubmissionModal component
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -50,9 +50,21 @@ const Submissions = () => {
   };
 
   const handleFormSubmit = (formDetails) => {
-    dispatch(submitNewSubmission(formDetails, userId));
+    switch (formDetails.requestType) {
+      case 'Credit Card':
+        dispatch(submitCreditCardDetails(formDetails, userId));
+        break;
+      
+      case 'New Account':
+        dispatch(submitNewAccountDetails(formDetails, userId));
+        break;
+     
+      default:
+        break;
+    }
     toggleModal();
   };
+  
 
   return (
     <div className="flex w-full">
