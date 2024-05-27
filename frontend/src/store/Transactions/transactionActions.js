@@ -38,7 +38,7 @@ export const getAllTransactions = (accountId) => async (dispatch) => {
       error.response.data.error === "No transactions found for this account"
     ) {
       // Dispatch empty transactions when there are no transactions found
-      dispatch(transactionActions.fetchSuccess([]));
+      dispatch(transactionActions.fetchFail([]));
     } else {
       const errorMessage = error.response
         ? error.response.data

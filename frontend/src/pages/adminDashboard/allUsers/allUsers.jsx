@@ -18,15 +18,16 @@ import {
   IconButton,
   Avatar,
 } from "@mui/material";
+import { DataGrid,GridToolbar } from "@mui/x-data-grid";
+import TransactionsDialog from "./manageAccount/TransactionsDialog ";
 import { useNavigate } from "react-router-dom";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import AdminSidebar from "../../../components/layout/adminSidebar/adminSidebar";
 import CloseIcon from "@mui/icons-material/Close";
 import { motion } from "framer-motion";
 import { getAllUsers } from "../../../store/users/userActions";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { getAllAccounts } from "../../../store/accounts/accountsActions";
-
+import { getAllTransactions } from "../../../store/Transactions/transactionActions";
 const AdminUsersPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,8 +37,10 @@ const AdminUsersPage = () => {
     loading: loadingAccounts,
     error: accountsError,
   } = useSelector((state) => state.accounts);
+  const { transactions, loading: loadingTransactions, error: transactionsError } = useSelector((state) => state.transactions);
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [openTransactionsDialog, setOpenTransactionsDialog] = useState(false);
 
   useEffect(() => {
     dispatch(getAllUsers());
@@ -49,6 +52,15 @@ const AdminUsersPage = () => {
     dispatch(getAllAccounts(userId));
   };
 
+  const handleViewTransactions = async (accountId) => {
+    try {
+      await dispatch(getAllTransactions(accountId));
+      setOpenTransactionsDialog(true);
+    } catch (error) {
+      console.error('Failed to fetch transactions:', error);
+    }
+  };
+
   const handleClose = () => {
     setOpen(false);
     setSelectedUser(null);
@@ -56,6 +68,10 @@ const AdminUsersPage = () => {
 
   const handleManageAccount = (accountId) => {
     navigate(`/admin/manage-account/${accountId}`);
+  };
+
+  const handleCloseTransactionsDialog = () => {
+    setOpenTransactionsDialog(false);
   };
 
   if (error) {
@@ -91,13 +107,14 @@ const AdminUsersPage = () => {
       flex: 1,
       sortable: false,
       renderCell: (params) => (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => handleViewAccounts(params.row.id)}
-        >
-          View Accounts
-        </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleViewAccounts(params.row.id)}
+          >
+            View Accounts
+          </Button>
+          
       ),
     },
   ];
@@ -135,8 +152,9 @@ const AdminUsersPage = () => {
                   columns={columns.map((column) => ({
                     ...column,
                     flex:
-                      window.innerWidth > 600 ? column.flex : column.flex * 0.8, // Example of dynamic flex
-                    hide: window.innerWidth < 600 && column.field === "email", // Hide 'email' on small screens
+                      window.innerWidth > 600 ? column.flex : column.flex * 0.8,
+                    hide:
+                      window.innerWidth < 600 && column.field === "email",
                   }))}
                   checkboxSelection={false}
                   slots={{
@@ -246,10 +264,19 @@ const AdminUsersPage = () => {
                             variant="outlined"
                             color="primary"
                             size="small"
-                            sx={{ mt: 1 }}
+                            sx={{ mt: 1, mr: 1 }}
                             onClick={() => handleManageAccount(account._id)}
                           >
                             Manage Account
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            size="small"
+                            sx={{ mt: 1 }}
+                            onClick={() => handleViewTransactions(account._id)}
+                          >
+                            View Transactions
                           </Button>
                         </>
                       }
@@ -269,6 +296,12 @@ const AdminUsersPage = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <TransactionsDialog
+        open={openTransactionsDialog}
+        handleClose={handleCloseTransactionsDialog}
+        transactions={transactions}
+        loading={loadingTransactions}
+      />
     </Box>
   );
 };

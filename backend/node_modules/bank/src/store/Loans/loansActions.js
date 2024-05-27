@@ -36,12 +36,12 @@ export const getAllLoansAdmin = () => async (dispatch) => {
   }
 };
 
-export const updateLoan = (userId, status) => async (dispatch) => {
+export const updateLoan = (loanId, status) => async (dispatch) => {
   dispatch(loansActions.fetchRequest());
   try {
-    const url = `http://localhost:4000/api/loan/${userId}`;
-    const response = await axios.patch(url, { status });
+    const response = await axios.patch(`http://localhost:4000/api/loan/${loanId}`, { status });
     dispatch(loansActions.updateLoanSuccess(response.data));
+    dispatch(getAllLoansAdmin())
   } catch (error) {
     console.log("Error updating loan:", error);
     if (error.response) {
@@ -51,6 +51,7 @@ export const updateLoan = (userId, status) => async (dispatch) => {
     }
   }
 };
+
 export const createLoanPayment = (loanId, paymentAmount,accountId,userId) => async (dispatch) => {
   dispatch(loansActions.fetchRequest()); // Assuming you manage loading state with this action
   try {

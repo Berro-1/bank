@@ -5,7 +5,8 @@ const {
   getCustomerLoans,
   getLoans,
   updateLoanStatus,
-  createLoanPayment
+  createLoanPayment,
+  deleteLoan
 } = require("../controllers/loanController.js");
 
 router.get("/", getLoans);
@@ -15,5 +16,6 @@ router.get("/:id", getCustomerLoans);
 router.post("/:id", createLoan);
 
 router.patch("/:id", updateLoanStatus);
+router.delete("/:id", deleteLoan);
 
 module.exports = router;

@@ -174,7 +174,26 @@ const createLoan = async (req, res) => {
 };
 
 
+// DELETE controller to remove a loan by ID
+const deleteLoan = async (req, res) => {
+  const { id } = req.params;  // Extracting loan ID from request parameters
 
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).send({ message: 'Invalid loan ID provided.' });
+  }
+
+  try {
+      const loan = await Loans.findByIdAndDelete(id);
+
+      if (!loan) {
+          return res.status(404).send({ message: 'Loan not found.' });
+      }
+
+      res.send({ message: 'Loan deleted successfully.', loan });
+  } catch (error) {
+      res.status(500).send({ message: 'Failed to delete the loan.', error: error.message });
+  }
+};
 
 const updateLoanStatus = async (req, res) => {
   const { id } = req.params; // This is the loan ID
@@ -192,7 +211,8 @@ const updateLoanStatus = async (req, res) => {
 
   try {
     // Find the loan by ID
-    const loan = await Loans.findById(id).session(session);
+    console.log("back",id);
+    const loan = await Loans.findById({_id:id}).session(session);
     if (!loan) {
       await session.abortTransaction();
       session.endSession();
@@ -268,7 +288,9 @@ const updateLoanStatus = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 module.exports = {
+  deleteLoan,
   createLoanPayment,
   createLoan,
   getCustomerLoans,

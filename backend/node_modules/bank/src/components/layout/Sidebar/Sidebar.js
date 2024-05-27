@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faCreditCard } from "@fortawesome/free-regular-svg-icons";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
-import RequestQuoteOutlinedIcon from "@mui/icons-material/RequestQuoteOutlined";
+import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import SyncAltOutlinedIcon from "@mui/icons-material/SyncAltOutlined";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined"; // added to maintain consistency
+
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -16,87 +18,85 @@ const Sidebar = () => {
 
   return (
     <div className="relative md:flex bg-gray-800 h-screen">
-      {/* Overlay to click out of the menu */}
       {isOpen && (
         <div
           className="bg-black bg-opacity-50 fixed inset-0 z-20"
           onClick={toggleSidebar}
         ></div>
       )}
-
-      {/* Sidebar */}
       <div
         className={`bg-gray-900 text-white w-64 space-y-6 py-7 px-2 fixed inset-y-0 left-0 transform ${
           !isOpen ? "-translate-x-full" : ""
         } md:relative md:translate-x-0 transition duration-200 ease-in-out z-30 h-full`}
       >
-        <h1 className="text-2xl font-bold text-center">Investmint</h1>
-        <ul className="text-center mx-3">
-        <li>
+        <h1 className="text-2xl font-bold text-center mb-10">Investmint</h1>
+        <ul className="text-center mx-3 space-y-6">
+          <li>
             <Link
               to="/mainPage"
-              className="block py-2 hover:text-custom-purple"
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <FontAwesomeIcon icon={faUser} className="text-lg" /> Home
+              <HomeOutlinedIcon className="mr-3" /> Home
             </Link>
           </li>
           <li>
             <Link
               to="/allAccounts"
-              className="block py-2 hover:text-custom-purple"
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <FontAwesomeIcon icon={faUser} className="text-lg" /> All Accounts
+              <FontAwesomeIcon icon={faUser} className="mr-3" /> All Accounts
             </Link>
           </li>
           <li>
             <Link
               to="/submissions"
-              className="block py-2 hover:text-custom-purple "
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <DescriptionOutlinedIcon className="text-lg" /> Applications
+              <DescriptionOutlinedIcon className="mr-3" /> Applications
             </Link>
           </li>
           <li>
             <Link
               to="/transactions"
-              className="block py-2 hover:text-custom-purple"
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <ReceiptLongOutlinedIcon className="text-lg" /> Transactions
+              <ReceiptLongOutlinedIcon className="mr-3" /> Transactions
             </Link>
           </li>
           <li>
             <Link
               to="/transfers"
-              className="block py-2 hover:text-custom-purple"
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <SyncAltOutlinedIcon className="text-lg" /> Transfers
+              <SyncAltOutlinedIcon className="mr-3" /> Transfers
             </Link>
           </li>
           <li>
-            <Link to="/cards" className="block py-2 hover:text-custom-purple">
-              <FontAwesomeIcon icon={faCreditCard} className="text-lg" /> Cards
+            <Link
+              to="/cards"
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
+            >
+              <FontAwesomeIcon icon={faCreditCard} className="mr-3" /> Cards
             </Link>
           </li>
           <li>
             <Link
               to="/loans"
-              className="block py-2 hover:text-custom-purple border-b-0.5 pb-10 "
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <RequestQuoteOutlinedIcon className="text-lg" /> Loans
+              <RequestQuoteOutlinedIcon className="mr-3" /> Loans
             </Link>
           </li>
           <li>
             <Link
               to="/logout"
-              className="block py-2 hover:text-custom-purple pt-6"
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <LogoutOutlinedIcon className="text-lg" /> Logout
+              <LogoutOutlinedIcon className="mr-3" /> Logout
             </Link>
           </li>
         </ul>
       </div>
-
-      {/* Burger Icon */}
       <button
         onClick={toggleSidebar}
         className="text-white md:hidden z-40 absolute top-2 left-2 p-3"
