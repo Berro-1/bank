@@ -3,7 +3,6 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require('cors');
 const accountsRouter = require("./routes/AccountRoutes");
-const checksRouter = require("./routes/CheckRoutes");
 const userRouter = require("./routes/UsersRoutes");
 const creditCardRouter = require("./routes/CreditCardRoutes");
 const investmentRouter = require("./routes/InvestmentRoutes");
@@ -25,7 +24,6 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/accounts", accountsRouter);
-app.use("/api/checks", checksRouter);
 app.use("/api/users", userRouter);
 app.use("/api/creditCard", creditCardRouter);
 app.use("/api/investment", investmentRouter);

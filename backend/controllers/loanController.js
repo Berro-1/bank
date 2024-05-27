@@ -27,6 +27,7 @@ const getCustomerLoans = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 const createLoanPayment = async (req, res) => {
   const { loanId, paymentAmount, accountId } = req.body;
 

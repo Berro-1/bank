@@ -17,6 +17,7 @@ import Sidebar from "../../../components/layout/Sidebar/Sidebar";
 import { getAllAccounts } from "../../../store/accounts/accountsActions";
 import { useSelector, useDispatch } from "react-redux";
 import { createTransfer } from "../../../store/transfers/transfersActions";
+import { getCards } from "../../../store/cards/cardsActions";
 
 export default function Transfers() {
   const [accountId, setAccountId] = useState("");
@@ -29,25 +30,37 @@ export default function Transfers() {
   const { loading: accountsLoading, accounts } = useSelector(
     (state) => state.accounts || { accounts: [], loading: false }
   );
+  const { loading: cardsLoading, cards } = useSelector(
+    (state) => state.cards || { cards: [], loading: false }
+  );
   const { loading: transferLoading, error: transferError } = useSelector(
     (state) => state.transfers || { loading: false, error: null }
   );
 
   useEffect(() => {
     dispatch(getAllAccounts(userId));
+    dispatch(getCards(userId));
   }, [dispatch, userId]);
 
-  const mappedAccounts = useMemo(() => {
-    return accounts
+  const mappedAccountsAndCards = useMemo(() => {
+    const mappedAccounts = accounts
       .filter((account) => account.type !== "Loan")
       .map((account) => (
-        <MenuItem key={account.balance} value={account.balance}>
+        <MenuItem key={account._id} value={account._id}>
           {account.type
-            ? `${account.type}(Balance: $${account.balance})`
-            : `ID: ${account.balance}`}
+            ? `${account.type} (Balance: $${account.balance})`
+            : `ID: ${account._id}`}
         </MenuItem>
       ));
-  }, [accounts]);
+
+    const mappedCards = cards.map((card) => (
+      <MenuItem key={card._id} value={card._id}>
+        {card.card_name} (Available Credit: ${card.available_credit})
+      </MenuItem>
+    ));
+
+    return [...mappedAccounts, ...mappedCards];
+  }, [accounts, cards]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -83,18 +96,18 @@ export default function Transfers() {
             Send Money
           </h2>
           <FormControl fullWidth margin="normal">
-            <InputLabel id="accountId-label">Select Account</InputLabel>
+            <InputLabel id="accountId-label">Select Account or Card</InputLabel>
             <Select
               labelId="accountId-label"
               id="accountId"
               value={accountId}
               onChange={(e) => setAccountId(e.target.value)}
-              label="Select Account"
+              label="Select Account or Card"
             >
-              {accounts.length > 0 ? (
-                mappedAccounts
+              {mappedAccountsAndCards.length > 0 ? (
+                mappedAccountsAndCards
               ) : (
-                <MenuItem disabled>No accounts available</MenuItem>
+                <MenuItem disabled>No accounts or cards available</MenuItem>
               )}
             </Select>
           </FormControl>

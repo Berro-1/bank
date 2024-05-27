@@ -1,7 +1,7 @@
 import axios from "axios";
 import { cardsActions } from "./cardsSlice";
 
-export const getcards = (userId) => async (dispatch) => {
+export const getCards = (userId) => async (dispatch) => {
   dispatch(cardsActions.fetchRequest());
   try {
     const url = `http://localhost:4000/api/creditCard/${userId}`;
