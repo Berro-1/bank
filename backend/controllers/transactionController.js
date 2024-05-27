@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const Transaction = require("../models/Transactions");
 const Account = require("../models/Accounts");
-const User = require("../models/User"); // Make sure to adjust the path as necessary
+const CreditCard = require("../models/CreditCards");
+const User = require("../models/User");
 
 const createTransaction = async (req, res) => {
   const { accountId } = req.params;
@@ -24,53 +25,87 @@ const createTransaction = async (req, res) => {
   session.startTransaction();
 
   try {
-    // Retrieve the sender account
-    const senderAccount = await Account.findById(accountId).session(session);
+    // Retrieve the sender account or credit card
+    let senderAccount = await Account.findById(accountId).session(session);
+    let senderCard = null;
+    let senderUser = null;
+
     if (!senderAccount) {
-      await session.abortTransaction();
-      session.endSession();
-      return res.status(404).json({ error: "Sender account not found" });
+      senderCard = await CreditCard.findById(accountId).session(session);
+      if (!senderCard) {
+        await session.abortTransaction();
+        session.endSession();
+        return res
+          .status(404)
+          .json({ error: "Sender account or card not found" });
+      }
+      senderUser = await User.findById(senderCard.user).session(session);
+      if (!senderUser) {
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(404).json({ error: "Sender user not found" });
+      }
+      if (
+        (type === "Withdrawal" || type === "Transfer") &&
+        parseFloat(senderCard.available_credit) < parsedAmount
+      ) {
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(400).json({ error: "Insufficient credit" });
+      }
+    } else {
+      senderUser = await User.findById(senderAccount.user).session(session);
+      if (!senderUser) {
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(404).json({ error: "Sender user not found" });
+      }
+      if (
+        (type === "Withdrawal" || type === "Transfer") &&
+        parseFloat(senderAccount.balance) < parsedAmount
+      ) {
+        await session.abortTransaction();
+        session.endSession();
+        return res.status(400).json({ error: "Insufficient funds" });
+      }
     }
 
-    // Retrieve the sender user
-    const senderUser = await User.findById(senderAccount.user).session(session);
-    if (!senderUser) {
-      await session.abortTransaction();
-      session.endSession();
-      return res.status(404).json({ error: "Sender user not found" });
-    }
-
-    // Check for sufficient funds if the transaction is a withdrawal or transfer
-    if (
-      (type === "Withdrawal" || type === "Transfer") &&
-      parseFloat(senderAccount.balance) < parsedAmount
-    ) {
-      await session.abortTransaction();
-      session.endSession();
-      return res.status(400).json({ error: "Insufficient funds" });
-    }
-
-    // Retrieve the receiver account and user for transfer transactions
+    // Retrieve the receiver account or credit card and user for transfer transactions
     let receiverAccount = null;
     let receiverUser = null;
+    let receiverCard = null;
     if (type === "Transfer") {
       receiverAccount = await Account.findById(receiver_acc).session(session);
       if (!receiverAccount) {
-        await session.abortTransaction();
-        session.endSession();
-        return res.status(404).json({ error: "Receiver account not found" });
-      }
-      receiverUser = await User.findById(receiverAccount.user).session(session);
-      if (!receiverUser) {
-        await session.abortTransaction();
-        session.endSession();
-        return res.status(404).json({ error: "Receiver user not found" });
+        receiverCard = await CreditCard.findById(receiver_acc).session(session);
+        if (!receiverCard) {
+          await session.abortTransaction();
+          session.endSession();
+          return res
+            .status(404)
+            .json({ error: "Receiver account or card not found" });
+        }
+        receiverUser = await User.findById(receiverCard.user).session(session);
+        if (!receiverUser) {
+          await session.abortTransaction();
+          session.endSession();
+          return res.status(404).json({ error: "Receiver user not found" });
+        }
+      } else {
+        receiverUser = await User.findById(receiverAccount.user).session(
+          session
+        );
+        if (!receiverUser) {
+          await session.abortTransaction();
+          session.endSession();
+          return res.status(404).json({ error: "Receiver user not found" });
+        }
       }
     }
 
     // Create the sender transaction
     const senderTransaction = new Transaction({
-      account: accountId,
+      account: senderAccount ? senderAccount._id : senderCard._id,
       receiver_acc: receiverUser ? receiverUser.name : receiver_acc,
       amount: parsedAmount,
       type,
@@ -80,21 +115,34 @@ const createTransaction = async (req, res) => {
     // Save the sender transaction
     await senderTransaction.save({ session });
 
-    // Update the sender account balance if necessary
+    // Update the sender account balance or credit card available credit if necessary
     if (type === "Withdrawal" || type === "Transfer") {
-      senderAccount.balance = parseFloat(senderAccount.balance) - parsedAmount;
-      await senderAccount.save({ session });
+      if (senderAccount) {
+        senderAccount.balance =
+          parseFloat(senderAccount.balance) - parsedAmount;
+        await senderAccount.save({ session });
+      } else if (senderCard) {
+        senderCard.available_credit =
+          parseFloat(senderCard.available_credit) - parsedAmount;
+        await senderCard.save({ session });
+      }
     }
 
     // Create the receiver transaction if it's a transfer
     let receiverTransaction = null;
     if (type === "Transfer") {
-      receiverAccount.balance =
-        parseFloat(receiverAccount.balance) + parsedAmount;
-      await receiverAccount.save({ session });
+      if (receiverAccount) {
+        receiverAccount.balance =
+          parseFloat(receiverAccount.balance) + parsedAmount;
+        await receiverAccount.save({ session });
+      } else if (receiverCard) {
+        receiverCard.available_credit =
+          parseFloat(receiverCard.available_credit) + parsedAmount;
+        await receiverCard.save({ session });
+      }
 
       receiverTransaction = new Transaction({
-        account: receiver_acc,
+        account: receiverAccount ? receiverAccount._id : receiverCard._id,
         receiver_acc: senderUser.name, // Use the sender's name
         amount: parsedAmount,
         type,
@@ -116,14 +164,13 @@ const createTransaction = async (req, res) => {
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
+
 const getLatestTransactions = async (req, res) => {
   const { accountId } = req.params;
   try {
-    const transactions = await Transaction.find({ account: accountId }).sort({
-      createdAt: -1,
-
-    })
-    .limit(5);
+    const transactions = await Transaction.find({ account: accountId })
+      .sort({ createdAt: -1 })
+      .limit(5);
     if (!transactions || transactions.length === 0) {
       return res
         .status(404)

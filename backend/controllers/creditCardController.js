@@ -1,5 +1,5 @@
-const CreditCard = require("../models/CreditCards");
 const mongoose = require("mongoose");
+const CreditCard = require("../models/CreditCards");
 
 const getCreditCards = async (req, res) => {
   const userId = req.params.userId;
@@ -27,10 +27,16 @@ const getCreditCards = async (req, res) => {
   }
 };
 
-
 const createCreditCard = async (req, res) => {
-  const { card_name, expiry_date, credit_limit, available_credit } = req.body;
+  const {
+    card_number,
+    card_name,
+    expiry_date,
+    credit_limit,
+    available_credit,
+  } = req.body;
   const userId = req.params.userId;
+
   // Validate expiry date
   const expiry = new Date(expiry_date);
   if (expiry <= new Date()) {
@@ -52,6 +58,7 @@ const createCreditCard = async (req, res) => {
 
   try {
     const newCreditCard = await CreditCard.create({
+      card_number,
       user: userId,
       card_name,
       expiry_date: expiry,
@@ -66,6 +73,7 @@ const createCreditCard = async (req, res) => {
       .json({ error: "Failed to create credit card: " + error.message });
   }
 };
+
 const deleteCreditCard = async (req, res) => {
   try {
     const deletedCreditCard = await CreditCard.findByIdAndDelete(req.params.id);
@@ -79,6 +87,7 @@ const deleteCreditCard = async (req, res) => {
       .json({ error: "Failed to delete credit card: " + error.message });
   }
 };
+
 const updateCreditCard = async (req, res) => {
   try {
     const updatedCreditCard = await CreditCard.findByIdAndUpdate(
@@ -96,6 +105,7 @@ const updateCreditCard = async (req, res) => {
       .json({ error: "Failed to update credit card: " + error.message });
   }
 };
+
 module.exports = {
   getCreditCards,
   createCreditCard,

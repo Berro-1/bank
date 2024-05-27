@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import Sidebar from "../../../components/layout/Sidebar/Sidebar";
 import "./cards.css"; // Make sure to have appropriate CSS styles
-import { getcards } from "../../../store/cards/cardsActions";
+import { getCards } from "../../../store/cards/cardsActions";
 
 // Function to get image path based on card name
 const getImagePath = (cardName) => {
@@ -37,7 +37,7 @@ export default function CreditCards() {
   );
 
   useEffect(() => {
-    dispatch(getcards(userId)).then(() => {
+    dispatch(getCards(userId)).then(() => {
       console.log("Credit cards fetched:", cards);
     });
   }, [dispatch, userId]);
