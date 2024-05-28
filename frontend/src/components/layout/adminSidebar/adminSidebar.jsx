@@ -62,7 +62,7 @@ const AdminSidebar = () => {
               to="/admin/credit-cards"
               className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <FontAwesomeIcon icon={faCreditCard} className="mr-3" /> Credit Cards
+              <FontAwesomeIcon icon={faCreditCard} className="mr-3" />Submissions
             </Link>
           </li>
           <li>

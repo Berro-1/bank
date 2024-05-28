@@ -150,7 +150,7 @@ const Submissions = () => {
                       </TableCell>
                       <TableCell>
                         {getRequestTypeLabel(
-                          submission.requestType,
+                          submission.details.requestType,
                           submission.details
                         )}
                       </TableCell>

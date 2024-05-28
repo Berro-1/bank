@@ -6,12 +6,13 @@ router.post("/credit-card/:userId", submissionController.createCreditCardSubmiss
 router.post("/new-account/:userId",submissionController.createNewAccountSubmission);
 
 router.get("/", submissionController.getSubmissions);
+router.get("/:reqType", submissionController.getSubmissions);
 router.get("/:id", submissionController.getSubmissionById);
 router.get(
   "/user-submissions/:userId",
   submissionController.getUserSubmissions
 );
 router.patch("/:id", submissionController.updateSubmission);
-router.delete("/:id", submissionController.deleteSubmission);
+router.delete("/", submissionController.deleteSubmission);
 
 module.exports = router;

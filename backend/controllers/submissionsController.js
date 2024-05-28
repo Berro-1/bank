@@ -5,20 +5,30 @@ const createCreditCardSubmission = async (req, res) => {
   const { userId } = req.params;
   const { details } = req.body;
 
-  if (!userId || !details) {
-      return res.status(400).json({ message: "Missing user ID or details" });
+  if (!userId || !details || !details.cardName) {
+      return res.status(400).json({ message: "Missing user ID, card name or details" });
+  }
+
+  // Validate the card name
+  const validCardNames = ["Silver Card", "Gold Card", "Platinum Card"];
+  if (!validCardNames.includes(details.cardName)) {
+      return res.status(400).json({ message: "Invalid card name" });
   }
 
   try {
-      // Check if the user already has a credit card submission
-      const existingSubmission = await Submission.findOne({ user: userId, requestType: 'Credit Card' });
+      // Check if the user already has a submission for this type of card
+      const existingSubmission = await Submission.findOne({ 
+          user: userId, 
+          'details.cardName': details.cardName 
+      });
+
       if (existingSubmission) {
-          return res.status(400).json({ message: "User already has a credit card submission" });
+          return res.status(400).json({ message: `You already have a submission for a ${details.cardName}` });
       }
 
       const submission = new Submission({
           user: userId,
-          requestType: 'Credit Card',
+          requestType: 'credit-card',
           details: details,
           status: 'Pending'
       });
@@ -30,6 +40,7 @@ const createCreditCardSubmission = async (req, res) => {
       res.status(500).json({ message: "Server error: " + error.message, errorDetails: error });
   }
 };
+
 
 const createNewAccountSubmission = async (req, res) => {
 const userId = req.params.userId; 
@@ -52,7 +63,7 @@ try {
 
   const newSubmission = new Submission({
     user: userId,
-    requestType: 'New Account',
+    requestType: 'new-account',
     details: details,
     status: 'Pending'
   });
@@ -67,26 +78,12 @@ try {
 }
 };
 
-// const createNewCheckbookSubmission = async (req, res) => {
-//   const { user, details } = req.body;
-//   try {
-//     const submission = new Submission({
-//       user,
-//       requestType: 'New Checkbook',
-//       details,
-//       status: 'Pending'
-//     });
-//     await submission.save();
-//     res.status(201).json(submission);
-//   } catch (err) {
-//     res.status(500).json({ message: "Server error: " + err.message });
-//   }
-// };
 
 // Get all submissions
 const getSubmissions = async (req, res) => {
+  const reqType =req.params.reqType;
   try {
-    const submissions = await Submission.find({})
+    const submissions = await Submission.find({requestType: reqType}).populate('user', 'name')
       .sort({ createdAt: -1 })
     res.status(200).json(submissions);
   } catch (error) {
@@ -114,7 +111,7 @@ const getUserSubmissions = async (req, res) => {
     return res.status(404).json({ error: "Invalid user ID" });
   }
   try {
-    const submissions = await Submission.find({ user: userId }).sort({ createdAt: -1 })
+    const submissions = await Submission.find({ user: userId }).sort({ createdAt: -1 }).populate('user', 'name');
     res.status(200).json(submissions);
   } catch (error) {
     res.status(400).json({ error: error.message });

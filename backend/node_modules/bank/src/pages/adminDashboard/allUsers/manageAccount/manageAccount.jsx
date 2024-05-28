@@ -14,9 +14,7 @@ import {
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllAccounts, updateAccount, deleteAccount } from '../../../../store/accounts/accountsActions';
-import { getAllTransactions } from '../../../../store/Transactions/transactionActions';
 import DeleteConfirmationDialog from './ConfirmationDialog';
-import TransactionsDialog from './TransactionsDialog '; // New component
 
 const statusOptions = ["Active", "Closed", "Suspended"];
 
@@ -27,8 +25,6 @@ const ManageAccountPage = () => {
   const { accounts, loading, error } = useSelector((state) => state.accounts);
   const [status, setStatus] = useState('');
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [openTransactionsDialog, setOpenTransactionsDialog] = useState(false);
-  const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
     if (accounts.length === 0) {
@@ -69,16 +65,9 @@ const ManageAccountPage = () => {
     setOpenDeleteDialog(false);
   };
 
-  const handleViewTransactions = () => {
-    dispatch(getAllTransactions(accountId)).then((response) => {
-      setTransactions(response.data);
-      setOpenTransactionsDialog(true);
-    });
-  };
 
-  const handleCloseTransactionsDialog = () => {
-    setOpenTransactionsDialog(false);
-  };
+
+
 
   if (loading) {
     return (
@@ -124,9 +113,7 @@ const ManageAccountPage = () => {
               <Button variant="outlined" color="error" onClick={handleDelete}>
                 Delete Account
               </Button>
-              <Button variant="outlined" onClick={handleViewTransactions}>
-                View Transactions
-              </Button>
+           
               <Button variant="outlined" onClick={handleCancel}>
                 Cancel
               </Button>
@@ -139,11 +126,7 @@ const ManageAccountPage = () => {
         handleClose={handleCloseDeleteDialog}
         handleConfirm={handleConfirmDelete}
       />
-      <TransactionsDialog
-        open={openTransactionsDialog}
-        handleClose={handleCloseTransactionsDialog}
-        transactions={transactions}
-      />
+    
     </Container>
   );
 };

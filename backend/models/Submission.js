@@ -10,7 +10,7 @@ const submissionsSchema = new Schema({
   requestType: {
     type: String,
     required: true,
-    enum: ["Credit Card", "New Account", "New Checkbook"],
+    enum: ["credit-card", "new-account"],
   },
   details: {
     type: Schema.Types.Mixed,

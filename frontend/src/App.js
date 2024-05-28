@@ -23,6 +23,7 @@ import AdminDashboard from "./pages/adminDashboard/mainPage/mainPage.jsx";
 import AllUsers from "./pages/adminDashboard/allUsers/allUsers.jsx";
 import ManageAccountPage from "./pages/adminDashboard/allUsers/manageAccount/manageAccount.jsx";
 import AdminLoans from "./pages/adminDashboard/Loans/Loans.jsx";
+import CreditCardSubmissionsPage from "./pages/adminDashboard/Submissions/Submissions.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -42,6 +43,7 @@ function App() {
         <Route path="/admin/users" element={<AllUsers/>} />
         <Route path="/admin/manage-account/:accountId" element={<ManageAccountPage />} />
         <Route path="/admin/Loans" element={<AdminLoans />} />
+        <Route path="/admin/credit-cards" element={<CreditCardSubmissionsPage />} />
 
       </Route>
     )

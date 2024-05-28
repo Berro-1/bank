@@ -15,12 +15,16 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
     requestType: '',
   };
 
-  const initialCreditCardState = {
+const initialCreditCardState = () => {
+  const currentDate = new Date();
+  const fiveYearsLater = new Date(currentDate.setFullYear(currentDate.getFullYear() + 5));
+
+  return {
     cardName: '',
-    expiryDate: '',
+    expiryDate: fiveYearsLater.toISOString().slice(0, 10), // Formats the date as YYYY-MM-DD
     creditLimit: '',
   };
-
+};
   const initialAccountState = {
     accountType: '',
     loanType: '',

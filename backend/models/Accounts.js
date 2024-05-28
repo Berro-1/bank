@@ -11,7 +11,7 @@ const accountSchema = new Schema(
     type: {
       type: String,
       required: true,
-      enum: ["Checking", "Savings"],
+      enum: ["Checkings", "Savings"],
     },
     balance: {
       type: Number,
