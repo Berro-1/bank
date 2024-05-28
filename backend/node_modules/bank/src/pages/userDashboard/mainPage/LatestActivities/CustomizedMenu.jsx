@@ -7,22 +7,23 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import { styled } from "@mui/material/styles";
 import { getAllAccounts } from "../../../../store/accounts/accountsActions";
+import { getCards } from "../../../../store/cards/cardsActions";
 
 const DarkListItemButton = styled(ListItemButton)(({ theme }) => ({
   color: theme.palette.common.white,
   backgroundColor: "#4727eb",
-  borderRadius: "20px", // Rounded corners
-  transition: "background-color 0.3s", // Smooth transition for background color
+  borderRadius: "20px",
+  transition: "background-color 0.3s",
   "&:hover": {
-    backgroundColor: "#6144ee", // Lighter shade on hover
+    backgroundColor: "#6144ee",
   },
 }));
 
 const DarkMenuItem = styled(MenuItem)(({ theme }) => ({
   color: "#ffffff",
   backgroundColor: "#4727eb",
-  borderRadius: "10px", // Slightly rounded for menu items
-  transition: "background-color 0.2s", // Smooth transition for background color
+  borderRadius: "10px",
+  transition: "background-color 0.2s",
   "&.Mui-selected": {
     backgroundColor: "#4727eb",
   },
@@ -35,34 +36,43 @@ const DarkMenu = styled(Menu)(({ theme }) => ({
   "& .MuiPaper-root": {
     backgroundColor: "#4727eb",
     color: theme.palette.common.white,
-    borderRadius: "15px", // Rounded corners for the menu dropdown
-    boxShadow: "0 4px 12px rgba(0,0,0,0.15)", // Subtle shadow for pop effect
+    borderRadius: "15px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
   },
 }));
 
 export default function SimpleListMenu({ onAccountSelect }) {
   const userId = "6644dcb9c16b269cf9bae998";
   const dispatch = useDispatch();
-  const { accounts, loading } = useSelector(
+  const { accounts, loading: accountsLoading } = useSelector(
     (state) => state.accounts || { accounts: [], loading: false }
+  );
+  const { cards, loading: cardsLoading } = useSelector(
+    (state) => state.cards || { cards: [], loading: false }
   );
 
   React.useEffect(() => {
     dispatch(getAllAccounts(userId));
+    dispatch(getCards(userId));
   }, [dispatch, userId]);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [selectedAccount, setSelectedAccount] = React.useState(null);
+  const [selectedItem, setSelectedItem] = React.useState(null);
   const open = Boolean(anchorEl);
+
+  const items = [
+    ...accounts.map((account) => ({ ...account, itemType: "Account" })),
+    ...cards.map((card) => ({ ...card, itemType: "Card" })),
+  ];
 
   const handleClickListItem = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuItemClick = (event, account) => {
-    setSelectedAccount(account);
+  const handleMenuItemClick = (event, item) => {
+    setSelectedItem(item);
     setAnchorEl(null);
-    onAccountSelect(account._id);
+    onAccountSelect(item._id);
   };
 
   const handleClose = () => {
@@ -76,20 +86,28 @@ export default function SimpleListMenu({ onAccountSelect }) {
           id="lock-button"
           aria-haspopup="listbox"
           aria-controls="lock-menu"
-          aria-label="Account:"
+          aria-label="Account or Card:"
           aria-expanded={open ? "true" : undefined}
           onClick={handleClickListItem}
         >
           <ListItemText
-            primary="Account:"
+            primary="Account or Card:"
             secondary={
-              selectedAccount
-                ? `${selectedAccount.type} - ${selectedAccount._id}`
-                : "Select an account"
+              selectedItem
+                ? `${
+                    selectedItem.itemType === "Account"
+                      ? selectedItem.type
+                      : selectedItem.card_name
+                  }`
+                : "Select an account or card"
             }
             sx={{
               color: "white",
               "& .MuiListItemText-secondary": { color: "white" },
+              display: "flex", // Enable flexbox
+              flexDirection: "column", // Stack children vertically
+              alignItems: "center", // Center horizontally
+              justifyContent: "center", // Center vertically
             }}
           />
         </DarkListItemButton>
@@ -104,15 +122,15 @@ export default function SimpleListMenu({ onAccountSelect }) {
           role: "listbox",
         }}
       >
-        {accounts.map((account) => (
+        {items.map((item) => (
           <DarkMenuItem
-            key={account._id}
-            selected={selectedAccount && account._id === selectedAccount._id}
-            onClick={(event) => handleMenuItemClick(event, account)}
+            key={item._id}
+            selected={selectedItem && item._id === selectedItem._id}
+            onClick={(event) => handleMenuItemClick(event, item)}
           >
-            {account.type
-              ? `${account.type} - ${account._id}`
-              : `ID: ${account._id}`}
+            {item.itemType === "Account"
+              ? `${item.type} - ${item._id}`
+              : `${item.card_name} - ${item.card_number}`}
           </DarkMenuItem>
         ))}
       </DarkMenu>

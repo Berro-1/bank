@@ -29,7 +29,7 @@ const Sidebar = () => {
           !isOpen ? "-translate-x-full" : ""
         } md:relative md:translate-x-0 transition duration-200 ease-in-out z-30 h-full`}
       >
-        <h1 className="text-2xl font-bold text-center mb-10">Investmint</h1>
+        <h1 className="text-2xl font-bold text-center mb-10">SafeStream</h1>
         <ul className="text-center mx-3 space-y-6">
           <li>
             <Link

@@ -72,7 +72,15 @@ export default function Transfers() {
     }
 
     setError("");
-    dispatch(createTransfer(accountId, recipientAccountId, amount));
+    dispatch(
+      createTransfer(
+        accountId,
+        recipientAccountId,
+        amount,
+        "Transfer",
+        userId
+      )
+    ); // Include userId
   };
 
   return (

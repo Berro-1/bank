@@ -1,9 +1,10 @@
 import axios from "axios";
 import { transfersActions } from "./transfersSlice";
 import { toast } from "react-toastify";
-
+import { getAllAccounts } from "../accounts/accountsActions";
+import { getCards } from "../cards/cardsActions";
 export const createTransfer =
-  (accountId, recieverAccountId, amountTransfer,transfer_type_back) => async (dispatch) => {
+  (accountId, recieverAccountId, amountTransfer,transfer_type_back,userId) => async (dispatch) => {
     dispatch(transfersActions.fetchRequest());
     try {
       const response = await axios.post(
@@ -21,6 +22,9 @@ export const createTransfer =
         autoClose: 1000,
         theme: "colored",
       });
+      dispatch(getAllAccounts(userId));
+      dispatch(getCards(userId));
+
     } catch (e) {
       console.log(e);
       dispatch(

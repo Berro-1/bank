@@ -31,27 +31,35 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 const LatestActivities = ({ accountId, onAccountSelect }) => {
   const dispatch = useDispatch();
-  const { transactions, loading } = useSelector(
-    (state) => state.transactions || { transactions: [], loading: false }
-  );
+  const transactions = useSelector((state) => state.transactions.transactions);
+  const loading = useSelector((state) => state.transactions.loading);
   const [hasNoTransactions, setHasNoTransactions] = useState(false);
 
   useEffect(() => {
     if (accountId) {
       dispatch(getLatestTransactions(accountId))
         .then((action) => {
-          // Check if the payload of the dispatched action is empty
           if (action.payload && action.payload.length === 0) {
             setHasNoTransactions(true);
           } else {
             setHasNoTransactions(false);
           }
         })
-        .catch(() => setHasNoTransactions(false));
+        .catch(() => {
+          setHasNoTransactions(false);
+        });
     } else {
       setHasNoTransactions(false);
     }
   }, [accountId, dispatch]);
+
+  useEffect(() => {
+    if (!accountId) {
+      setHasNoTransactions(true);
+    } else {
+      setHasNoTransactions(false);
+    }
+  }, [accountId]);
 
   return (
     <motion.div
@@ -66,7 +74,7 @@ const LatestActivities = ({ accountId, onAccountSelect }) => {
       </div>
       {loading ? (
         <p>Loading...</p>
-      ) : hasNoTransactions ? (
+      ) : !accountId || hasNoTransactions ? (
         <p>No transactions available for this account.</p>
       ) : transactions.length > 0 ? (
         <TableContainer component={Paper} className="rounded-lg shadow-md">

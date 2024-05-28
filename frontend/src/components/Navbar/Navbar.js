@@ -30,12 +30,12 @@ export default function Navbar() {
       <div className="container flex justify-between items-center px-10">
         <div className="flex items-center gap-3">
           <img
-            src="logo_investmint-removebg.png"
-            alt="Investmint Logo"
+            src="logo.png"
+            alt="SafeStream Logo"
             className="h-12 w-auto object-cover"
           />
           <span className="text-white text-2xl font-bold leading-none">
-            Investmint
+            SafeStream
           </span>
         </div>
 
