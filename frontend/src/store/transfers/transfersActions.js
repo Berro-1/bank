@@ -12,7 +12,7 @@ export const createTransfer =
         {
           transfer_type:transfer_type_back,
           account: accountId,
-          receiver_acc: recieverAccountId,
+          second_account: recieverAccountId,
           amount: amountTransfer,
           type: "Transfer",
         }

@@ -25,7 +25,8 @@ const AdminSidebar = () => {
   };
 
   return (
-    <div className="relative md:flex bg-gray-800 h-screen">
+    <div className="relative md:flex bg-gray-800 h-100">
+      {/* Overlay to click out of the menu */}
       {isOpen && (
         <div
           className="bg-black bg-opacity-50 fixed inset-0 z-20"

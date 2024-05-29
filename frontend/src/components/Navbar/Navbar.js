@@ -30,7 +30,7 @@ export default function Navbar() {
       <div className="container flex justify-between items-center px-10">
         <div className="flex items-center gap-3">
           <img
-            src="logo.png"
+            src="/logo.png"
             alt="SafeStream Logo"
             className="h-12 w-auto object-cover"
           />
