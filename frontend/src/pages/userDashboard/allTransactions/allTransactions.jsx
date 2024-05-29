@@ -29,7 +29,7 @@ const AllTransactionsPage = () => {
   const { transactions, loading } = useSelector(state => state.transactions);
 
   useEffect(() => {
-    dispatch(getAllTransactions("664f053fee2114220f466c03"));
+    dispatch(getAllTransactions("664f0538ee2114220f466c01"));
   }, [dispatch]);
 
   return (
@@ -73,7 +73,7 @@ const AllTransactionsPage = () => {
                     <TableCell>{transaction.type}</TableCell>
                     <TableCell>{`$${transaction.amount}`}</TableCell>
                     <TableCell>{transaction.transfer_type}</TableCell>
-                    <TableCell>{transaction.receiver_acc}</TableCell>
+                    <TableCell>{transaction.second_account_name}</TableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>

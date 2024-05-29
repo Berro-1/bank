@@ -100,7 +100,7 @@ const TransactionsDialog = ({ open, handleClose, transactions, loading }) => {
                           variant="body2"
                           color="text.primary"
                         >
-                          <strong>Account: </strong> {transaction.receiver_acc}
+                          <strong>Account: </strong> {transaction.second_account}
                         </Typography>
                       </>
                     }

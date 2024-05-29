@@ -16,7 +16,7 @@ const AdminSidebar = () => {
   };
 
   return (
-    <div className="relative md:flex bg-gray-800 h-screen">
+    <div className="relative md:flex bg-gray-800 h-100">
       {/* Overlay to click out of the menu */}
       {isOpen && (
         <div
@@ -63,22 +63,6 @@ const AdminSidebar = () => {
               className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
               <FontAwesomeIcon icon={faCreditCard} className="mr-3" />Submissions
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/admin/investments"
-              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
-            >
-              <CategoryOutlinedIcon className="mr-3" /> Investments
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/admin/transactions"
-              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
-            >
-              <ReceiptLongOutlinedIcon className="mr-3" /> Transactions
             </Link>
           </li>
           <li>

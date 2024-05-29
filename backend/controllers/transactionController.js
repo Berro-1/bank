@@ -3,15 +3,48 @@ const Transaction = require("../models/Transactions");
 const Account = require("../models/Accounts");
 const CreditCard = require("../models/CreditCards");
 const User = require("../models/User");
+const Loan = require("../models/Loans");
+
+const getUserNameByAccountId = async (accountId) => {
+  try {
+    let userId = null;
+
+    // Find the account by ID
+    const account = await Account.findById(accountId).exec();
+    if (account) {
+      userId = account.user;
+    } else {
+      // If account not found, find the loan by ID
+      const loan = await Loan.findById(accountId).exec();
+      if (loan) {
+        userId = loan.user;
+      } else {
+        throw new Error("Account or Loan not found");
+      }
+    }
+
+    // Find the user by the user ID
+    const user = await User.findById(userId).exec();
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Return the user's name
+    return user.name;
+  } catch (error) {
+    console.error("Error fetching user name:", error);
+    throw error;
+  }
+};
 
 const createTransaction = async (req, res) => {
   const { accountId } = req.params;
-  const { amount, type, receiver_acc } = req.body;
+  const { amount, type, second_account } = req.body;
 
   // Validate request body
-  if (!amount || !type || !receiver_acc) {
+  if (!amount || !type || !second_account) {
     return res.status(400).json({
-      error: "All fields must be provided: amount, type, receiver_acc",
+      error: "All fields must be provided: amount, type, second_account",
     });
   }
 
@@ -75,9 +108,11 @@ const createTransaction = async (req, res) => {
     let receiverUser = null;
     let receiverCard = null;
     if (type === "Transfer") {
-      receiverAccount = await Account.findById(receiver_acc).session(session);
+      receiverAccount = await Account.findById(second_account).session(session);
       if (!receiverAccount) {
-        receiverCard = await CreditCard.findById(receiver_acc).session(session);
+        receiverCard = await CreditCard.findById(second_account).session(
+          session
+        );
         if (!receiverCard) {
           await session.abortTransaction();
           session.endSession();
@@ -103,13 +138,19 @@ const createTransaction = async (req, res) => {
       }
     }
 
+    // Retrieve names for sender and receiver
+    const senderUserName = await getUserNameByAccountId(accountId);
+    const receiverUserName = await getUserNameByAccountId(second_account);
+
     // Create the sender transaction
     const senderTransaction = new Transaction({
       account: senderAccount ? senderAccount._id : senderCard._id,
-      receiver_acc: receiverUser ? receiverUser.name : receiver_acc,
+      second_account: second_account,
       amount: parsedAmount,
       type,
       transfer_type: "Sent",
+      account_name: senderUserName,
+      second_account_name: receiverUserName,
     });
 
     // Save the sender transaction
@@ -143,10 +184,12 @@ const createTransaction = async (req, res) => {
 
       receiverTransaction = new Transaction({
         account: receiverAccount ? receiverAccount._id : receiverCard._id,
-        receiver_acc: senderUser.name, // Use the sender's name
+        second_account: senderAccount ? senderAccount._id : senderCard._id,
         amount: parsedAmount,
         type,
         transfer_type: "Received",
+        account_name: receiverUserName,
+        second_account_name: senderUserName,
       });
 
       // Save the receiver transaction
@@ -168,18 +211,31 @@ const createTransaction = async (req, res) => {
 const getLatestTransactions = async (req, res) => {
   const { accountId } = req.params;
   try {
+    // Check if the accountId exists in Accounts or Loans
+    const accountExists = await Account.findById(accountId).lean().exec();
+    const loanExists = await Loan.findById(accountId).lean().exec();
+
+    if (!accountExists && !loanExists) {
+      return res.status(404).json({ error: "Account or loan not found" });
+    }
+
+    // Find transactions for the given accountId
     const transactions = await Transaction.find({ account: accountId })
       .sort({ createdAt: -1 })
-      .limit(5);
-    if (!transactions || transactions.length === 0) {
+      .limit(5)
+      .lean()
+      .exec();
+
+    if (!transactions.length) {
       return res
         .status(404)
-        .json({ error: "No transactions found for this account" });
+        .json({ error: "No transactions found for this account or loan" });
     }
+
     res.status(200).json(transactions);
-  } catch (err) {
-    console.error("Error finding transactions:", err);
-    res.status(500).json({ error: "Server error: " + err.message });
+  } catch (error) {
+    console.error("Error finding transactions:", error);
+    res.status(500).json({ error: "Server error: " + error.message });
   }
 };
 

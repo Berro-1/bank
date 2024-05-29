@@ -8,7 +8,7 @@ const transactionSchema = new Schema(
       ref: "Account",
       required: true,
     },
-    receiver_acc: {
+    second_account: {
       type: String,
       required: true,
     },
@@ -19,12 +19,18 @@ const transactionSchema = new Schema(
     transfer_type: {
       type: String,
       required: true,
-      enum: [ "Received", "Sent"],
+      enum: ["Received", "Sent"],
     },
     type: {
       type: String,
       required: true,
-      enum: [ "Withdrawal", "Transfer", "Payment"],
+      enum: ["Withdrawal", "Transfer", "Payment", "Loan Payment"], // Include "Loan Payment"
+    },
+    account_name: {
+      type: String,
+    },
+    second_account_name: {
+      type: String,
     },
   },
   {
