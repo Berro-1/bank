@@ -9,7 +9,6 @@ import { RouterProvider } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 import Home from "./pages/Home/Home";
-import Test from "./pages/testing/test";
 import Login from "./pages/Login/Login";
 import Navbar from "./components/Navbar/Navbar";
 import MainPage from "./pages/userDashboard/mainPage/mainPage.jsx";
@@ -19,19 +18,19 @@ import LoansPage from "./pages/userDashboard/Loans/Loans.jsx";
 import Cards from "./pages/userDashboard/cards/cards";
 import Submissions from "./pages/userDashboard/submissions/submissions.jsx";
 import Transfers from "./pages/userDashboard/transfers/transfers.jsx";
-import AdminDashboard from "./pages/adminDashboard/mainPage/mainPage.jsx";
+import AdminMainPage from "./pages/adminDashboard/mainPage/mainPage.jsx";
 import AllUsers from "./pages/adminDashboard/allUsers/allUsers.jsx";
 import ManageAccountPage from "./pages/adminDashboard/allUsers/manageAccount/manageAccount.jsx";
 import AdminLoans from "./pages/adminDashboard/Loans/Loans.jsx";
 import CreditCardSubmissionsPage from "./pages/adminDashboard/Submissions/Submissions.jsx";
+import ProtectedRoute from "./components/protectedRoute/protectedRoute.js";
 
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Root />}>
         <Route index element={<Home />} />
-        <Route path="/test" element={<Test />} />
-        <Route path="/Login" element={<Login />} />
+        <Route path="/Login" exact element={<Login />} />
         <Route path="/mainPage" element={<MainPage />} />
         <Route path="/allAccounts" element={<AllAccounts />} />
         <Route path="/transactions" element={<AllTransactionsPage />} />
@@ -39,12 +38,24 @@ function App() {
         <Route path="/cards" element={<Cards />} />
         <Route path="/submissions" element={<Submissions />} />
         <Route path="/transfers" element={<Transfers />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard/>} />
-        <Route path="/admin/users" element={<AllUsers/>} />
-        <Route path="/admin/manage-account/:accountId" element={<ManageAccountPage />} />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminMainPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/admin/users" element={<AllUsers />} />
+        <Route
+          path="/admin/manage-account/:accountId"
+          element={<ManageAccountPage />}
+        />
         <Route path="/admin/Loans" element={<AdminLoans />} />
-        <Route path="/admin/credit-cards" element={<CreditCardSubmissionsPage />} />
-
+        <Route
+          path="/admin/credit-cards"
+          element={<CreditCardSubmissionsPage />}
+        />
       </Route>
     )
   );

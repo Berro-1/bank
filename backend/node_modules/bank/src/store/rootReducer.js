@@ -6,6 +6,7 @@ import loanSlice from "./Loans/loansSlice";
 import submissionSlice from "./submissions/submissionsSlice";
 import transfersSlice from "./transfers/transfersSlice";
 import userSlice from "./users/userSlice";
+import authSlice from "./auth/authSlice";
 
 const rootReducer = combineReducers({
   transactions: transactionSlice.reducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   submissions: submissionSlice.reducer,
   transfers: transfersSlice.reducer,
   users: userSlice.reducer,
+  auth: authSlice.reducer,
 
 });
 

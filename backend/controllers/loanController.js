@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 
 const getLoans = async (req, res) => {
   try {
-    const loans = await Loans.find({});
+    const loans = await Loans.find().populate('user', 'name');
     res.status(200).json(loans);
   } catch (err) {
     res.status(500).json({ error: err.message });

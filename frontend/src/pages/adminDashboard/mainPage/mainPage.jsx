@@ -18,6 +18,7 @@ import {
 const AdminDashboard = () => {
   const dispatch = useDispatch();
   const { users } = useSelector((state) => state.users);
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     dispatch(getAllUsers());

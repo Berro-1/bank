@@ -98,7 +98,9 @@ const LoansPage = () => {
     : [];
 
   const columns = [
-    { field: "id", headerName: "ID", width: 200 },
+    { field: "id", headerName: "Name", width: 200, renderCell: (params) => {
+      return params?.row?.user?.name
+    } },
     { field: "type", headerName: "Type", width: 150 },
     { field: "amount", headerName: "Amount", width: 150 },
     { field: "interest_rate", headerName: "Interest Rate", width: 150 },
@@ -130,11 +132,10 @@ const LoansPage = () => {
         transition={{ duration: 0.5 }}
       >
         <Container maxWidth="lg">
-        <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }}>
-              Manage Loans
-            </Typography>
+          <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }}>
+            Manage Loans
+          </Typography>
           <Paper elevation={3} sx={{ padding: 4, borderRadius: 2, mt: 4 }}>
-           
             <div style={{ height: 600, width: "100%" }}>
               <DataGrid
                 rows={rows}
@@ -160,7 +161,7 @@ const LoansPage = () => {
           >
             <DialogTitle>Edit Loan Status</DialogTitle>
             <DialogContent>
-              <FormControl fullWidth sx={{ mb: 2,mt:2 }}>
+              <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
                 <InputLabel>Status</InputLabel>
                 <Select
                   label="Status"

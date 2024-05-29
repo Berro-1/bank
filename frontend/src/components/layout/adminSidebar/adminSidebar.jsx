@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faCreditCard } from "@fortawesome/free-regular-svg-icons";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
@@ -7,17 +7,25 @@ import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import { useDispatch } from "react-redux";
+import { logout } from "../../../store/auth/authActions"; // Adjust the path as necessary
 
 const AdminSidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login"); // Redirect to the login page after logging out
+  };
+
   return (
     <div className="relative md:flex bg-gray-800 h-screen">
-      {/* Overlay to click out of the menu */}
       {isOpen && (
         <div
           className="bg-black bg-opacity-50 fixed inset-0 z-20"
@@ -25,7 +33,6 @@ const AdminSidebar = () => {
         ></div>
       )}
 
-      {/* Sidebar */}
       <div
         className={`bg-gray-900 text-white w-64 space-y-6 py-7 px-2 fixed inset-y-0 left-0 transform ${
           !isOpen ? "-translate-x-full" : ""
@@ -62,7 +69,7 @@ const AdminSidebar = () => {
               to="/admin/credit-cards"
               className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <FontAwesomeIcon icon={faCreditCard} className="mr-3" />Submissions
+              <FontAwesomeIcon icon={faCreditCard} className="mr-3" /> Submissions
             </Link>
           </li>
           <li>
@@ -82,17 +89,16 @@ const AdminSidebar = () => {
             </Link>
           </li>
           <li>
-            <Link
-              to="/logout"
-              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
+            <button
+              onClick={handleLogout}
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200 w-full text-left"
             >
               <ExitToAppOutlinedIcon className="mr-3" /> Logout
-            </Link>
+            </button>
           </li>
         </ul>
       </div>
 
-      {/* Burger Icon */}
       <button
         onClick={toggleSidebar}
         className="text-white md:hidden z-40 absolute top-2 left-2 p-3"
