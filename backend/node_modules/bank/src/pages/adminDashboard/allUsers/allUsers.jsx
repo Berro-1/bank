@@ -136,13 +136,14 @@ const AdminUsersPage = () => {
         transition={{ duration: 0.5 }}
       >
         <Container maxWidth="lg">
-          <Paper elevation={3} sx={{ padding: 4, borderRadius: 2 }}>
-            <Typography
+        <Typography
               variant="h4"
               sx={{ fontWeight: "bold", marginBottom: 2 }}
             >
               User Management
             </Typography>
+          <Paper elevation={3} sx={{ padding: 4, borderRadius: 2 }}>
+            
             <div style={{ width: "100%" }}>
               {loading ? (
                 <CircularProgress />

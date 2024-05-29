@@ -1,26 +1,39 @@
-const User = require("../models/User");
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).send("User not found");
+const jwt = require('jsonwebtoken');
+
+// Middleware to validate token and authenticate user
+const authenticate = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN_VALUE
+
+    if (!token) {
+        return res.status(401).json({ message: 'Access denied. No token provided.' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).send("Invalid credentials");
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+        next();
+    } catch (err) {
+        res.status(401).json({ message: 'Invalid token' });
     }
+};
 
-    if (user.isFirstLogin) {
-      res.json({
-        message: "Please complete your password setup",
-        isFirstLogin: true,
-      });
+// Middleware to check if the user is a general user
+const userRole = (req, res, next) => {
+    if (req.user.role === 'user' || req.user.role === 'admin') {
+        next();
     } else {
-      res.json({ message: "Login successful", isFirstLogin: false });
+        res.status(403).json({ message: 'Access denied. You do not have the proper role.' });
     }
-  } catch (error) {
-    res.status(500).send("Server error");
-  }
-});
+};
+
+// Middleware to check if the user is an admin
+const adminRole = (req, res, next) => {
+    if (req.user.role === 'admin') {
+        next();
+    } else {
+        res.status(403).json({ message: 'Access denied. Admin privileges required.' });
+    }
+};
+
+module.exports = { authenticate, userRole, adminRole };

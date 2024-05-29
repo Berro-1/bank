@@ -16,7 +16,7 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import { DataGrid,GridToolbar } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import {
   getAllLoansAdmin,
   updateLoan,
@@ -43,19 +43,18 @@ const LoansPage = () => {
 
   const handleEditClick = (loanId, currentStatus) => {
     setLoanId(loanId);
-    console.log(loanId,currentStatus);
+    console.log(loanId, currentStatus);
     setStatus(currentStatus);
     setOpen(true);
     console.log(loanId);
   };
   const handleSaveClick = (loanId, status) => {
-    console.log('12', status);
+    console.log("12", status);
     dispatch(updateLoan(loanId, status));
     setOpen(false);
     setLoanId(null);
     setStatus("");
-};
-
+  };
 
   const handleStatusChange = (event) => {
     setStatus(event.target.value);
@@ -86,16 +85,17 @@ const LoansPage = () => {
     return <Typography color="error">{error.message || error}</Typography>;
   }
 
-  const rows = loans ? loans.map((loan) => ({
-    id: loan._id,
-    type: loan.type,
-    amount: loan.amount,
-    interest_rate: loan.interest_rate,
-    loan_term: loan.loan_term,
-    status: loan.status,
-    user: loan.user,
-  })) : [];
-  
+  const rows = loans
+    ? loans.map((loan) => ({
+        id: loan._id,
+        type: loan.type,
+        amount: loan.amount,
+        interest_rate: loan.interest_rate,
+        loan_term: loan.loan_term,
+        status: loan.status,
+        user: loan.user,
+      }))
+    : [];
 
   const columns = [
     { field: "id", headerName: "ID", width: 200 },
@@ -120,7 +120,6 @@ const LoansPage = () => {
     },
   ];
 
-
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
       <AdminSidebar />
@@ -131,26 +130,37 @@ const LoansPage = () => {
         transition={{ duration: 0.5 }}
       >
         <Container maxWidth="lg">
-          <Paper elevation={3} sx={{ padding: 4, borderRadius: 2, mt: 4 }}>
-            <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }}>
+        <Typography variant="h4" sx={{ fontWeight: "bold", mb: 2 }}>
               Manage Loans
             </Typography>
+          <Paper elevation={3} sx={{ padding: 4, borderRadius: 2, mt: 4 }}>
+           
             <div style={{ height: 600, width: "100%" }}>
               <DataGrid
                 rows={rows}
                 columns={columns}
                 slots={{
-                  toolbar: GridToolbar
+                  toolbar: GridToolbar,
                 }}
                 pageSize={10}
                 rowsPerPageOptions={[10]}
               />
             </div>
           </Paper>
-          <Dialog open={open} onClose={handleClose} className="">
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            sx={{
+              "& .MuiDialog-paper": {
+                minWidth: "200px",
+                maxWidth: "70%",
+                width: "30%",
+              },
+            }}
+          >
             <DialogTitle>Edit Loan Status</DialogTitle>
             <DialogContent>
-              <FormControl fullWidth sx={{ mb: 2 }}>
+              <FormControl fullWidth sx={{ mb: 2,mt:2 }}>
                 <InputLabel>Status</InputLabel>
                 <Select
                   label="Status"
@@ -168,7 +178,7 @@ const LoansPage = () => {
                 Cancel
               </Button>
               <Button
-                onClick={()=>handleSaveClick(loanId,status)}
+                onClick={() => handleSaveClick(loanId, status)}
                 variant="contained"
                 color="primary"
               >

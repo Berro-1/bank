@@ -138,6 +138,12 @@ const SubmissionsPage = () => {
     <Box sx={{ display: "flex" }}>
       <AdminSidebar />
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
+      <Typography
+              variant="h4"
+              sx={{ fontWeight: "bold", marginBottom: 2 }}
+            >
+            Submissions
+          </Typography>
         <Paper
           sx={{
             p: 2,
@@ -146,9 +152,7 @@ const SubmissionsPage = () => {
             flexDirection: "column",
           }}
         >
-          <Typography variant="h4" gutterBottom>
-            Submissions
-          </Typography>
+         
           <Tabs
             value={tabValue}
             onChange={handleChangeTab}

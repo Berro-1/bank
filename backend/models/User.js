@@ -1,11 +1,27 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const validator = require("validator"); // Import the validator library
 
 const userSchema = new Schema(
   {
     name: {
       type: String,
       required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 8,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      validate: {
+        validator: (email) => validator.isEmail(email),
+        message: "Please provide a valid email",
+      },
     },
     address: {
       type: String,
@@ -15,29 +31,24 @@ const userSchema = new Schema(
       type: String,
       required: true,
       match: [
-        /^(01|03|70|71|76|78|79|81)\d{6}$/, // Mobile numbers start with 01, 03, 70, 71, 76, 78, 79, or 81
+        /^(01|03|70|71|76|78|79|81)\d{6}$/,
         "Please enter a valid Lebanese phone number",
       ],
     },
-    email: {
-      type: String,
-      required: true,
-      match: [/\S+@\S+\.\S+/, "Please provide a valid email"],
-      unique: true,
-    },
-    type: {
-      type: String,
-      required: true,
-      enum: ["user", "admin"], // Allowed types are 'user' or 'admin'
-      default: "user", // Default type is 'user'
-    },
-    is_eligible_for_loan:{
+
+    is_eligible_for_loan: {
       type: Boolean,
       default: true,
     },
     is_first_login: {
       type: Boolean,
       default: true,
+    },
+    role: {
+      type: String,
+      required: true,
+      enum: ["user", "admin"],
+      default: "user",
     },
   },
   {
