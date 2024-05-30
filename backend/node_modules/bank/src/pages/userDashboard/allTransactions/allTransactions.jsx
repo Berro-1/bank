@@ -73,7 +73,9 @@ const AllTransactionsPage = () => {
                     <TableCell>{transaction.type}</TableCell>
                     <TableCell>{`$${transaction.amount}`}</TableCell>
                     <TableCell>{transaction.transfer_type}</TableCell>
-                    <TableCell>{transaction.second_account_name}</TableCell>
+                    <TableCell>
+                      {transaction.second_account?.user?.name || "N/A"}
+                    </TableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>

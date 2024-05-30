@@ -85,7 +85,7 @@ const LatestActivities = ({ accountId, onAccountSelect }) => {
                 <StyledTableCell>Type</StyledTableCell>
                 <StyledTableCell>Amount</StyledTableCell>
                 <StyledTableCell>Transfer Type</StyledTableCell>
-                <StyledTableCell>Receiver Account ID</StyledTableCell>
+                <StyledTableCell>Receiver Account</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -97,7 +97,7 @@ const LatestActivities = ({ accountId, onAccountSelect }) => {
                   <TableCell>{transaction.type}</TableCell>
                   <TableCell>{`$${transaction.amount}`}</TableCell>
                   <TableCell>{transaction.transfer_type}</TableCell>
-                  <TableCell>{transaction.second_account_name}</TableCell>
+                  <TableCell>{transaction.second_account?.user?.name || "N/A"}</TableCell>
                 </StyledTableRow>
               ))}
             </TableBody>

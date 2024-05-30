@@ -5,37 +5,7 @@ const CreditCard = require("../models/CreditCards");
 const User = require("../models/User");
 const Loan = require("../models/Loans");
 
-const getUserNameByAccountId = async (accountId) => {
-  try {
-    let userId = null;
 
-    // Find the account by ID
-    const account = await Account.findById(accountId).exec();
-    if (account) {
-      userId = account.user;
-    } else {
-      // If account not found, find the loan by ID
-      const loan = await Loan.findById(accountId).exec();
-      if (loan) {
-        userId = loan.user;
-      } else {
-        throw new Error("Account or Loan not found");
-      }
-    }
-
-    // Find the user by the user ID
-    const user = await User.findById(userId).exec();
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    // Return the user's name
-    return user.name;
-  } catch (error) {
-    console.error("Error fetching user name:", error);
-    throw error;
-  }
-};
 
 const createTransaction = async (req, res) => {
   const { accountId } = req.params;
@@ -138,9 +108,7 @@ const createTransaction = async (req, res) => {
       }
     }
 
-    // Retrieve names for sender and receiver
-    const senderUserName = await getUserNameByAccountId(accountId);
-    const receiverUserName = await getUserNameByAccountId(second_account);
+
 
     // Create the sender transaction
     const senderTransaction = new Transaction({
@@ -149,8 +117,7 @@ const createTransaction = async (req, res) => {
       amount: parsedAmount,
       type,
       transfer_type: "Sent",
-      account_name: senderUserName,
-      second_account_name: receiverUserName,
+      
     });
 
     // Save the sender transaction
@@ -188,8 +155,8 @@ const createTransaction = async (req, res) => {
         amount: parsedAmount,
         type,
         transfer_type: "Received",
-        account_name: receiverUserName,
-        second_account_name: senderUserName,
+       
+       
       });
 
       // Save the receiver transaction
@@ -211,16 +178,29 @@ const createTransaction = async (req, res) => {
 const getLatestTransactions = async (req, res) => {
   const { accountId } = req.params;
   try {
-    // Check if the accountId exists in Accounts or Loans
+    // Check if the accountId exists in Accounts, Loans, or Credit Cards
     const accountExists = await Account.findById(accountId).lean().exec();
     const loanExists = await Loan.findById(accountId).lean().exec();
+    const creditCardExists = await CreditCard.findById(accountId).lean().exec();
 
-    if (!accountExists && !loanExists) {
-      return res.status(404).json({ error: "Account or loan not found" });
+    if (!accountExists && !loanExists && !creditCardExists) {
+      return res
+        .status(404)
+        .json({ error: "Account, loan, or credit card not found" });
     }
 
     // Find transactions for the given accountId
-    const transactions = await Transaction.find({ account: accountId })
+    const transactions = await Transaction.find({
+      $or: [{ account: accountId }, { second_account: accountId }],
+    })
+      .populate({
+        path: "account",
+        populate: { path: "user", select: "name" },
+      })
+      .populate({
+        path: "second_account",
+        populate: { path: "user", select: "name" },
+      })
       .sort({ createdAt: -1 })
       .limit(5)
       .lean()
@@ -229,7 +209,9 @@ const getLatestTransactions = async (req, res) => {
     if (!transactions.length) {
       return res
         .status(404)
-        .json({ error: "No transactions found for this account or loan" });
+        .json({
+          error: "No transactions found for this account, loan, or credit card",
+        });
     }
 
     res.status(200).json(transactions);
@@ -239,23 +221,39 @@ const getLatestTransactions = async (req, res) => {
   }
 };
 
+
+
+
 const getAllTransactions = async (req, res) => {
   const { accountId } = req.params;
   try {
-    const transactions = await Transaction.find({ account: accountId }).sort({
-      createdAt: -1,
-    });
+    const transactions = await Transaction.find({ account: accountId })
+      .populate({
+        path: "account",
+        populate: { path: "user", select: "name" },
+      })
+      .populate({
+        path: "second_account",
+        populate: { path: "user", select: "name" },
+      })
+      .sort({ createdAt: -1 })
+      .lean()
+      .exec();
+
     if (!transactions || transactions.length === 0) {
       return res
         .status(404)
         .json({ error: "No transactions found for this account" });
     }
+
     res.status(200).json(transactions);
   } catch (err) {
     console.error("Error finding transactions:", err);
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
+
+
 
 module.exports = {
   createTransaction,

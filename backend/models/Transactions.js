@@ -9,7 +9,8 @@ const transactionSchema = new Schema(
       required: true,
     },
     second_account: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "Account",
       required: true,
     },
     amount: {
@@ -25,12 +26,6 @@ const transactionSchema = new Schema(
       type: String,
       required: true,
       enum: ["Withdrawal", "Transfer", "Payment", "Loan Payment"], // Include "Loan Payment"
-    },
-    account_name: {
-      type: String,
-    },
-    second_account_name: {
-      type: String,
     },
   },
   {
