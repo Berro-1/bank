@@ -73,22 +73,7 @@ const AdminSidebar = () => {
               <FontAwesomeIcon icon={faCreditCard} className="mr-3" /> Submissions
             </Link>
           </li>
-          <li>
-            <Link
-              to="/admin/investments"
-              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
-            >
-              <CategoryOutlinedIcon className="mr-3" /> Investments
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/admin/transactions"
-              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
-            >
-              <ReceiptLongOutlinedIcon className="mr-3" /> Transactions
-            </Link>
-          </li>
+         
           <li>
             <button
               onClick={handleLogout}

@@ -37,7 +37,7 @@ const AdminUsersPage = () => {
     loading: loadingAccounts,
     error: accountsError,
   } = useSelector((state) => state.accounts);
-  const { transactions, loading: loadingTransactions, error: transactionsError } = useSelector((state) => state.transactions);
+  const { transactions, loading: loadingTransactions, error: transactionsError } = useSelector((state) => state.transactions || {transactions:[]});
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [openTransactionsDialog, setOpenTransactionsDialog] = useState(false);
@@ -54,6 +54,7 @@ const AdminUsersPage = () => {
 
   const handleViewTransactions = async (accountId) => {
     try {
+      console.log('12',accountId);
       await dispatch(getAllTransactions(accountId));
       setOpenTransactionsDialog(true);
     } catch (error) {
@@ -67,6 +68,7 @@ const AdminUsersPage = () => {
   };
 
   const handleManageAccount = (accountId) => {
+    console.log("accountid",accountId);
     navigate(`/admin/manage-account/${accountId}`);
   };
 
@@ -213,7 +215,7 @@ const AdminUsersPage = () => {
                 boxShadow: 3,
               }}
             >
-              {accounts.map((account) => (
+              {accounts && accounts.map((account) => (
                 <React.Fragment key={account._id}>
                   <ListItem alignItems="flex-start">
                     <Avatar sx={{ bgcolor: "#1976d2", marginRight: 2 }}>
@@ -266,7 +268,7 @@ const AdminUsersPage = () => {
                             color="primary"
                             size="small"
                             sx={{ mt: 1, mr: 1 }}
-                            onClick={() => handleManageAccount(account._id)}
+                            onClick={() => handleManageAccount(account?._id)}
                           >
                             Manage Account
                           </Button>
