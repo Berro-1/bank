@@ -37,6 +37,7 @@ export const getAllLoansAdmin = () => async (dispatch) => {
 };
 
 
+
 export const updateLoan = (loanId, status) => async (dispatch) => {
   dispatch(loansActions.fetchRequest());
   try {

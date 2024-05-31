@@ -2,15 +2,18 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Typography,
   CircularProgress,
-  Box,
-  Container,
-  Paper,
   Button,
-  styled,
 } from "@mui/material";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { styled } from "@mui/material/styles";
 import Sidebar from "../../../components/layout/Sidebar/Sidebar";
 import {
   getAllLoans,
@@ -18,19 +21,33 @@ import {
 } from "../../../store/Loans/loansActions";
 import LoanPaymentDialog from "./LoanPaymentDialog";
 
-const StatusIndicator = styled("span")(({ status }) => ({
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  fontWeight: "bold",
+  backgroundColor: "#4727eb",
+  color: theme.palette.common.white,
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  "&:hover": {
+    backgroundColor: theme.palette.action.selected,
+  },
+}));
+
+const StatusIndicator = styled("span")(({ status, theme }) => ({
   height: "10px",
   width: "10px",
   borderRadius: "50%",
   display: "inline-block",
   marginLeft: "10px",
   marginRight: "5px",
+
   backgroundColor:
     status === "Active"
       ? "#4CAF50" // Green
-      : status === "Pending"
-      ? "#FF9800" // Orange
-      : status === "Deleted"
+      : status === "Closed"
       ? "#F44336" // Red
       : "#F6B000", // Default color (yellow)
 }));
@@ -39,7 +56,7 @@ const userId = "6644dcb9c16b269cf9bae998";
 
 const LoansPage = () => {
   const dispatch = useDispatch();
-  const { loans, loading, error } = useSelector(
+  const { loans, loading } = useSelector(
     (state) => state.loans || { loans: [], loading: false }
   );
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
@@ -62,44 +79,6 @@ const LoansPage = () => {
     dispatch(createLoanPayment(loanId, amount, accountId, userId));
   };
 
-  const columns = [
-    { field: 'type', headerName: 'Type', flex: 1 },
-    { field: 'amount', headerName: 'Amount', flex: 1, renderCell: (params) => `$${params.row.amount.toFixed(2)}` },
-    { field: 'interest_rate', headerName: 'Interest Rate', flex: 1, renderCell: (params) => `${params.row.interest_rate}%` },
-    { field: 'loan_term', headerName: 'Loan Term', flex: 1 },
-    { field: 'status', headerName: 'Status', flex: 1, renderCell: (params) => (
-      <>
-        <StatusIndicator status={params.row.status} />
-        {params.row.status}
-      </>
-    )},
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      flex: 1,
-      renderCell: (params) => (
-        params.row.status === "Active" && (
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => handleOpenPaymentDialog(params.row)}
-          >
-            Make Payment
-          </Button>
-        )
-      ),
-    },
-  ];
-
-  const rows = loans.map((loan) => ({
-    id: loan._id,
-    type: loan.type,
-    amount: loan.amount,
-    interest_rate: loan.interest_rate,
-    loan_term: loan.loan_term,
-    status: loan.status,
-  }));
-
   return (
     <div className="flex w-full">
       <Sidebar />
@@ -107,50 +86,72 @@ const LoansPage = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        style={{ flexGrow: 1, padding: 20 }}
+        style={{ padding: 20, flexGrow: 1 }}
       >
-        <Container maxWidth="lg">
-          <Typography
-            variant="h4"
-            component="h1"
-            gutterBottom
-            className="font-bold pt-10"
-          >
-            Loans
-          </Typography>
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          className="font-bold pt-10"
+        >
+          Loans
+        </Typography>
 
-          {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-              <CircularProgress color="primary" />
-            </Box>
-          ) : error ? (
-            <Typography color="error">{error}</Typography>
-          ) : (
-            <Paper elevation={3} sx={{ padding: 4, borderRadius: 2, marginTop: 3 }}>
-              <div style={{ height: 600, width: '100%' }}>
-                <DataGrid
-                  rows={rows}
-                  columns={columns}
-                  pageSize={10}
-                  rowsPerPageOptions={[10, 20, 50]}
-                  slots={{
-                    toolbar: GridToolbar,
-                  }}
-                  loading={loading}
-                />
-              </div>
-            </Paper>
-          )}
+        {loading ? (
+          <CircularProgress color="primary" />
+        ) : (
+          <TableContainer component={Paper} style={{ width: "100%" }}>
+            <Table style={{ width: "100%" }}>
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>ID</StyledTableCell>
 
-          {selectedLoan && (
-            <LoanPaymentDialog
-              open={paymentDialogOpen}
-              handleClose={handleClosePaymentDialog}
-              handlePayment={handleConfirmPayment}
-              loan={selectedLoan}
-            />
-          )}
-        </Container>
+                  <StyledTableCell>Type</StyledTableCell>
+                  <StyledTableCell>Amount</StyledTableCell>
+                  <StyledTableCell>Interest Rate</StyledTableCell>
+                  <StyledTableCell>Loan Term</StyledTableCell>
+                  <StyledTableCell>Status</StyledTableCell>
+                  <StyledTableCell>Actions</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {loans.map((loan) => (
+                  <StyledTableRow key={loan._id}>
+                    <TableCell>{loan._id}</TableCell>
+
+                    <TableCell>{loan.type}</TableCell>
+                    <TableCell>{`$${loan.amount}`}</TableCell>
+                    <TableCell>{`${loan.interest_rate}%`}</TableCell>
+                    <TableCell>{loan.loan_term}</TableCell>
+                    <TableCell>
+                      <StatusIndicator status={loan.status} />
+                      {loan.status}
+                    </TableCell>
+                    <TableCell>
+                      {loan.status === "Active" && (
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={() => handleOpenPaymentDialog(loan)}
+                        >
+                          Make Payment
+                        </Button>
+                      )}
+                    </TableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+        {selectedLoan && (
+          <LoanPaymentDialog
+            open={paymentDialogOpen}
+            handleClose={handleClosePaymentDialog}
+            handlePayment={handleConfirmPayment}
+            loan={selectedLoan}
+          />
+        )}
       </motion.div>
     </div>
   );

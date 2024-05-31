@@ -3,7 +3,8 @@ const router = express.Router();
 const {
   createTransaction,
   getAllTransactions,
-  getLatestTransactions
+  getLatestTransactions,
+  fetchDetails
 } = require("../controllers/transactionController.js");
 
 router.post("/:accountId", createTransaction);

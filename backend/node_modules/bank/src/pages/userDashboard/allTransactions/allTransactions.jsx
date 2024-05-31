@@ -16,22 +16,63 @@ const AllTransactionsPage = () => {
     dispatch(getAllTransactions("664f0538ee2114220f466c01"));
   }, [dispatch]);
 
-  const columns = [
-    { field: 'date', headerName: 'Date', flex: 1, renderCell: (params) => new Date(params?.row?.createdAt).toLocaleDateString() },
-    { field: 'type', headerName: 'Type', flex: 1 },
-    { field: 'amount', headerName: 'Amount', flex: 1, renderCell: (params) => `$${params?.row?.amount.toFixed(2)}` },
-    { field: 'transfer_type', headerName: 'Transfer Type', flex: 1 },
-    { field: 'account', headerName: 'Account', flex: 1, renderCell: (params) => params?.row?.second_account || 'N/A' },
-  ];
+const columns = [
+  {
+    field: "createdAt",
+    headerName: "Date",
+    flex: 1,
+    renderCell: (params) => new Date(params.row.createdAt).toLocaleDateString(),
+  },
+  { field: "type", headerName: "Type", flex: 1 },
+  {
+    field: "amount",
+    headerName: "Amount",
+    flex: 1,
+    renderCell: (params) => `$${params.row.amount.toFixed(2)}`,
+  },
+  { field: "transfer_type", headerName: "Transfer Type", flex: 1 },
+  {
+    field: "account",
+    headerName: "Account Holder",
+    flex: 1,
+    renderCell: (params) => params.row.account?.user?.name || "Account N/A",
+  },
+  {
+    field: "second_account",
+    headerName: "Second Account Holder",
+    flex: 2,
+    renderCell: (params) => {
+      // Check if the second_account object contains a user object with a name property
+      if (
+        params.row.second_account &&
+        params.row.second_account.user &&
+        params.row.second_account.user.name
+      ) {
+        return params.row.second_account.user.name;
+      } else if (params.row.second_account) {
+        // This handles cases where second_account is not populated with a user object
+        return `ID: ${
+          params.row.second_account._id || params.row.second_account
+        }`;
+      }
+      return "N/A"; // Default display when no second_account data is available
+    },
+  },
+];
 
-  const rows = transactions.map(transaction => ({
-    id: transaction._id,
-    createdAt: transaction?.createdAt,
-    type: transaction.type,
-    amount: transaction.amount,
-    transfer_type: transaction.transfer_type,
-    account: transaction.second_account,
-  }));
+
+
+const rows = transactions.map(transaction => ({
+  id: transaction._id,
+  createdAt: transaction.createdAt,
+  type: transaction.type,
+  amount: transaction.amount,
+  transfer_type: transaction.transfer_type,
+  account: transaction.account, // This should already include the necessary user details if populated
+  second_account: transaction.second_account, // Ensure this includes any details necessary
+}));
+
+
 
   return (
     <div className="flex w-full">
