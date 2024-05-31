@@ -31,13 +31,63 @@ function App() {
       <Route path="/" element={<Root />}>
         <Route index element={<Home />} />
         <Route path="/Login" exact element={<Login />} />
-        <Route path="/mainPage" element={<MainPage />} />
-        <Route path="/allAccounts" element={<AllAccounts />} />
-        <Route path="/transactions" element={<AllTransactionsPage />} />
-        <Route path="/loans" element={<LoansPage />} />
-        <Route path="/cards" element={<Cards />} />
-        <Route path="/submissions" element={<Submissions />} />
-        <Route path="/transfers" element={<Transfers />} />
+        <Route
+          path="/mainPage"
+          element={
+            <ProtectedRoute requiredRole="user">
+              <MainPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/allAccounts"
+          element={
+            <ProtectedRoute requiredRole="user">
+              <AllAccounts />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/transactions"
+          element={
+            <ProtectedRoute requiredRole="user">
+              <AllTransactionsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/loans"
+          element={
+            <ProtectedRoute requiredRole="user">
+              <LoansPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/cards"
+          element={
+            <ProtectedRoute requiredRole="user">
+              <Cards />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/submissions"
+          element={
+            <ProtectedRoute requiredRole="user">
+              <Submissions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/transfers"
+          element={
+            <ProtectedRoute requiredRole="user">
+              <Transfers />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/admin/dashboard"
           element={
@@ -46,15 +96,37 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/admin/users" element={<AllUsers />} />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AllUsers />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin/manage-account/:accountId"
-          element={<ManageAccountPage />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <ManageAccountPage />
+            </ProtectedRoute>
+          }
         />
-        <Route path="/admin/Loans" element={<AdminLoans />} />
+        <Route
+          path="/admin/Loans"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminLoans />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/admin/credit-cards"
-          element={<CreditCardSubmissionsPage />}
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <CreditCardSubmissionsPage />
+            </ProtectedRoute>
+          }
         />
       </Route>
     )
@@ -71,7 +143,7 @@ function App() {
 
 const Root = () => {
   return (
-    <div className="bg-gray-800 text-gray-200 h-full">
+    <div className=" text-gray-200 h-full" style={{backgroundColor:"#121212"}}>
       <div>
         <Navbar />
       </div>

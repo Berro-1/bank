@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { login } from '../../store/auth/authActions'; // Ensure this path is correct
 
@@ -25,11 +25,8 @@ const Login = () => {
       return;
     }
     try {
-      await dispatch(login(credentials));
-      toast.success("Login successful");
-      navigate("/admin/dashboard");
+      await dispatch(login(credentials,navigate));
     } catch (error) {
-      toast.error(error.message || "Login failed");
     }
   };
 
