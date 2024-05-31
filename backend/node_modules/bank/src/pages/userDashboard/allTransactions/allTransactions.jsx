@@ -2,35 +2,36 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
 import { 
-  Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
-  Typography, CircularProgress, TextField, Button 
+  Typography, CircularProgress, Box, Container, Paper 
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { getAllTransactions } from '../../../store/Transactions/transactionActions';
 import Sidebar from '../../../components/layout/Sidebar/Sidebar';
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    fontWeight: 'bold',
-    backgroundColor: '#4727eb', 
-    color: theme.palette.common.white,
-  }));
-  
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  '&:hover': {
-    backgroundColor: theme.palette.action.selected,
-  },
-}));
-
 const AllTransactionsPage = () => {
   const dispatch = useDispatch();
-  const { transactions, loading } = useSelector(state => state.transactions);
+  const { transactions, loading, error } = useSelector(state => state.transactions);
 
   useEffect(() => {
     dispatch(getAllTransactions("664f0538ee2114220f466c01"));
   }, [dispatch]);
+
+  const columns = [
+    { field: 'date', headerName: 'Date', flex: 1, renderCell: (params) => new Date(params?.row?.createdAt).toLocaleDateString() },
+    { field: 'type', headerName: 'Type', flex: 1 },
+    { field: 'amount', headerName: 'Amount', flex: 1, renderCell: (params) => `$${params?.row?.amount.toFixed(2)}` },
+    { field: 'transfer_type', headerName: 'Transfer Type', flex: 1 },
+    { field: 'account', headerName: 'Account', flex: 1, renderCell: (params) => params?.row?.second_account || 'N/A' },
+  ];
+
+  const rows = transactions.map(transaction => ({
+    id: transaction._id,
+    createdAt: transaction?.createdAt,
+    type: transaction.type,
+    amount: transaction.amount,
+    transfer_type: transaction.transfer_type,
+    account: transaction.second_account,
+  }));
 
   return (
     <div className="flex w-full">
@@ -39,49 +40,41 @@ const AllTransactionsPage = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        style={{ padding: 20, flexGrow: 1 }}
+        style={{ flexGrow: 1, padding: 20 }}
       >
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
-          className="font-bold pt-10"
-        >
-          All Transactions
-        </Typography>
+        <Container maxWidth="lg">
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
+            className="font-bold pt-10"
+          >
+            All Transactions
+          </Typography>
 
-        {loading ? (
-          <CircularProgress color="primary" />
-        ) : (
-          <TableContainer component={Paper} style={{ width: "100%" }}>
-            <Table style={{ width: "100%" }}>
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell>Date</StyledTableCell>
-                  <StyledTableCell>Type</StyledTableCell>
-                  <StyledTableCell>Amount</StyledTableCell>
-                  <StyledTableCell>transfer_type</StyledTableCell>
-                  <StyledTableCell>Account</StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {transactions.map((transaction) => (
-                  <StyledTableRow key={transaction._id}>
-                    <TableCell>
-                      {new Date(transaction.createdAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>{transaction.type}</TableCell>
-                    <TableCell>{`$${transaction.amount}`}</TableCell>
-                    <TableCell>{transaction.transfer_type}</TableCell>
-                    <TableCell>
-                      {transaction.second_account?.user?.name || "N/A"}
-                    </TableCell>
-                  </StyledTableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
+          {loading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+              <CircularProgress color="primary" />
+            </Box>
+          ) : error ? (
+            <Typography color="error">{error}</Typography>
+          ) : (
+            <Paper elevation={3} sx={{ padding: 4, borderRadius: 2, marginTop: 3 }}>
+              <div style={{ height: 600, width: '100%' }}>
+                <DataGrid
+                  rows={rows}
+                  columns={columns}
+                  pageSize={10}
+                  rowsPerPageOptions={[10, 20, 50]}
+                  slots={{
+                    toolbar: GridToolbar,
+                  }}
+                  loading={loading}
+                />
+              </div>
+            </Paper>
+          )}
+        </Container>
       </motion.div>
     </div>
   );
