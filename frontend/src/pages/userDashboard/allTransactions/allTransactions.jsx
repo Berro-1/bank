@@ -31,46 +31,53 @@ const columns = [
     renderCell: (params) => `$${params.row.amount.toFixed(2)}`,
   },
   { field: "transfer_type", headerName: "Transfer Type", flex: 1 },
+
   {
-    field: "account",
-    headerName: "Account Holder",
-    flex: 1,
-    renderCell: (params) => params.row.account?.user?.name || "Account N/A",
-  },
-  {
-    field: "second_account",
-    headerName: "Second Account Holder",
+    field: "second_account_info",
+    headerName: "Second Account Details",
     flex: 2,
     renderCell: (params) => {
-      // Check if the second_account object contains a user object with a name property
-      if (
-        params.row.second_account &&
-        params.row.second_account.user &&
-        params.row.second_account.user.name
-      ) {
-        return params.row.second_account.user.name;
-      } else if (params.row.second_account) {
-        // This handles cases where second_account is not populated with a user object
-        return `ID: ${
-          params.row.second_account._id || params.row.second_account
-        }`;
+      const info = params.row.second_account_info;
+      if (!info || info === "Not found") {
+        return "N/A";
       }
-      return "N/A"; // Default display when no second_account data is available
+
+      // Dynamically display based on the type of second account
+      switch (info.type) {
+        case "Account":
+          // Assuming 'details' object contains a 'user' property for Account
+          return `${info.details.user?.name || "Unknown"} - ${
+            info.details.type || "unkown account"
+          } Account`;
+        case "Credit Card":
+          // Display card name and the holder's name
+          return `${info.details.card_name} - ${
+            info.details.user?.name || "Unknown"
+          } `;
+        case "Loan":
+          // Display loan type and the holder's name
+          return `${info.details.type} Loan - ${
+            info.details.user?.name || "Unknown"
+          }`;
+        default:
+          return "N/A";
+      }
     },
   },
 ];
 
 
 
-const rows = transactions.map(transaction => ({
+const rows = transactions.map((transaction) => ({
   id: transaction._id,
   createdAt: transaction.createdAt,
   type: transaction.type,
   amount: transaction.amount,
   transfer_type: transaction.transfer_type,
-  account: transaction.account, // This should already include the necessary user details if populated
-  second_account: transaction.second_account, // Ensure this includes any details necessary
+  account: transaction.account?.user?.name || "Account N/A",
+  second_account_info: transaction.second_account_info, // Directly use the detailed object provided from backend
 }));
+
 
 
 

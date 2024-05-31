@@ -174,7 +174,7 @@ const getLatestTransactions = async (req, res) => {
     // Check if the accountId exists in Accounts, Loans, or Credit Cards
     const accountExists = await Account.findById(accountId).lean().exec();
     const loanExists = await Loan.findById(accountId).lean().exec();
-    const creditCardExists = await CreditCard.findById(accountid).lean().exec();
+    const creditCardExists = await CreditCard.findById(accountId).lean().exec();
 
     if (!accountExists && !loanExists && !creditCardExists) {
       return res
@@ -193,14 +193,6 @@ const getLatestTransactions = async (req, res) => {
           select: "name",
         },
       })
-      .populate({
-        path: "second_account",
-        populate: {
-          path: "user",
-          select: "name",
-          match: { _id: { $exists: true } },
-        },
-      })
       .sort({ createdAt: -1 })
       .limit(5)
       .lean()
@@ -208,26 +200,64 @@ const getLatestTransactions = async (req, res) => {
 
     const enhancedTransactions = await Promise.all(
       transactions.map(async (transaction) => {
-        if (!transaction.second_account) {
-          // Attempt to find in CreditCards or Loans if not populated
-          const card = await CreditCard.findById(transaction.second_account)
+        let second_account_info = "Not found";
+
+        // Populate second_account details based on type (Account, CreditCard, Loan)
+        const accountDetails = await Account.findById(
+          transaction.second_account
+        )
+          .populate("user", "name email -_id")
+          .lean()
+          .exec();
+
+        if (accountDetails) {
+          second_account_info = {
+            type: "Account",
+            details: accountDetails,
+          };
+        } else {
+          const cardDetails = await CreditCard.findById(
+            transaction.second_account
+          )
+            .populate("user", "name email -_id")
             .lean()
             .exec();
-          const loan = card
-            ? null
-            : await Loan.findById(transaction.second_account).lean().exec();
-          transaction.second_account = card || loan || "Not found";
+
+          if (cardDetails) {
+            second_account_info = {
+              type: "Credit Card",
+              details: {
+                cardName: cardDetails.card_name,
+                user: cardDetails.user,
+              },
+            };
+          } else {
+            const loanDetails = await Loan.findById(transaction.second_account)
+              .populate("user", "name email -_id")
+              .lean()
+              .exec();
+
+            if (loanDetails) {
+              second_account_info = {
+                type: "Loan",
+                details: {
+                  loanType: loanDetails.loan_type,
+                  user: loanDetails.user,
+                },
+              };
+            }
+          }
         }
+
+        transaction.second_account_info = second_account_info;
         return transaction;
       })
     );
 
     if (!enhancedTransactions.length) {
-      return res
-        .status(404)
-        .json({
-          error: "No transactions found for this account, loan, or credit card",
-        });
+      return res.status(404).json({
+        error: "No transactions found for this account, loan, or credit card",
+      });
     }
 
     res.status(200).json(enhancedTransactions);
@@ -236,10 +266,23 @@ const getLatestTransactions = async (req, res) => {
     res.status(500).json({ error: "Server error: " + error.message });
   }
 };
+
 const getAllTransactions = async (req, res) => {
   const { accountId } = req.params;
   try {
-    const transactions = await Transaction.find({ account: accountId })
+    const accountExists = await Account.findById(accountId).lean().exec();
+    const loanExists = await Loan.findById(accountId).lean().exec();
+    const cardExists = await CreditCard.findById(accountId).lean().exec();
+
+    if (!accountExists && !loanExists && !cardExists) {
+      return res
+        .status(404)
+        .json({ error: "Account, loan, or credit card not found" });
+    }
+
+    const transactions = await Transaction.find({
+      $or: [{ account: accountId }, { second_account: accountId }],
+    })
       .populate({
         path: "account",
         populate: {
@@ -253,30 +296,29 @@ const getAllTransactions = async (req, res) => {
 
     const detailedTransactions = await Promise.all(
       transactions.map(async (transaction) => {
-        // Initialize second_account_info to 'Not found' by default
         let second_account_info = "Not found";
 
-        // First, attempt to populate from Account
         const accountDetails = await Account.findById(
           transaction.second_account
         )
-          .populate({
-            path: "user",
-            select: "name email -_id",
-          })
+          .populate("user", "name email -_id")
           .lean()
           .exec();
+
+        const secondAccountId = transaction.second_account
+          ? transaction.second_account.toString()
+          : null;
+        const primaryAccountId = transaction.account
+          ? transaction.account._id.toString()
+          : null;
 
         if (accountDetails) {
           second_account_info = {
             type: "Account",
-            accountDetails: {
-              ...accountDetails,
-              user: accountDetails.user,
-            },
+            details: accountDetails,
+            transfer_type: primaryAccountId === accountId ? "Sent" : "Received",
           };
         } else {
-          // If not an account, check if it's a Credit Card
           const cardDetails = await CreditCard.findById(
             transaction.second_account
           )
@@ -287,13 +329,11 @@ const getAllTransactions = async (req, res) => {
           if (cardDetails) {
             second_account_info = {
               type: "Credit Card",
-              cardDetails: {
-                cardName: cardDetails.card_name,
-                user: cardDetails.user,
-              },
+              details: cardDetails,
+              transfer_type:
+                primaryAccountId === accountId ? "Sent" : "Received",
             };
           } else {
-            // Lastly, check if it's a Loan
             const loanDetails = await Loan.findById(transaction.second_account)
               .populate("user", "name email -_id")
               .lean()
@@ -302,25 +342,25 @@ const getAllTransactions = async (req, res) => {
             if (loanDetails) {
               second_account_info = {
                 type: "Loan",
-                loanDetails: {
-                  loanType: loanDetails.loan_type,
-                  user: loanDetails.user,
-                },
+                details: loanDetails,
+                transfer_type:
+                  primaryAccountId === accountId ? "Sent" : "Received",
               };
             }
           }
         }
 
-        // Attach the populated second_account_info to the transaction
-        transaction.second_account_info = second_account_info;
-        return transaction;
+        return {
+          ...transaction,
+          second_account_info,
+        };
       })
     );
 
     if (!detailedTransactions.length) {
       return res
         .status(404)
-        .json({ error: "No transactions found for this account" });
+        .json({ error: "No transactions found for this identifier" });
     }
 
     res.status(200).json(detailedTransactions);
@@ -329,8 +369,6 @@ const getAllTransactions = async (req, res) => {
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
-
-
 
 module.exports = {
   createTransaction,
