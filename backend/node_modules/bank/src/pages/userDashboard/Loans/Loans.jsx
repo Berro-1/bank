@@ -104,6 +104,8 @@ const LoansPage = () => {
             <Table style={{ width: "100%" }}>
               <TableHead>
                 <TableRow>
+                  <StyledTableCell>ID</StyledTableCell>
+
                   <StyledTableCell>Type</StyledTableCell>
                   <StyledTableCell>Amount</StyledTableCell>
                   <StyledTableCell>Interest Rate</StyledTableCell>
@@ -115,6 +117,8 @@ const LoansPage = () => {
               <TableBody>
                 {loans.map((loan) => (
                   <StyledTableRow key={loan._id}>
+                    <TableCell>{loan._id}</TableCell>
+
                     <TableCell>{loan.type}</TableCell>
                     <TableCell>{`$${loan.amount}`}</TableCell>
                     <TableCell>{`${loan.interest_rate}%`}</TableCell>

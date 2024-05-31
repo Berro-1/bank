@@ -1,32 +1,41 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { motion } from 'framer-motion';
-import { 
-  Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
-  Typography, CircularProgress, TextField, Button 
-} from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { getAllTransactions } from '../../../store/Transactions/transactionActions';
-import Sidebar from '../../../components/layout/Sidebar/Sidebar';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { motion } from "framer-motion";
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+  CircularProgress,
+  TextField,
+  Button,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { getAllTransactions } from "../../../store/Transactions/transactionActions";
+import Sidebar from "../../../components/layout/Sidebar/Sidebar";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    fontWeight: 'bold',
-    backgroundColor: '#4727eb', 
-    color: theme.palette.common.white,
-  }));
-  
+  fontWeight: "bold",
+  backgroundColor: "#4727eb",
+  color: theme.palette.common.white,
+}));
+
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
+  "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
   },
-  '&:hover': {
+  "&:hover": {
     backgroundColor: theme.palette.action.selected,
   },
 }));
 
 const AllTransactionsPage = () => {
   const dispatch = useDispatch();
-  const { transactions, loading } = useSelector(state => state.transactions);
+  const { transactions, loading } = useSelector((state) => state.transactions);
 
   useEffect(() => {
     dispatch(getAllTransactions("664f0538ee2114220f466c01"));
@@ -73,9 +82,7 @@ const AllTransactionsPage = () => {
                     <TableCell>{transaction.type}</TableCell>
                     <TableCell>{`$${transaction.amount}`}</TableCell>
                     <TableCell>{transaction.transfer_type}</TableCell>
-                    <TableCell>
-                      {transaction.second_account?.user?.name || "N/A"}
-                    </TableCell>
+                    <TableCell>{transaction.second_account}</TableCell>
                   </StyledTableRow>
                 ))}
               </TableBody>
