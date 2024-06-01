@@ -4,11 +4,10 @@ const {
   createTransaction,
   getAllTransactions,
   getLatestTransactions,
-  fetchDetails
 } = require("../controllers/transactionController.js");
 
 router.post("/:accountId", createTransaction);
-router.get("/:accountId", getAllTransactions);
+router.get("/:id", getAllTransactions);
 router.get("/latest/:accountId", getLatestTransactions);
 
 

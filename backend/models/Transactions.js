@@ -3,24 +3,39 @@ const Schema = mongoose.Schema;
 
 const transactionSchema = new Schema(
   {
-    account: {
+    sender: {
       type: Schema.Types.ObjectId,
-      ref: "Account",
+      refPath: 'senderModel',
       required: true,
     },
-    second_account: {
-      type: Schema.Types.ObjectId,
-      ref: "Account",
+    senderModel: {
+      type: String,
       required: true,
+      enum: ['Account', 'CreditCard'],
+    },
+    receiver: {
+      type: Schema.Types.ObjectId,
+      refPath: 'receiverModel',
+      required: true,
+    },
+    receiverModel: {
+      type: String,
+      required: true,
+      enum: ['Account', 'CreditCard', 'Loan'],
     },
     amount: {
       type: Number,
       required: true,
     },
-    transfer_type: {
+    senderTransferType: {
       type: String,
       required: true,
-      enum: ["Received", "Sent"],
+      enum: ["Sent"],
+    },
+    receiverTransferType: {
+      type: String,
+      required: true,
+      enum: ["Received"],
     },
     type: {
       type: String,
@@ -33,4 +48,5 @@ const transactionSchema = new Schema(
   }
 );
 
-module.exports = mongoose.model("Transaction", transactionSchema);
+// Check if the model is already compiled
+module.exports = mongoose.models.Transaction || mongoose.model("Transaction", transactionSchema);
