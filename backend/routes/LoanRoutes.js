@@ -13,7 +13,7 @@ router.get("/", getLoans);
 router.post("/pay/:id", createLoanPayment);
 
 router.get("/:id", getCustomerLoans);
-router.post("/:id", createLoan);
+router.post("/:userId", createLoan);
 
 router.patch("/:id", updateLoanStatus);
 router.delete("/:id", deleteLoan);

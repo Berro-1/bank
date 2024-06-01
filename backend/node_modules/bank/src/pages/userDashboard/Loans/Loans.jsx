@@ -2,18 +2,15 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
   CircularProgress,
+  Box,
+  Container,
+  Paper,
   Button,
+  styled,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import Sidebar from "../../../components/layout/Sidebar/Sidebar";
 import {
   getAllLoans,
@@ -21,40 +18,26 @@ import {
 } from "../../../store/Loans/loansActions";
 import LoanPaymentDialog from "./LoanPaymentDialog";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  fontWeight: "bold",
-  backgroundColor: "#4727eb",
-  color: theme.palette.common.white,
-}));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  "&:nth-of-type(odd)": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  "&:hover": {
-    backgroundColor: theme.palette.action.selected,
-  },
-}));
-
-const StatusIndicator = styled("span")(({ status, theme }) => ({
+const StatusIndicator = styled("span")(({ status }) => ({
   height: "10px",
   width: "10px",
   borderRadius: "50%",
   display: "inline-block",
   marginLeft: "10px",
   marginRight: "5px",
-
   backgroundColor:
     status === "Active"
       ? "#4CAF50" // Green
-      : status === "Closed"
+      : status === "Pending"
+      ? "#FF9800" // Orange
+      : status === "Deleted"
       ? "#F44336" // Red
       : "#F6B000", // Default color (yellow)
 }));
 
 const LoansPage = () => {
   const dispatch = useDispatch();
-  const { loans, loading } = useSelector(
+  const { loans, loading, error } = useSelector(
     (state) => state.loans || { loans: [], loading: false }
   );
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
@@ -144,16 +127,17 @@ const LoansPage = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        style={{ padding: 20, flexGrow: 1 }}
+        style={{ flexGrow: 1, padding: 20 }}
       >
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
-          className="font-bold pt-10"
-        >
-          Loans
-        </Typography>
+        <Container maxWidth="lg">
+          <Typography
+            variant="h4"
+            component="h1"
+            gutterBottom
+            className="font-bold pt-10"
+          >
+            Loans
+          </Typography>
 
           {loading ? (
             <Box
@@ -168,6 +152,10 @@ const LoansPage = () => {
             </Box>
           ) : error ? (
             <Typography color="error">{error}</Typography>
+          ) : loans.length === 0 ? (
+            <Typography color="textPrimary" variant="h6" align="center">
+              No loans found.
+            </Typography>
           ) : (
             <Paper
               elevation={3}
