@@ -15,8 +15,6 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { getAllAccounts } from "../../../store/accounts/accountsActions";
 
-const userId = "6644dcb9c16b269cf9bae998";
-
 const LoanPaymentDialog = ({ open, handleClose, handlePayment, loan }) => {
   const dispatch = useDispatch();
   const { accounts } = useSelector((state) => state.accounts);
@@ -24,8 +22,12 @@ const LoanPaymentDialog = ({ open, handleClose, handlePayment, loan }) => {
   const [selectedAccount, setSelectedAccount] = useState("");
 
   useEffect(() => {
-    if (accounts.length === 0) {
-      dispatch(getAllAccounts(userId));
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.id) {
+      const userId = user.id;
+      if (accounts.length === 0) {
+        dispatch(getAllAccounts(userId));
+      }
     }
   }, [dispatch, accounts.length]);
 
@@ -36,12 +38,15 @@ const LoanPaymentDialog = ({ open, handleClose, handlePayment, loan }) => {
       Number(paymentAmount) > 0 &&
       selectedAccount
     ) {
-      handlePayment(loan._id, Number(paymentAmount), selectedAccount,userId);
-      handleClose();
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (user && user.id) {
+        const userId = user.id;
+        handlePayment(loan._id, Number(paymentAmount), selectedAccount, userId);
+        handleClose();
+      }
     } else {
       alert("Please enter a valid payment amount and select an account.");
     }
-
   };
 
   return (

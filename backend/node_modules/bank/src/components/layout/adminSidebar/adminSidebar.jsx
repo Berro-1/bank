@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faCreditCard } from "@fortawesome/free-regular-svg-icons";
-import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
-import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import { useDispatch } from "react-redux";
 import { logout } from "../../../store/auth/authActions"; // Adjust the path as necessary

@@ -15,16 +15,16 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
     requestType: '',
   };
 
-const initialCreditCardState = () => {
-  const currentDate = new Date();
-  const fiveYearsLater = new Date(currentDate.setFullYear(currentDate.getFullYear() + 5));
-
-  return {
-    cardName: '',
-    expiryDate: fiveYearsLater.toISOString().slice(0, 10), // Formats the date as YYYY-MM-DD
-    creditLimit: '',
+  const initialCreditCardState = () => {
+    const currentDate = new Date();
+    const fiveYearsLater = new Date(currentDate.setFullYear(currentDate.getFullYear() + 5));
+    return {
+      cardName: '',
+      expiryDate: fiveYearsLater.toISOString().slice(0, 10), // Formats the date as YYYY-MM-DD
+      creditLimit: '',
+    };
   };
-};
+
   const initialAccountState = {
     accountType: '',
     loanType: '',
@@ -50,7 +50,6 @@ const initialCreditCardState = () => {
   const handleCreditCardChange = (e) => {
     const { name, value } = e.target;
     let creditLimit = '';
-  
     switch (value) {
       case 'Silver Card':
         creditLimit = 5000;
@@ -64,7 +63,6 @@ const initialCreditCardState = () => {
       default:
         break;
     }
-  
     setCreditName({ ...creditCardDetails, [name]: value, creditLimit });
   };
 
@@ -75,13 +73,19 @@ const initialCreditCardState = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formDetails.requestType === 'Credit Card') {
-      onSubmit({ ...creditCardDetails, requestType: 'Credit Card' });
-    } else if (formDetails.requestType === 'New Account') {
-      onSubmit({ ...accountDetails, requestType: 'New Account' });
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.id) {
+      const userId = user.id;
+      if (formDetails.requestType === 'Credit Card') {
+        onSubmit({ ...creditCardDetails, requestType: 'Credit Card', userId });
+      } else if (formDetails.requestType === 'New Account') {
+        onSubmit({ ...accountDetails, requestType: 'New Account', userId });
+      }
+      toggle();
+      resetForm(); // Reset form after submission
+    } else {
+      alert('User not found');
     }
-    toggle();
-    resetForm(); // Reset form after submission
   };
 
   const handleCancel = () => {
@@ -96,7 +100,7 @@ const initialCreditCardState = () => {
     }
     return options;
   };
-  
+
   const renderConditionalInputs = () => {
     switch (formDetails.requestType) {
       case 'Credit Card':
@@ -194,7 +198,6 @@ const initialCreditCardState = () => {
         return null;
     }
   };
-  
 
   return (
     <Dialog
