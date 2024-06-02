@@ -1,19 +1,28 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faCreditCard } from "@fortawesome/free-regular-svg-icons";
 import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import RequestQuoteOutlinedIcon from '@mui/icons-material/RequestQuoteOutlined';
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import SyncAltOutlinedIcon from "@mui/icons-material/SyncAltOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined"; // added to maintain consistency
+import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
+
+import { useDispatch } from "react-redux";
+import { logout } from "../../../store/auth/authActions"
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
+  };
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login"); // Redirect to the login page after logging out
   };
 
   return (
@@ -88,12 +97,12 @@ const Sidebar = () => {
             </Link>
           </li>
           <li>
-            <Link
-              to="/logout"
-              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
+          <button
+              onClick={handleLogout}
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200 w-full text-left"
             >
-              <LogoutOutlinedIcon className="mr-3" /> Logout
-            </Link>
+              <ExitToAppOutlinedIcon className="mr-3" /> Logout
+            </button>
           </li>
         </ul>
       </div>

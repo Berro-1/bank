@@ -18,9 +18,7 @@ const getCustomerLoans = async (req, res) => {
   try {
     const loans = await Loans.find({ user: id }).sort({ createdAt: -1 });
     if (!loans || loans.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "No loans found for this customer" });
+      return res.status(200).json([]);
     }
     res.status(200).json(loans);
   } catch (err) {
@@ -29,6 +27,7 @@ const getCustomerLoans = async (req, res) => {
 };
 
 const createLoanPayment = async (req, res) => {
+
   const { loanId, paymentAmount, accountId } = req.body;
 
   // Validate input parameters
@@ -115,15 +114,15 @@ const createLoanPayment = async (req, res) => {
     session.endSession();
   }
 };
-
 const createLoan = async (req, res) => {
-  const { user, type, amount, interest_rate, loan_term, status } = req.body;
+  const { userId } = req.params;  // Changed from `req.params` to `req.params.userId`
+  const { type, amount, interest_rate, loan_term, status } = req.body;
 
   // Validate required fields
-  if (!user || !type || !amount || !interest_rate || !loan_term || !status) {
+  if (!userId || !type || !amount || !interest_rate || !loan_term || !status) {
     return res.status(400).json({
       error:
-        "All fields are required: user, type, amount, interest rate, loan term, status.",
+        "All fields are required: userId, type, amount, interest rate, loan term, status.",
     });
   }
 
@@ -168,7 +167,7 @@ const createLoan = async (req, res) => {
   try {
     // Create the loan
     const loan = new Loans({
-      user,
+      user: userId,
       type,
       amount,
       interest_rate,
