@@ -1,5 +1,4 @@
 import React from "react";
-import Header from "./header/header";
 import HeroSection from "./hero/Hero";
 import ServicesSection from "./services/services";
 import WhyChooseUsSection from "./whyChooseUs/whyChooseUs";
@@ -13,7 +12,6 @@ import Footer from "./footer/footer";
 function Home() {
     return (
         <div>
-            <Header />
             <HeroSection />
             <ServicesSection />
             <WhyChooseUsSection />
