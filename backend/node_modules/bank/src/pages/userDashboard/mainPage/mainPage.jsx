@@ -46,10 +46,7 @@ export default function MainPage() {
             value="789"
           />
         </div>
-        <LatestActivities
-          accountId={selectedAccountId}
-          onAccountSelect={setSelectedAccountId}
-        />
+
       </motion.div>
     </div>
   );

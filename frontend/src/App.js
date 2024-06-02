@@ -143,7 +143,7 @@ function App() {
 
 const Root = () => {
   return (
-    <div className=" text-gray-200 h-full" style={{backgroundColor:"#121212"}}>
+    <div className=" text-gray-200 h-full" >
       <div>
         <Navbar />
       </div>

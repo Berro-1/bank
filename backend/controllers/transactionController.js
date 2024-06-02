@@ -196,11 +196,10 @@ const getLatestTransactions = async (req, res) => {
 
   try {
     const transactions = await Transaction.find({
-      $or: [
-        { sender: id },
-        { receiver: id }
-      ]
-    }).sort({ createdAt: -1 }).limit(5);
+      $or: [{ sender: id }, { receiver: id }],
+    })
+      .sort({ createdAt: -1 })
+      .limit(5);
 
     const detailedTransactions = await Promise.all(transactions.map(async (transaction) => {
       const sender = await getEntityDetails(transaction.sender, transaction.senderModel);

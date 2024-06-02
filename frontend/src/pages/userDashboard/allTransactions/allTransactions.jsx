@@ -1,85 +1,107 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { motion } from 'framer-motion';
-import { 
-  Typography, CircularProgress, Box, Container, Paper 
-} from '@mui/material';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import { getAllTransactions } from '../../../store/Transactions/transactionActions';
-import Sidebar from '../../../components/layout/Sidebar/Sidebar';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { motion } from "framer-motion";
+import {
+  Typography,
+  CircularProgress,
+  Box,
+  Container,
+  Paper,
+  Grid,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+} from "@mui/material";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { getAllTransactions } from "../../../store/Transactions/transactionActions";
+import { getAllAccounts } from "../../../store/accounts/accountsActions";
+import { getCards } from "../../../store/cards/cardsActions";
+import Sidebar from "../../../components/layout/Sidebar/Sidebar";
 
 const AllTransactionsPage = () => {
+  const currentUserId = "6644dcb9c16b269cf9bae998";
   const dispatch = useDispatch();
-  const { transactions, loading, error } = useSelector(state => state.transactions);
+  const { transactions, loading, error } = useSelector(
+    (state) => state.transactions
+  );
+  const { accounts } = useSelector((state) => state.accounts);
+  const { cards } = useSelector((state) => state.cards);
+  const [selectedAccountId, setSelectedAccountId] = useState("");
 
   useEffect(() => {
-    dispatch(getAllTransactions("664f0538ee2114220f466c01"));
-  }, [dispatch]);
+    dispatch(getAllAccounts(currentUserId));
+    dispatch(getCards(currentUserId));
+  }, [dispatch, currentUserId]);
 
-const columns = [
-  {
-    field: "createdAt",
-    headerName: "Date",
-    flex: 1,
-    renderCell: (params) => new Date(params.row.createdAt).toLocaleDateString(),
-  },
-  { field: "type", headerName: "Type", flex: 1 },
-  {
-    field: "amount",
-    headerName: "Amount",
-    flex: 1,
-    renderCell: (params) => `$${params.row.amount.toFixed(2)}`,
-  },
-  { field: "transfer_type", headerName: "Transfer Type", flex: 1 },
+  useEffect(() => {
+    if (selectedAccountId) {
+      dispatch(getAllTransactions(selectedAccountId));
+    }
+  }, [dispatch, selectedAccountId]);
 
-  {
-    field: "second_account_info",
-    headerName: "Second Account Details",
-    flex: 2,
-    renderCell: (params) => {
-      const info = params.row.second_account_info;
-      if (!info || info === "Not found") {
-        return "N/A";
-      }
+  const handleChange = (event) => {
+    setSelectedAccountId(event.target.value);
+  };
 
-      // Dynamically display based on the type of second account
-      switch (info.type) {
-        case "Account":
-          // Assuming 'details' object contains a 'user' property for Account
-          return `${info.details.user?.name || "Unknown"} - ${
-            info.details.type || "unkown account"
-          } Account`;
-        case "Credit Card":
-          // Display card name and the holder's name
-          return `${info.details.card_name} - ${
-            info.details.user?.name || "Unknown"
-          } `;
-        case "Loan":
-          // Display loan type and the holder's name
-          return `${info.details.type} Loan - ${
-            info.details.user?.name || "Unknown"
-          }`;
-        default:
-          return "N/A";
-      }
+  // Debugging logs
+  useEffect(() => {
+    console.log("Selected Account ID: ", selectedAccountId);
+    console.log("cards: ", cards);
+    console.log("Transactions: ", transactions);
+    console.log("Accounts: ", accounts);
+  }, [selectedAccountId, transactions, accounts]);
+
+  const columns = [
+    {
+      field: "createdAt",
+      headerName: "Date",
+      flex: 1,
+      renderCell: (params) =>
+        new Date(params.row.createdAt).toLocaleDateString(),
     },
-  },
-];
+    {
+      field: "amount",
+      headerName: "Amount",
+      flex: 1,
+      renderCell: (params) => `$${params.row.amount.toFixed(2)}`,
+    },
+    { field: "transfer_type", headerName: "Transfer Type", flex: 1 },
+    {
+      field: "second_account_info",
+      headerName: "Second Account Details",
+      flex: 2,
+      renderCell: (params) => {
+        const isSender = params.row.sender === currentUserId;
+        const secondAccountUser = isSender
+          ? params.row.receiverUser
+          : params.row.senderUser;
+        return `${secondAccountUser.name || "Unknown"} (${
+          isSender ? "Receiver" : "Sender"
+        })`;
+      },
+    },
+  ];
 
+  // Ensure transactions are mapped correctly
+  const rows = transactions.map((transaction) => ({
+    id: transaction._id,
+    createdAt: transaction.createdAt,
+    amount: transaction.amount,
+    transfer_type:
+      transaction.sender === currentUserId
+        ? transaction.senderTransferType
+        : transaction.receiverTransferType,
+    sender: transaction.sender,
+    receiver: transaction.receiver,
+    senderUser: transaction.senderUser,
+    receiverUser: transaction.receiverUser,
+  }));
 
-
-const rows = transactions.map((transaction) => ({
-  id: transaction._id,
-  createdAt: transaction.createdAt,
-  type: transaction.type,
-  amount: transaction.amount,
-  transfer_type: transaction.transfer_type,
-  account: transaction.account?.user?.name || "Account N/A",
-  second_account_info: transaction.second_account_info, // Directly use the detailed object provided from backend
-}));
-
-
-
+  // Check rows mapping
+  useEffect(() => {
+    console.log("Rows: ", rows);
+  }, [rows]);
 
   return (
     <div className="flex w-full">
@@ -97,25 +119,89 @@ const rows = transactions.map((transaction) => ({
             gutterBottom
             className="font-bold pt-10"
           >
-            All Transactions
+            <Grid container alignItems="center">
+              <Grid item xs>
+                All Transactions
+              </Grid>
+              <Grid item>
+                <FormControl
+                  variant="outlined"
+                  sx={{
+                    ml: 2,
+                    minWidth: 150,
+                    "& .MuiInputLabel-root": {
+                      color: "#ffffff",
+                    },
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: "#ffffff",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#ffffff",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#ffffff",
+                      },
+                      "& .MuiSelect-icon": {
+                        color: "#ffffff",
+                      },
+                      backgroundColor: "#333333",
+                    },
+                  }}
+                >
+                  <InputLabel id="transaction-select-label">
+                    Select Account or Card
+                  </InputLabel>
+                  <Select
+                    labelId="transaction-select-label"
+                    id="transaction-select"
+                    value={selectedAccountId}
+                    onChange={handleChange}
+                    label="Select Account or Card"
+                  >
+
+                    {accounts.map((account) => (
+                      <MenuItem key={account._id} value={account._id}>
+                        {account.type} - {account.balance}
+                      </MenuItem>
+                    ))}
+                    {cards.map((card) => (
+                      <MenuItem key={card._id} value={card._id}>
+                        {card.card_name} - {card.credit_limit}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
           </Typography>
 
           {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
               <CircularProgress color="primary" />
             </Box>
           ) : error ? (
             <Typography color="error">{error}</Typography>
           ) : (
-            <Paper elevation={3} sx={{ padding: 4, borderRadius: 2, marginTop: 3 }}>
-              <div style={{ height: 600, width: '100%' }}>
+            <Paper
+              elevation={3}
+              sx={{ padding: 4, borderRadius: 2, marginTop: 3 }}
+            >
+              <div style={{ height: 600, width: "100%" }}>
                 <DataGrid
                   rows={rows}
                   columns={columns}
                   pageSize={10}
                   rowsPerPageOptions={[10, 20, 50]}
-                  slots={{
-                    toolbar: GridToolbar,
+                  components={{
+                    Toolbar: GridToolbar,
                   }}
                   loading={loading}
                 />
