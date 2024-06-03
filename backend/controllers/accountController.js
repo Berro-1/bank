@@ -106,7 +106,9 @@ const createLoanAccount = async (req, res) => {
 // Create a new account (savings or checking)
 const createAccount = async (req, res) => {
   try {
-    const { user, balance, accountType } = req.body; // accountType should be 'Savings' or 'Checking'
+    const user = req.params.id;
+    console.log(user);
+    const { balance, accountType } = req.body; // accountType should be 'Savings' or 'Checking'
     if (!user || !balance || !accountType) {
       return res.status(400).json({ error: "All fields are required." });
     }

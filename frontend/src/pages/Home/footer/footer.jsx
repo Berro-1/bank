@@ -5,7 +5,6 @@ import { styled } from "@mui/system";
 const StyledFooter = styled('footer')(({ theme }) => ({
     backgroundColor: '#1c1c1c',
     padding: theme.spacing(6),
-    marginTop: theme.spacing(8),
     textAlign: 'center',
 }));
 
