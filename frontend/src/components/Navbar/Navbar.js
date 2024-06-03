@@ -93,7 +93,7 @@ export default function Navbar() {
             Home
           </Link>
           <Link
-            to="/test"
+            to="/Aboutus"
             className="text-white text-lg mb-3 hover:text-custom-purple hover:border-custom-purple transition duration-300 ease-in-out border-b-2"
             onClick={() => setIsOpen(false)}
           >
