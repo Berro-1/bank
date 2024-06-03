@@ -152,7 +152,7 @@ const AllTransactionsPage = () => {
                   variant="outlined"
                   sx={{
                     ml: 2,
-                    minWidth: 150,
+                    minWidth: 215,
                     "& .MuiInputLabel-root": {
                       color: "#ffffff",
                     },
@@ -174,7 +174,7 @@ const AllTransactionsPage = () => {
                   }}
                 >
                   <InputLabel id="transaction-select-label">
-                    Select Account, Card, or Loan
+                    Select Account or Loan
                   </InputLabel>
                   <Select
                     labelId="transaction-select-label"
@@ -221,7 +221,7 @@ const AllTransactionsPage = () => {
                           },
                         }}
                       >
-                        {account.type} - {account.balance}
+                        {account.type} - ${account.balance}
                       </MenuItem>
                     ))}
                     {cards.map((card) => (
@@ -236,7 +236,7 @@ const AllTransactionsPage = () => {
                           },
                         }}
                       >
-                        {card.card_name} - {card.credit_limit}
+                        {card.card_name} - ${card.credit_limit}
                       </MenuItem>
                     ))}
                     {activeLoans.map((loan) => (
@@ -251,7 +251,7 @@ const AllTransactionsPage = () => {
                           },
                         }}
                       >
-                        {loan.type} - {loan.amount}
+                        {loan.type} - ${loan.amount}
                       </MenuItem>
                     ))}
                   </Select>
