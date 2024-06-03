@@ -14,7 +14,7 @@ router.get("/", getAccounts);
 router.get("/:id",getUserAccounts);
 router.get("/singleAccount/:accountId",getAccountById);
 
-router.post("/loan/:id", createLoanAccount);
+router.post("/loan/:user", createLoanAccount);
 router.post("/account/:id", createAccount);
 
 

@@ -65,7 +65,9 @@ const createLoanAccount = async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    const { user, type, amount, loan_term } = req.body;
+      const { user } = req.params;
+console.log(user);
+    const {  type, amount, loan_term } = req.body;
     if (!user || !type || !amount || !loan_term) {
       throw new Error("All fields are required.");
     }

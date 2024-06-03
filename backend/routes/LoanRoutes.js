@@ -10,7 +10,7 @@ const {
 } = require("../controllers/loanController.js");
 
 router.get("/", getLoans);
-router.post("/pay/:id", createLoanPayment);
+router.post("/pay/:loanId", createLoanPayment);
 
 router.get("/:id", getCustomerLoans);
 router.post("/:userId", createLoan);

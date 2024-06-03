@@ -41,7 +41,7 @@ const LoanPaymentDialog = ({ open, handleClose, handlePayment, loan }) => {
       const user = JSON.parse(localStorage.getItem("user"));
       if (user && user.id) {
         const userId = user.id;
-        handlePayment(loan._id, Number(paymentAmount), selectedAccount, userId);
+        handlePayment(loan.id, selectedAccount, Number(paymentAmount), userId);
         handleClose();
       }
     } else {

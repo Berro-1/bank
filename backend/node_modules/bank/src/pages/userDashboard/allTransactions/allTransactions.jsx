@@ -17,22 +17,35 @@ import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { getAllTransactions } from "../../../store/Transactions/transactionActions";
 import { getAllAccounts } from "../../../store/accounts/accountsActions";
 import { getCards } from "../../../store/cards/cardsActions";
+import { getAllLoans } from "../../../store/Loans/loansActions";
 import Sidebar from "../../../components/layout/Sidebar/Sidebar";
 
 const AllTransactionsPage = () => {
-  const currentUserId = "6644dcb9c16b269cf9bae998";
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.id) {
+      setUserId(user.id);
+    }
+  }, []);
+
   const dispatch = useDispatch();
   const { transactions, loading, error } = useSelector(
     (state) => state.transactions
   );
   const { accounts } = useSelector((state) => state.accounts);
   const { cards } = useSelector((state) => state.cards);
+  const { loans } = useSelector((state) => state.loans);
   const [selectedAccountId, setSelectedAccountId] = useState("");
 
   useEffect(() => {
-    dispatch(getAllAccounts(currentUserId));
-    dispatch(getCards(currentUserId));
-  }, [dispatch, currentUserId]);
+    if (userId) {
+      dispatch(getAllAccounts(userId));
+      dispatch(getCards(userId));
+      dispatch(getAllLoans(userId));
+    }
+  }, [dispatch, userId]);
 
   useEffect(() => {
     if (selectedAccountId) {
@@ -50,7 +63,8 @@ const AllTransactionsPage = () => {
     console.log("cards: ", cards);
     console.log("Transactions: ", transactions);
     console.log("Accounts: ", accounts);
-  }, [selectedAccountId, transactions, accounts]);
+    console.log("Loans: ", loans);
+  }, [selectedAccountId, transactions, accounts, loans]);
 
   const columns = [
     {
@@ -66,13 +80,23 @@ const AllTransactionsPage = () => {
       flex: 1,
       renderCell: (params) => `$${params.row.amount.toFixed(2)}`,
     },
-    { field: "transfer_type", headerName: "Transfer Type", flex: 1 },
+    {
+      field: "transfer_type",
+      headerName: "Transfer Type",
+      flex: 1,
+      renderCell: (params) => {
+        const isSender = params.row.sender === selectedAccountId;
+        return isSender
+          ? params.row.senderTransferType
+          : params.row.receiverTransferType;
+      },
+    },
     {
       field: "second_account_info",
       headerName: "Second Account Details",
       flex: 2,
       renderCell: (params) => {
-        const isSender = params.row.sender === currentUserId;
+        const isSender = params.row.sender === selectedAccountId;
         const secondAccountUser = isSender
           ? params.row.receiverUser
           : params.row.senderUser;
@@ -83,13 +107,14 @@ const AllTransactionsPage = () => {
     },
   ];
 
-  // Ensure transactions are mapped correctly
+  const activeLoans = loans.filter((loan) => loan.status === "Active");
+
   const rows = transactions.map((transaction) => ({
     id: transaction._id,
     createdAt: transaction.createdAt,
     amount: transaction.amount,
     transfer_type:
-      transaction.sender === currentUserId
+      transaction.sender === selectedAccountId
         ? transaction.senderTransferType
         : transaction.receiverTransferType,
     sender: transaction.sender,
@@ -98,7 +123,6 @@ const AllTransactionsPage = () => {
     receiverUser: transaction.receiverUser,
   }));
 
-  // Check rows mapping
   useEffect(() => {
     console.log("Rows: ", rows);
   }, [rows]);
@@ -145,29 +169,89 @@ const AllTransactionsPage = () => {
                       "& .MuiSelect-icon": {
                         color: "#ffffff",
                       },
-                      backgroundColor: "#333333",
+                      backgroundColor: "#1F2937",
                     },
                   }}
                 >
                   <InputLabel id="transaction-select-label">
-                    Select Account or Card
+                    Select Account, Card, or Loan
                   </InputLabel>
                   <Select
                     labelId="transaction-select-label"
                     id="transaction-select"
                     value={selectedAccountId}
                     onChange={handleChange}
-                    label="Select Account or Card"
+                    label="Select Account, Card, or Loan"
+                    sx={{
+                      color: "#ffffff",
+                      ".MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#ffffff",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#ffffff",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        borderColor: "#ffffff",
+                      },
+                      ".MuiSelect-icon": {
+                        color: "#ffffff",
+                      },
+                      backgroundColor: "#1F2937",
+                      ".MuiList-root": {
+                        backgroundColor: "#1F2937",
+                      },
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          backgroundColor: "#1F2937",
+                        },
+                      },
+                    }}
                   >
-
                     {accounts.map((account) => (
-                      <MenuItem key={account._id} value={account._id}>
+                      <MenuItem
+                        key={account._id}
+                        value={account._id}
+                        sx={{
+                          color: "#ffffff",
+                          backgroundColor: "#1F2937",
+                          "&:hover": {
+                            backgroundColor: "#374151",
+                          },
+                        }}
+                      >
                         {account.type} - {account.balance}
                       </MenuItem>
                     ))}
                     {cards.map((card) => (
-                      <MenuItem key={card._id} value={card._id}>
+                      <MenuItem
+                        key={card._id}
+                        value={card._id}
+                        sx={{
+                          color: "#ffffff",
+                          backgroundColor: "#1F2937",
+                          "&:hover": {
+                            backgroundColor: "#374151",
+                          },
+                        }}
+                      >
                         {card.card_name} - {card.credit_limit}
+                      </MenuItem>
+                    ))}
+                    {activeLoans.map((loan) => (
+                      <MenuItem
+                        key={loan._id}
+                        value={loan._id}
+                        sx={{
+                          color: "#ffffff",
+                          backgroundColor: "#1F2937",
+                          "&:hover": {
+                            backgroundColor: "#374151",
+                          },
+                        }}
+                      >
+                        {loan.type} - {loan.amount}
                       </MenuItem>
                     ))}
                   </Select>
@@ -185,27 +269,22 @@ const AllTransactionsPage = () => {
                 height: "100%",
               }}
             >
-              <CircularProgress color="primary" />
+              <CircularProgress />
             </Box>
           ) : error ? (
-            <Typography color="error">{error}</Typography>
+            <Typography variant="h6" color="error">
+              {error}
+            </Typography>
           ) : (
-            <Paper
-              elevation={3}
-              sx={{ padding: 4, borderRadius: 2, marginTop: 3 }}
-            >
-              <div style={{ height: 600, width: "100%" }}>
-                <DataGrid
-                  rows={rows}
-                  columns={columns}
-                  pageSize={10}
-                  rowsPerPageOptions={[10, 20, 50]}
-                  components={{
-                    Toolbar: GridToolbar,
-                  }}
-                  loading={loading}
-                />
-              </div>
+            <Paper style={{ height: 400, width: "100%" }}>
+              <DataGrid
+                rows={rows}
+                columns={columns}
+                pageSize={5}
+                components={{
+                  Toolbar: GridToolbar,
+                }}
+              />
             </Paper>
           )}
         </Container>
