@@ -24,13 +24,21 @@ import ManageAccountPage from "./pages/adminDashboard/allUsers/manageAccount/man
 import AdminLoans from "./pages/adminDashboard/Loans/Loans.jsx";
 import CreditCardSubmissionsPage from "./pages/adminDashboard/Submissions/Submissions.jsx";
 import ProtectedRoute from "./components/protectedRoute/protectedRoute.js";
+import ServicesSection from "./pages/Services/Services.jsx";
+import ServiceDetail from "./pages/Services/servicesDetails/serviceDetails.jsx";
+import AboutUs from "./pages/aboutUs/aboutUs.jsx";
 
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Root />}>
         <Route index element={<Home />} />
+        <Route path="/Services" element={<ServicesSection />} />
+        <Route path="/services/:serviceId" element={<ServiceDetail />} />
+        <Route path="/AboutUs" element={<AboutUs />} />
+
         <Route path="/Login" exact element={<Login />} />
+
         <Route
           path="/mainPage"
           element={
