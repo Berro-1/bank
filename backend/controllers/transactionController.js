@@ -160,7 +160,7 @@ const getAllTransactions = async (req, res) => {
     // Retrieve all transactions where the account or credit card is either the sender or receiver
     const transactions = await Transaction.find({
       $or: [{ sender: id }, { receiver: id }],
-    }).sort({ createdAt: -1 }).limit(5);
+    }).sort({ createdAt: -1 });
 
     // Process the transactions to include user names
     const detailedTransactions = await Promise.all(

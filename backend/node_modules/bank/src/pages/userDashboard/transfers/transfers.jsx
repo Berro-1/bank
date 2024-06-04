@@ -24,8 +24,14 @@ export default function Transfers() {
   const [recipientAccountId, setRecipientAccountId] = useState("");
   const [amount, setAmount] = useState("");
   const [error, setError] = useState("");
-  const userId = "6644dcb9c16b269cf9bae998";
+  const [userId, setUserId] = useState(null);
 
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.id) {
+      setUserId(user.id);
+    }
+  }, []);
   const dispatch = useDispatch();
   const { loading: accountsLoading, accounts } = useSelector(
     (state) => state.accounts || { accounts: [], loading: false }

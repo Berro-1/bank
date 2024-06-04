@@ -27,14 +27,27 @@ const getCreditCards = async (req, res) => {
   }
 };
 
+const generateUniqueCardNumber = async () => {
+  const generateRandomNumber = () => {
+    return Math.floor(1000000000000000 + Math.random() * 9000000000000000); // Generate a 16-digit number
+  };
+
+  let cardNumber;
+  let isUnique = false;
+
+  while (!isUnique) {
+    cardNumber = generateRandomNumber();
+    const existingCard = await CreditCard.findOne({ card_number: cardNumber });
+    if (!existingCard) {
+      isUnique = true;
+    }
+  }
+
+  return cardNumber;
+};
+
 const createCreditCard = async (req, res) => {
-  const {
-    card_number,
-    card_name,
-    expiry_date,
-    credit_limit,
-    available_credit,
-  } = req.body;
+  const { card_name, expiry_date } = req.body;
   const userId = req.params.userId;
 
   // Validate expiry date
@@ -45,18 +58,38 @@ const createCreditCard = async (req, res) => {
       .json({ error: "Expiry date must be in the future." });
   }
 
-  // Validate credit limits
-  if (
-    credit_limit < 0 ||
-    available_credit < 0 ||
-    available_credit > credit_limit
-  ) {
-    return res
-      .status(400)
-      .json({ error: "Invalid credit limit or available credit." });
+  // Set credit limits based on card name
+  let credit_limit;
+  let available_credit;
+
+  switch (card_name) {
+    case "Platinum Card":
+      credit_limit = 20000;
+      available_credit = 20000;
+      break;
+    case "Gold Card":
+      credit_limit = 10000;
+      available_credit = 10000;
+      break;
+    case "Silver Card":
+      credit_limit = 5000;
+      available_credit = 5000;
+      break;
+    default:
+      return res.status(400).json({ error: "Invalid card name." });
   }
 
   try {
+    // Check if the user already has a card with the same name
+    const existingCard = await CreditCard.findOne({ user: userId, card_name });
+    if (existingCard) {
+      return res
+        .status(400)
+        .json({ error: `User already has a ${card_name}.` });
+    }
+
+    const card_number = await generateUniqueCardNumber();
+
     const newCreditCard = await CreditCard.create({
       card_number,
       user: userId,
@@ -65,6 +98,7 @@ const createCreditCard = async (req, res) => {
       credit_limit,
       available_credit,
     });
+
     res.status(201).json(newCreditCard);
   } catch (error) {
     console.error("Failed to create credit card:", error);

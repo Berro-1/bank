@@ -13,7 +13,7 @@ const submissionRoutes =require("./routes/SubmissionRoutes")
 const authRoutes = require('./routes/authRoutes');
 const cookieParser = require('cookie-parser')
 const sgMail = require('@sendgrid/mail');
-
+const statisticsRoutes =require("./routes/statisticsRoutes")
 const app = express();
 
 app.use(cors({
@@ -37,6 +37,8 @@ app.use("/api/transaction", transactionRouter);
 app.use("/api", qrRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/auth",authRoutes);
+app.use("/api/statistics",statisticsRoutes );
+
 
 //email
 sgMail.setApiKey('YOUR_SENDGRID_API_KEY');
