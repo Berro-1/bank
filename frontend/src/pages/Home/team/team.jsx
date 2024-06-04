@@ -10,7 +10,7 @@ const teamMembers = [
     {
         name: "Bob Smith",
         role: "CEO",
-        image: "Bob.jpg",
+        image: "bob.jpg",
     },
     {
         name: "Clay Davis",
@@ -21,9 +21,9 @@ const teamMembers = [
 
 function OurTeamSection() {
     return (
-        <Box sx={{ py: 8, backgroundColor: '#1c1c1c', color: 'white' }}>
+        <Box sx={{ py: 8, backgroundColor: '#121212', color: 'white' }}>
             <Container>
-                <Typography variant="h4" gutterBottom textAlign="center">
+                <Typography variant="h4" gutterBottom textAlign="center" sx={{ fontWeight: 'bold', color: '#64CCC5' }}>
                     Our Team
                 </Typography>
                 <Grid container spacing={4}>
@@ -33,7 +33,7 @@ function OurTeamSection() {
                                 <Avatar
                                     src={member.image}
                                     alt={member.name}
-                                    sx={{ width: 150, height: 150, margin: '0 auto' }}
+                                    sx={{ width: 150, height: 150, margin: '0 auto', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)' }}
                                 />
                                 <Typography variant="h6" mt={2}>
                                     {member.name}

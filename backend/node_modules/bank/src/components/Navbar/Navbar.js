@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
-import "./Navbar.css";
-import Button from "react-bootstrap/Button";
-import "react-bootstrap";
-
+import { NavLink } from "react-router-dom";
+import "./Navbar.css"; // Ensure the CSS file is correctly referenced
+import { Button } from "@mui/material";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef();
@@ -26,22 +24,15 @@ export default function Navbar() {
   }, [isOpen]);
 
   return (
-    <nav className="bg-gray-900 py-3 shadow-lg relative">
+    <nav className="navbar">
       <div className="container flex justify-between items-center px-10">
         <div className="flex items-center gap-3">
-          <img
-            src="/logo.png"
-            alt="SafeStream Logo"
-            className="h-12 w-auto object-cover"
-          />
-          <span className="text-white text-2xl font-bold leading-none">
-            SafeStream
-          </span>
+          <img src="/logo.png" alt="SafeStream Logo" className="logo" />
+          <span className="brand">SafeStream</span>
         </div>
-
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="lg:hidden text-white focus:outline-none focus:ring-2 focus:ring-custom-purple p-2"
+          className="menu-toggle text-white focus:outline-none focus:ring-2 p-2"
         >
           <svg
             className="w-6 h-6"
@@ -54,21 +45,20 @@ export default function Navbar() {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth="2"
-              d="M4 6h16M4 12h16M4 18h16"
+              d="M4 6h16M4 12h16m-16 6h16"
             />
           </svg>
         </button>
-
         <div
           ref={menuRef}
-          className={`fixed top-0 right-0 h-full w-64 bg-gray-800 bg-opacity-95 transform ${
+          className={`nav-menu fixed top-0 right-0 h-full w-64 bg-gray-800 bg-opacity-95 transform ${
             isOpen ? "translate-x-0" : "translate-x-full"
           } transition-transform duration-300 ease-in-out flex flex-col items-center justify-start py-7 lg:hidden`}
           style={{ zIndex: isOpen ? 2000 : 1 }}
         >
           <button
             onClick={() => setIsOpen(false)}
-            className="absolute top-3 right-3 text-white hover:text-custom-purple focus:outline-none"
+            className="absolute top-3 right-3 text-white focus:outline-none"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -77,7 +67,7 @@ export default function Navbar() {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth="{2}"
+              strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
@@ -85,72 +75,92 @@ export default function Navbar() {
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
-          <Link
+          <NavLink
             to="/"
-            className="text-custom-purple text-lg mb-3 hover:text-white border-custom-purple hover:border-white transition duration-300 ease-in-out border-b-2"
+            exact
+            className="nav-link"
+            activeClassName="active"
             onClick={() => setIsOpen(false)}
           >
             Home
-          </Link>
-          <Link
-            to="/Aboutus"
-            className="text-white text-lg mb-3 hover:text-custom-purple hover:border-custom-purple transition duration-300 ease-in-out border-b-2"
+          </NavLink>
+          <NavLink
+            to="/AboutUs"
+            className="nav-link"
+            activeClassName="active"
             onClick={() => setIsOpen(false)}
           >
             About
-          </Link>
-          <Link
-            to=""
-            className="text-white text-lg mb-3 hover:text-custom-purple hover:border-custom-purple transition duration-300 ease-in-out border-b-2"
+          </NavLink>
+          <NavLink
+            to="/Services"
+            className="nav-link"
+            activeClassName="active"
             onClick={() => setIsOpen(false)}
           >
             Services
-          </Link>
-          <Link
-            to=""
-            className="text-white text-lg mb-3 hover:text-custom-purple hover:border-custom-purple transition duration-300 ease-in-out border-b-2"
+          </NavLink>
+          <NavLink
+            to="/Contact"
+            className="nav-link"
+            activeClassName="active"
             onClick={() => setIsOpen(false)}
           >
             Contact
-          </Link>
-          <button className="bg-custom-purple hover:bg-custom-purple text-white font-bold py-2 px-4 border border-custom-purple rounded">
+          </NavLink>
+          <Button
+            variant="outlined"
+            sx={{
+              borderColor: "#64CCC5",
+              color: "white",
+              marginTop: "10px",
+              "&:hover": {
+                borderColor: "#52A9A5",
+                color: "#52A9A5",
+              },
+              padding: "10px 20px",
+              fontSize: "16px",
+              fontWeight: "600",
+              borderRadius: "50px",
+              transition: "all 0.3s ease",
+            }}
+          >
             Login
-          </button>
+          </Button>{" "}
         </div>
-
-        <div className="hidden lg:flex gap-6 ml">
-          <Link
-            to="/"
-            className="text-custom-purple text-lg hover:text-white transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
-          >
+        <div className="hidden lg:flex gap-6">
+          <NavLink to="/" exact className="nav-link" activeClassName="active">
             Home
-          </Link>
-          <Link
-            to="/test"
-            className="text-white text-lg hover:text-custom-purple transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
-          >
+          </NavLink>
+          <NavLink to="/AboutUs" className="nav-link" activeClassName="active">
             About
-          </Link>
-          <Link
-            to=""
-            className="text-white text-lg hover:text-custom-purple transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
-          >
+          </NavLink>
+          <NavLink to="/Services" className="nav-link" activeClassName="active">
             Services
-          </Link>
-          <Link
-            to=""
-            className="text-white text-lg hover:text-custom-purple transition duration-300 ease-in-out py-2 hover:underline underline-offset-8"
-          >
+          </NavLink>
+          <NavLink to="/Contact" className="nav-link" activeClassName="active">
             Contact
-          </Link>
+          </NavLink>
         </div>
-
         <div className="hidden lg:flex items-center">
-          <a href="/Login">
-            <button className="bg-custom-purple hover:bg-custom-purple text-white font-bold py-2 px-4 border border-custom-purple rounded">
-              Login
-            </button>
-          </a>
+          <Button
+            to="/Login"
+            component={NavLink}
+            variant="outlined"
+            sx={{
+              borderColor: "#64CCC5",
+              color: "white",
+              "&:hover": {
+                borderColor: "#52A9A5",
+                color: "#52A9A5",
+              },
+              padding: "10px 30px",
+              borderRadius: "50px",
+              transition: "all 0.3s ease",
+            }}
+          >
+            Login
+          </Button>{" "}
         </div>
       </div>
     </nav>

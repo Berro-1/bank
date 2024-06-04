@@ -27,6 +27,7 @@ import ProtectedRoute from "./components/protectedRoute/protectedRoute.js";
 import ServicesSection from "./pages/Services/Services.jsx";
 import ServiceDetail from "./pages/Services/servicesDetails/serviceDetails.jsx";
 import AboutUs from "./pages/aboutUs/aboutUs.jsx";
+import ContactUsSection from "./pages/contactPage/contact.jsx";
 
 function App() {
   const router = createBrowserRouter(
@@ -36,6 +37,7 @@ function App() {
         <Route path="/Services" element={<ServicesSection />} />
         <Route path="/services/:serviceId" element={<ServiceDetail />} />
         <Route path="/AboutUs" element={<AboutUs />} />
+        <Route path="/contact" element={<ContactUsSection />} />
 
         <Route path="/Login" exact element={<Login />} />
 

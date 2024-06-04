@@ -1,13 +1,14 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { Container, Box, Typography, Button, AppBar, Toolbar } from '@mui/material';
+import { Container, Box, Typography, Button } from '@mui/material';
 import { services } from '../Services'; // Import services array
+import Footer from '../../../components/footer/footer';
 
 const darkTheme = {
-  backgroundColor: '#121212',
+  backgroundColor: '#111827', // Navy blue
   color: '#ffffff',
-  primary: '#bb86fc',
-  secondary: '#03dac6',
+  primary: '#64CCC5', // Consistent teal color
+  secondary: '#03dac6', // Accent color for highlights
 };
 
 const ServiceDetail = () => {
@@ -26,7 +27,6 @@ const ServiceDetail = () => {
 
   return (
     <div style={{ backgroundColor: darkTheme.backgroundColor, color: darkTheme.color, minHeight: '100vh' }}>
-    
       <Container sx={{ py: 8 }}>
         <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center' }}>
           <Box
@@ -51,6 +51,7 @@ const ServiceDetail = () => {
           </Box>
         </Box>
       </Container>
+      <Footer/>
     </div>
   );
 };
