@@ -1,18 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import "./Navbar.css"; // Ensure the CSS file is correctly referenced
 import { Button } from "@mui/material";
+import "./Navbar.css"; // Ensure the CSS file is correctly referenced
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target) &&
-        isOpen
-      ) {
+      if (menuRef.current && !menuRef.current.contains(event.target) && isOpen) {
         setIsOpen(false);
       }
     };
@@ -126,7 +123,7 @@ export default function Navbar() {
             }}
           >
             Login
-          </Button>{" "}
+          </Button>
         </div>
         <div className="hidden lg:flex gap-6">
           <NavLink to="/" exact className="nav-link" activeClassName="active">
@@ -160,7 +157,7 @@ export default function Navbar() {
             }}
           >
             Login
-          </Button>{" "}
+          </Button>
         </div>
       </div>
     </nav>

@@ -31,6 +31,7 @@ export const getAllTransactions = (accountId) => async (dispatch) => {
     const url = `http://localhost:4000/api/transaction/${accountId}`;
     const response = await axios.get(url);
     dispatch(transactionActions.fetchSuccess(response.data));
+    console.log('action',response.data);
   } catch (error) {
     if (
       error.response &&

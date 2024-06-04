@@ -18,47 +18,56 @@ import {
   IconButton,
   Avatar,
 } from "@mui/material";
-import { DataGrid,GridToolbar } from "@mui/x-data-grid";
-import TransactionsDialog from "./manageAccount/TransactionsDialog ";
-import { useNavigate } from "react-router-dom";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
-import AdminSidebar from "../../../components/layout/adminSidebar/adminSidebar";
 import CloseIcon from "@mui/icons-material/Close";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { getAllUsers } from "../../../store/users/userActions";
-import { getAllAccounts } from "../../../store/accounts/accountsActions";
+import { getAllAccounts, resetAccounts } from "../../../store/accounts/accountsActions";
 import { getAllTransactions } from "../../../store/Transactions/transactionActions";
+import TransactionsDialog from "./manageAccount/TransactionsDialog ";
+import Sidebar from "../../../components/layout/adminSidebar/adminSidebar"; // Adjust the import path as necessary
+
 const AdminUsersPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { users, loading, error } = useSelector((state) => state.users);
-  const {
-    accounts,
-    loading: loadingAccounts,
-    error: accountsError,
-  } = useSelector((state) => state.accounts);
-  const { transactions, loading: loadingTransactions, error: transactionsError } = useSelector((state) => state.transactions || {transactions:[]});
+  const { users, loading, error } = useSelector(state => state.users);
+  const { accounts, loading: loadingAccounts } = useSelector(state => state.accounts);
+  const { transactions, loading: loadingTransactions, error: transactionsError } = useSelector(state => state.transactions || { transactions: [] });
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedAccountId, setSelectedAccountId] = useState(null);
   const [openTransactionsDialog, setOpenTransactionsDialog] = useState(false);
 
   useEffect(() => {
     dispatch(getAllUsers());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (open && selectedUser) {
+      dispatch(resetAccounts());
+      dispatch(getAllAccounts(selectedUser._id));
+    }
+  }, [dispatch, selectedUser, open]);
+
   const handleViewAccounts = (userId) => {
-    setSelectedUser(users.find((user) => user._id === userId));
+    const user = users.find(user => user._id === userId);
+    setSelectedUser(user);
     setOpen(true);
-    dispatch(getAllAccounts(userId));
   };
 
   const handleViewTransactions = async (accountId) => {
     try {
-      console.log('12',accountId);
+      setSelectedAccountId(accountId);
       await dispatch(getAllTransactions(accountId));
-      setOpenTransactionsDialog(true);
+      if (transactions) {
+        setOpenTransactionsDialog(true);
+      } else {
+        alert("No transactions found for this account.");
+      }
     } catch (error) {
-      console.error('Failed to fetch transactions:', error);
+      console.error("Failed to fetch transactions:", error);
     }
   };
 
@@ -67,13 +76,13 @@ const AdminUsersPage = () => {
     setSelectedUser(null);
   };
 
-  const handleManageAccount = (accountId) => {
-    console.log("accountid",accountId);
-    navigate(`/admin/manage-account/${accountId}`);
-  };
-
   const handleCloseTransactionsDialog = () => {
     setOpenTransactionsDialog(false);
+    setSelectedAccountId(null);
+  };
+
+  const handleManageAccount = (accountId) => {
+    navigate(`/admin/manage-account/${accountId}`);
   };
 
   if (error) {
@@ -82,46 +91,27 @@ const AdminUsersPage = () => {
 
   const columns = [
     { field: "id", headerName: "ID", flex: 1.5, sortable: false },
-    {
-      field: "name",
-      headerName: "Name",
-      flex: 1,
-      sortable: true,
-      filterable: true,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      flex: 1.5,
-      sortable: true,
-      filterable: true,
-    },
-    {
-      field: "createdAt",
-      headerName: "Created At",
-      flex: 1,
-      sortable: true,
-      filterable: true,
-    },
+    { field: "name", headerName: "Name", flex: 1, sortable: true, filterable: true },
+    { field: "email", headerName: "Email", flex: 1.5, sortable: true, filterable: true },
+    { field: "createdAt", headerName: "Created At", flex: 1, sortable: true, filterable: true },
     {
       field: "actions",
       headerName: "Actions",
       flex: 1,
       sortable: false,
       renderCell: (params) => (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handleViewAccounts(params.row.id)}
-          >
-            View Accounts
-          </Button>
-          
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleViewAccounts(params.row.id)}
+        >
+          View Accounts
+        </Button>
       ),
     },
   ];
 
-  const rows = users.map((user) => ({
+  const rows = users.map(user => ({
     id: user._id,
     name: user.name,
     email: user.email,
@@ -130,7 +120,7 @@ const AdminUsersPage = () => {
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh" }}>
-      <AdminSidebar />
+      <Sidebar/>
       <motion.div
         style={{ flexGrow: 1, padding: 20 }}
         initial={{ opacity: 0 }}
@@ -138,27 +128,17 @@ const AdminUsersPage = () => {
         transition={{ duration: 0.5 }}
       >
         <Container maxWidth="lg">
-        <Typography
-              variant="h4"
-              sx={{ fontWeight: "bold", marginBottom: 2 }}
-            >
-              User Management
-            </Typography>
+          <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: 2 }}>
+            User Management
+          </Typography>
           <Paper elevation={3} sx={{ padding: 4, borderRadius: 2 }}>
-            
             <div style={{ width: "100%" }}>
               {loading ? (
                 <CircularProgress />
               ) : (
                 <DataGrid
                   rows={rows}
-                  columns={columns.map((column) => ({
-                    ...column,
-                    flex:
-                      window.innerWidth > 600 ? column.flex : column.flex * 0.8,
-                    hide:
-                      window.innerWidth < 600 && column.field === "email",
-                  }))}
+                  columns={columns}
                   checkboxSelection={false}
                   slots={{
                     toolbar: GridToolbar,
@@ -207,7 +187,7 @@ const AdminUsersPage = () => {
             >
               <CircularProgress />
             </Box>
-          ) : accounts.length ? (
+          ) : accounts && accounts.length > 0 ? (
             <List
               sx={{
                 bgcolor: "background.paper",
@@ -215,7 +195,7 @@ const AdminUsersPage = () => {
                 boxShadow: 3,
               }}
             >
-              {accounts && accounts.map((account) => (
+              {accounts.map((account) => (
                 <React.Fragment key={account._id}>
                   <ListItem alignItems="flex-start">
                     <Avatar sx={{ bgcolor: "#1976d2", marginRight: 2 }}>
@@ -242,8 +222,7 @@ const AdminUsersPage = () => {
                             variant="body2"
                             color="text.primary"
                           >
-                            <strong>Balance:</strong> $
-                            {account.balance.toFixed(2)}
+                            <strong>Balance:</strong> ${account.balance.toFixed(2)}
                           </Typography>
                           <br />
                           <Typography
@@ -259,8 +238,7 @@ const AdminUsersPage = () => {
                             variant="body2"
                             color="text.primary"
                           >
-                            <strong>Created At:</strong>{" "}
-                            {new Date(account.createdAt).toLocaleDateString()}
+                            <strong>Created At:</strong> {new Date(account.createdAt).toLocaleDateString()}
                           </Typography>
                           <br />
                           <Button
@@ -268,7 +246,7 @@ const AdminUsersPage = () => {
                             color="primary"
                             size="small"
                             sx={{ mt: 1, mr: 1 }}
-                            onClick={() => handleManageAccount(account?._id)}
+                            onClick={() => handleManageAccount(account._id)}
                           >
                             Manage Account
                           </Button>

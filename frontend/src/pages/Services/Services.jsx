@@ -42,9 +42,9 @@ export const services = [
 
 const OurServices = () => {
   return (
-    <div style={{ backgroundColor: darkTheme.backgroundColor, color: darkTheme.color, minHeight: '100vh', padding: '40px 0' }}>
+    <div style={{ backgroundColor: darkTheme.backgroundColor, color: darkTheme.color, minHeight: '100vh', padding: '60px 20px' }}>
       <Container maxWidth="lg">
-        <Typography variant="h4" gutterBottom textAlign="center" sx={{ fontWeight: 'bold', color: darkTheme.primary, mb: 4 }}>
+        <Typography variant="h4" gutterBottom textAlign="center" sx={{ fontWeight: 'bold', color: darkTheme.primary, mb: 4,fontSize:'3rem' }}>
           Our Services
         </Typography>
         <Grid container spacing={4} justifyContent="center" alignItems="stretch">

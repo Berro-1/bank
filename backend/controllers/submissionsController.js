@@ -121,19 +121,27 @@ const getUserSubmissions = async (req, res) => {
 // Update a submission
 const updateSubmission = async (req, res) => {
   const { id } = req.params;
+  const { status } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "No submission with that id" });
   }
-  const submission = await Submission.findOneAndUpdate(
-    { _id: id },
-    { ...req.body },
-    { new: true, runValidators: true }
-  );
-  if (!submission) {
-    return res.status(404).json({ error: "No submission with that id" });
+
+  try {
+    const submission = await Submission.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true, runValidators: true }
+    );
+
+    if (!submission) {
+      return res.status(404).json({ error: "No submission with that id" });
+    }
+
+    res.status(200).json(submission);
+  } catch (error) {
+    res.status(500).json({ error: "Server error: " + error.message });
   }
-  res.status(200).json(submission);
 };
 
 // Delete a submission

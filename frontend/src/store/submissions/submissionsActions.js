@@ -66,3 +66,17 @@ export const getAllSubmissions = (reqType) => async (dispatch) => {
     }
   }
 };
+
+
+export const updateSubmissionStatus = (id, status) => async (dispatch) => {
+  try {
+    const response = await axios.patch(`http://localhost:4000/api/submissions/${id}`, { status });
+    dispatch(submissionsActions.fetchRequest());
+    dispatch(getAllSubmissions("credit-card"));
+    dispatch(getAllSubmissions("new-account"));
+    toast.success("Submission status updated successfully", { autoClose: 1000, theme: "colored" });
+  } catch (error) {
+    dispatch(submissionsActions.fetchFail(error.response ? error.response.data : "Network error or no response"));
+    toast.error(error.response.data.message, { autoClose: 1000, theme: "colored" });
+  }
+};

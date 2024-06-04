@@ -98,3 +98,5 @@ export const deleteAccount = (accountId) => async (dispatch) => {
     });
   }
 };
+
+export const {resetAccounts} = accountsActions;

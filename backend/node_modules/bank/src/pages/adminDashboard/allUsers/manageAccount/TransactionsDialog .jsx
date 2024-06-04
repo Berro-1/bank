@@ -72,14 +72,18 @@ const TransactionsDialog = ({ open, handleClose, transactions, loading }) => {
                   <ListItemText
                     primary={
                       <>
-                        <Typography variant="h6" sx={{ fontWeight: "bold" }} className="flex align-middle justify-start">
-                          ${transaction.amount} -{"     "}
+                        <Typography
+                          variant="h6"
+                          sx={{ fontWeight: "bold" }}
+                          className="flex align-middle justify-start"
+                        >
+                          ${transaction.amount} -{" "}
                           <Typography
                             variant=""
                             color="text.secondary"
-                            sx={{ fontStyle: "italic",marginLeft:'5px' }}
+                            sx={{ fontStyle: "italic", marginLeft: "5px" }}
                           >
-                          {transaction.transfer_type}
+                            {transaction.type}
                           </Typography>
                         </Typography>
                       </>
@@ -100,8 +104,23 @@ const TransactionsDialog = ({ open, handleClose, transactions, loading }) => {
                           variant="body2"
                           color="text.primary"
                         >
-                          <strong>Account: </strong> {transaction.second_account}
+                          <strong>From:</strong> {transaction.senderName} (
+                          {transaction.senderTransferType})
                         </Typography>
+                        <br />
+                        <Typography
+                          component="span"
+                          variant="body2"
+                          color="text.primary"
+                        >
+                          <strong>To:</strong>{" "}
+                          {transaction.receiverModel === "Loan"
+                            ? transaction.type
+                            : transaction.receiverName}{" "}
+                          ({transaction.receiverTransferType})
+                        </Typography>
+                        <br />
+                        
                       </>
                     }
                   />

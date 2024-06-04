@@ -34,6 +34,10 @@ const allAccountsSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    resetAccounts: (state) => {
+      state.accounts = [];
+      state.error = null;
+    },
   },
 });
 

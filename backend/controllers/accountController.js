@@ -28,11 +28,14 @@ const getUserAccounts = async (req, res) => {
     return res.status(404).json({ error: "No account with that id" });
   }
   const accounts = await Account.find({ user: id });
-  if (!accounts.length) {
-    return res.status(404).json({ error: "No accounts found for this user" });
+  if (!accounts || accounts.length === 0) {
+    return res.status(200).json([]); // Correct response for no accounts
   }
   res.status(200).json(accounts);
 };
+
+
+
 
 // Fetch a single account by account ID provided in query
 const getAccountByQr = async (req, res) => {

@@ -24,8 +24,9 @@ import {
   AccountBalance as AccountBalanceIcon,
 } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
-import { getAllSubmissions } from "../../../store/submissions/submissionsActions";
+import { getAllSubmissions, updateSubmissionStatus } from "../../../store/submissions/submissionsActions";
 import AdminSidebar from "../../../components/layout/adminSidebar/adminSidebar";
+import UpdateStatusDialog from "./dialogs/updateDialog"; // Import the new component
 
 const StatusIndicator = styled("span")(({ status, theme }) => ({
   height: "10px",
@@ -35,11 +36,11 @@ const StatusIndicator = styled("span")(({ status, theme }) => ({
   marginLeft: "10px",
   marginRight: "5px",
   backgroundColor:
-    status === "Active"
+    status === "Pending"
+      ? "#F6B000" // Yellow
+      : status === "Approved"
       ? "#4CAF50" // Green
-      : status === "Closed"
-      ? "#F44336" // Red
-      : "#F6B000", // Default color (yellow)
+      : "#F44336", // Red
 }));
 
 const SubmissionsPage = () => {
@@ -49,7 +50,9 @@ const SubmissionsPage = () => {
   );
   const [tabValue, setTabValue] = useState("credit-card");
   const [openDialog, setOpenDialog] = useState(false);
+  const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [selectedDetails, setSelectedDetails] = useState(null);
+  const [selectedSubmission, setSelectedSubmission] = useState(null);
 
   useEffect(() => {
     dispatch(getAllSubmissions(tabValue));
@@ -67,6 +70,22 @@ const SubmissionsPage = () => {
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setSelectedDetails(null);
+  };
+
+  const handleOpenUpdateDialog = (submission) => {
+    setSelectedSubmission(submission);
+    setOpenUpdateDialog(true);
+  };
+
+  const handleCloseUpdateDialog = () => {
+    setOpenUpdateDialog(false);
+    setSelectedSubmission(null);
+  };
+
+  const handleUpdateStatus = (newStatus) => {
+    if (selectedSubmission) {
+      dispatch(updateSubmissionStatus(selectedSubmission.id, newStatus));
+    }
   };
 
   const columns = [
@@ -89,7 +108,7 @@ const SubmissionsPage = () => {
     },
     {
       field: "status",
-      headerContactBlog: "Status",
+      headerName: "Status",
       width: 180,
       renderCell: (params) => (
         <>
@@ -100,7 +119,7 @@ const SubmissionsPage = () => {
     {
       field: "details",
       headerName: "Details",
-      width: 300,
+      width: 180,
       renderCell: (params) => {
         if (
           (params.row.requestType === "new-account" &&
@@ -127,6 +146,16 @@ const SubmissionsPage = () => {
           day: "numeric",
         }),
     },
+    {
+      field: "update",
+      headerName: "Update",
+      width: 150,
+      renderCell: (params) => (
+        <Button onClick={() => handleOpenUpdateDialog(params.row)}>
+          Update Status
+        </Button>
+      ),
+    },
   ];
 
   const rows = submissions.map((sub) => ({
@@ -138,12 +167,9 @@ const SubmissionsPage = () => {
     <Box sx={{ display: "flex" }}>
       <AdminSidebar />
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
-      <Typography
-              variant="h4"
-              sx={{ fontWeight: "bold", marginBottom: 2 }}
-            >
-            Submissions
-          </Typography>
+        <Typography variant="h4" sx={{ fontWeight: "bold", marginBottom: 2 }}>
+          Submissions
+        </Typography>
         <Paper
           sx={{
             p: 2,
@@ -152,7 +178,6 @@ const SubmissionsPage = () => {
             flexDirection: "column",
           }}
         >
-         
           <Tabs
             value={tabValue}
             onChange={handleChangeTab}
@@ -239,6 +264,14 @@ const SubmissionsPage = () => {
               </Button>
             </DialogActions>
           </Dialog>
+        )}
+        {selectedSubmission && (
+          <UpdateStatusDialog
+            open={openUpdateDialog}
+            handleClose={handleCloseUpdateDialog}
+            handleUpdate={handleUpdateStatus}
+            currentStatus={selectedSubmission.status}
+          />
         )}
       </Container>
     </Box>
