@@ -60,11 +60,11 @@ const LoansPage = () => {
     setPaymentDialogOpen(false);
   };
 
-  const handleConfirmPayment = (loanId, amount, accountId) => {
+  const handleConfirmPayment = (loanId, second_account, amount) => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user && user.id) {
       const userId = user.id;
-      dispatch(createLoanPayment(loanId, amount, accountId, userId));
+      dispatch(createLoanPayment(loanId, second_account, amount, userId));
     }
   };
 
@@ -110,15 +110,16 @@ const LoansPage = () => {
         ),
     },
   ];
-
-  const rows = loans.map((loan) => ({
-    id: loan._id,
-    type: loan.type,
-    amount: loan.amount,
-    interest_rate: loan.interest_rate,
-    loan_term: loan.loan_term,
-    status: loan.status,
-  }));
+   const rows = Array.isArray(loans)
+     ? loans.map((loan) => ({
+         id: loan._id,
+         type: loan.type,
+         amount: loan.amount,
+         interest_rate: loan.interest_rate,
+         loan_term: loan.loan_term,
+         status: loan.status,
+       }))
+     : [];
 
   return (
     <div className="flex w-full">

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Card,
@@ -29,8 +29,14 @@ const getImagePath = (cardName) => {
 };
 
 export default function CreditCards() {
-  const userId = "6644dcb9c16b269cf9bae998";
+const [userId, setUserId] = useState(null);
 
+useEffect(() => {
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user && user.id) {
+    setUserId(user.id);
+  }
+}, []);
   const dispatch = useDispatch();
   const { loading, cards } = useSelector(
     (state) => state.cards || { cards: [], loading: false }

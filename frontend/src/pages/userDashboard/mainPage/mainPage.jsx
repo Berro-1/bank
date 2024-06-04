@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux"; // Import useDispatch and useSelector
 import Sidebar from "../../../components/layout/Sidebar/Sidebar";
 import DashboardItem from "./DashboardItem/DashboardItem";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
@@ -7,9 +8,29 @@ import ReceiptLongOutlinedIcon from "@mui/icons-material/ReceiptLongOutlined";
 import GridViewOutlinedIcon from "@mui/icons-material/GridViewOutlined";
 import LatestActivities from "./LatestActivities/LatestActivities";
 import { motion } from "framer-motion";
+import { getAlluserTransactions } from "../../../store/statistics/statisticsActions";
+import { getAllAccounts } from "../../../store/accounts/accountsActions";
 
 export default function MainPage() {
+  const dispatch = useDispatch(); // Define dispatch
   const [selectedAccountId, setSelectedAccountId] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const statistics = useSelector((state) => state.statistics.statistics || {});
+  const accounts = useSelector((state) => state.accounts.accounts || []);
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.id) {
+      setUserId(user.id);
+      dispatch(getAlluserTransactions(user.id));
+      dispatch(getAllAccounts(user.id));
+    }
+  }, [dispatch]);
+
+  const totalBalance = accounts.reduce(
+    (sum, account) => sum + (account.balance || 0),
+    0
+  );
 
   return (
     <div className="flex">
@@ -31,25 +52,21 @@ export default function MainPage() {
             backgroundColor="#2D3748"
             icon={PersonOutlineOutlinedIcon}
             title="Total Accounts"
-            value="123"
+            value={accounts.length}
           />
           <DashboardItem
             backgroundColor="#4A5568"
             icon={ReceiptLongOutlinedIcon}
             title="Total Transactions"
-            value="456"
+            value={statistics.totalTransactions || 0}
           />
           <DashboardItem
             backgroundColor="#2D3748"
             icon={AccountBalanceWalletOutlinedIcon}
             title="Current Balance"
-            value="789"
+            value={totalBalance}
           />
         </div>
-        <LatestActivities
-          accountId={selectedAccountId}
-          onAccountSelect={setSelectedAccountId}
-        />
       </motion.div>
     </div>
   );
