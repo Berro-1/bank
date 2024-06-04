@@ -1,37 +1,113 @@
-/* Burger Menu Overlay */
-.menu-overlay {
+/* Main Navbar Styling */
+.navbar {
+  background: rgba(17, 24, 39, 0.8); /* Semi-transparent for glass effect */
+  backdrop-filter: blur(10px); /* Glassmorphism effect */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
+  padding: 0 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6); /* Enhanced shadow for depth */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 70px; /* Fixed height for uniform appearance */
+  position: sticky; /* Sticky header */
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+/* Logo Styling */
+.logo {
+  height: 50px;
+  transition: transform 0.3s ease-out;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3)); /* Soft shadow on logo */
+}
+
+.logo:hover {
+  transform: scale(1.05); /* Subtle scale effect on hover */
+}
+
+/* Brand Styling */
+.brand {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* Navigation Link Styling */
+.nav-link, .login-btn {
+  color: #E0E0E0;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 50px; /* Rounded borders for a modern look */
+  transition: all 0.3s ease;
+  margin: 0 5px;
+}
+
+/* Hover and Active States for Nav Items */
+.nav-link:hover, .nav-link.active, .login-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+  border-bottom: 3px solid #64CCC5;
+}
+
+/* Mobile Menu Button */
+.menu-toggle {
+  display: none;
+  cursor: pointer;
+  fill: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .nav-menu {
     position: fixed;
     top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000; /* Ensure it's above other content */
-    display: flex;
+    right: -100%;
+    width: 100%; /* Full width for mobile menu */
+    height: 100vh; /* Full viewport height */
+    background: rgba(17, 24, 39, 0.95); /* Slightly darker for mobile */
+    backdrop-filter: blur(10px); /* Consistent glass effect */
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    transition: opacity 0.3s ease;
+    transition: right 0.3s ease-in-out;
   }
-  
-  /* Hidden State for the Overlay */
-  .menu-overlay.hidden {
-    opacity: 0;
-    pointer-events: none; /* Prevent interaction when hidden */
+
+  .nav-menu.open {
+    right: 0; /* Full right slide in */
   }
-  
-  /* Visible State for the Overlay */
-  .menu-overlay.visible {
-    opacity: 1;
-    pointer-events: all; /* Allow interaction */
+
+  .nav-link, .login-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 15px 20px; /* Larger touch targets */
   }
-  
-  /* Menu Animation */
-  .menu-animation {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-  }
-  
-  .menu-animation.open {
-    transform: translateX(0%);
-  }
-  
+}
+.nav-link, .login-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link::after, .login-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  transition: height 0.3s ease;
+}
+
+.nav-link:hover::after, .login-btn:hover::after {
+  height: 100%;
+}

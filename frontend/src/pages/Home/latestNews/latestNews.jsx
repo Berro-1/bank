@@ -18,20 +18,21 @@ const newsArticles = [
 
 function LatestNewsSection() {
     return (
-        <Box sx={{ py: 8, backgroundColor: '#1c1c1c', color: 'white' }}>
+        <Box sx={{ py: 8, backgroundColor: '#121212', color: 'white' }}>
             <Container>
-                <Typography variant="h4" gutterBottom textAlign="center">
+                <Typography variant="h4" gutterBottom textAlign="center" sx={{ fontWeight: 'bold', color: '#64CCC5' }}>
                     Latest News
                 </Typography>
                 <Grid container spacing={4}>
                     {newsArticles.map((article) => (
                         <Grid item xs={12} sm={6} md={4} key={article.title}>
-                            <Card sx={{ backgroundColor: '#171717', color: 'white' }}>
+                            <Card sx={{ backgroundColor: '#1c1c1c', color: 'white', borderRadius: 2, boxShadow: '0 4px 20p rgba(0, 0, 0, 0.5)' }}>
                                 <CardMedia
                                     component="img"
                                     height="140"
                                     image={article.image}
                                     alt={article.title}
+                                    sx={{ borderRadius: '2px 2px 0 0' }}
                                 />
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="div">

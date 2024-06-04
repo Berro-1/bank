@@ -3,15 +3,15 @@ import { Box, Container, Typography, Grid, Avatar } from "@mui/material";
 
 function WhyChooseUsSection() {
     return (
-        <Box sx={{ py: 8, backgroundColor: '#1c1c1c', color: 'white' }}>
+        <Box sx={{ py: 8, backgroundColor: '#121212', color: 'white' }}>
             <Container>
-                <Typography variant="h4" gutterBottom textAlign="center">
+                <Typography variant="h4" gutterBottom textAlign="center" sx={{ fontWeight: 'bold', color: '#64CCC5' }}>
                     Why Choose Us
                 </Typography>
                 <Grid container spacing={4}>
                     <Grid item xs={12} sm={6} md={3}>
                         <Box sx={{ textAlign: 'center' }}>
-                            <Avatar sx={{ bgcolor: '#bb86fc', width: 56, height: 56, margin: '0 auto' }}>1</Avatar>
+                            <Avatar sx={{ bgcolor: '#52A9A5', width: 56, height: 56, margin: '0 auto' }}>1</Avatar>
                             <Typography variant="h6" mt={2}>
                                 Trusted
                             </Typography>
@@ -22,7 +22,7 @@ function WhyChooseUsSection() {
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                         <Box sx={{ textAlign: 'center' }}>
-                            <Avatar sx={{ bgcolor: '#bb86fc', width: 56, height: 56, margin: '0 auto' }}>2</Avatar>
+                            <Avatar sx={{ bgcolor: '#52A9A5', width: 56, height: 56, margin: '0 auto' }}>2</Avatar>
                             <Typography variant="h6" mt={2}>
                                 Secure
                             </Typography>
@@ -33,7 +33,7 @@ function WhyChooseUsSection() {
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                         <Box sx={{ textAlign: 'center' }}>
-                            <Avatar sx={{ bgcolor: '#bb86fc', width: 56, height: 56, margin: '0 auto' }}>3</Avatar>
+                            <Avatar sx={{ bgcolor: '#52A9A5', width: 56, height: 56, margin: '0 auto' }}>3</Avatar>
                             <Typography variant="h6" mt={2}>
                                 Accessible
                             </Typography>
@@ -44,7 +44,7 @@ function WhyChooseUsSection() {
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                         <Box sx={{ textAlign: 'center' }}>
-                            <Avatar sx={{ bgcolor: '#bb86fc', width: 56, height: 56, margin: '0 auto' }}>4</Avatar>
+                            <Avatar sx={{ bgcolor: '#52A9A5', width: 56, height: 56, margin: '0 auto' }}>4</Avatar>
                             <Typography variant="h6" mt={2}>
                                 Support
                             </Typography>

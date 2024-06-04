@@ -12,6 +12,7 @@ const qrRoutes = require("./routes/qrRoutes");
 const submissionRoutes =require("./routes/SubmissionRoutes")
 const authRoutes = require('./routes/authRoutes');
 const cookieParser = require('cookie-parser')
+const sgMail = require('@sendgrid/mail');
 
 const app = express();
 
@@ -36,6 +37,31 @@ app.use("/api/transaction", transactionRouter);
 app.use("/api", qrRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/auth",authRoutes);
+
+//email
+sgMail.setApiKey('YOUR_SENDGRID_API_KEY');
+
+app.post('/send-email', (req, res) => {
+    const { name, email, message } = req.body;
+
+    const msg = {
+        to: 'hussienberro1@gmail.com',
+        from: email,
+        subject: `Contact Us Form Submission from ${name}`,
+        text: message
+    };
+
+    sgMail
+        .send(msg)
+        .then(() => {
+            res.status(200).json({ success: 'Email sent successfully!' });
+        })
+        .catch((error) => {
+            console.error(error);
+            res.status(500).send(error.toString());
+        });
+});
+
 
 const PORT = process.env.PORT || 4001;
 

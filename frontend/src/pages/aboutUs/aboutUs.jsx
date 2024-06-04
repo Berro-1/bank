@@ -1,12 +1,13 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, Container, Box, Grid, Avatar, Paper, Divider, Button } from '@mui/material';
+import { Box, Container, Typography, Grid, Avatar, Paper, Divider } from '@mui/material';
 import { motion } from 'framer-motion';
+import Footer from '../../components/footer/footer';
 
 const darkTheme = {
-  backgroundColor: '#1F2937',
+  backgroundColor: '#111827', // Matching the deep navy blue
   color: '#ffffff',
-  primary: '#bb86fc',
-  secondary: '#03dac6',
+  primary: '#64CCC5', // Consistent medium teal
+  secondary: '#bb86fc', // Accent color for highlights
 };
 
 const teamMembers = [
@@ -44,8 +45,7 @@ const testimonials = [
 
 const AboutUs = () => {
   return (
-    <div style={{ backgroundColor: darkTheme.backgroundColor, color: darkTheme.color, minHeight: '100vh' }}>
-      
+    <Box sx={{ backgroundColor: darkTheme.backgroundColor, color: darkTheme.color, minHeight: '100vh' }}>
       <Box sx={{ py: 8 }}>
         <Container>
           <Typography variant="h3" gutterBottom textAlign="center" sx={{ fontWeight: 'bold', color: darkTheme.primary }}>
@@ -262,7 +262,8 @@ const AboutUs = () => {
           </Box>
         </Container>
       </Box>
-    </div>
+      <Footer/>
+    </Box>
   );
 };
 
