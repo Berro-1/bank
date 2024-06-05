@@ -149,10 +149,10 @@ const SubmissionsPage = () => {
     {
       field: "update",
       headerName: "Update",
-      width: 150,
+      width: 180,
       renderCell: (params) => (
         <Button onClick={() => handleOpenUpdateDialog(params.row)}>
-          Update Status
+          update status
         </Button>
       ),
     },
@@ -206,7 +206,7 @@ const SubmissionsPage = () => {
               columns={columns}
               pageSize={5}
               rowsPerPageOptions={[5, 10, 15]}
-              components={{ Toolbar: GridToolbar }}
+              slots={{ toolbar: GridToolbar }}
               autoHeight
             />
           ) : (

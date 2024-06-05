@@ -1,6 +1,10 @@
 const Submission = require("../models/Submission");
 const mongoose = require("mongoose");
 
+const CreditCards = require("../models/CreditCards");
+const Users = require("../models/User");
+const Loans = require("../models/Loans");
+
 const createCreditCardSubmission = async (req, res) => {
   const { userId } = req.params;
   const { details } = req.body;
@@ -118,31 +122,168 @@ const getUserSubmissions = async (req, res) => {
   }
 };
 
-// Update a submission
 const updateSubmission = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "No submission with that id" });
+      return res.status(404).json({ error: "No submission with that id" });
   }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
   try {
-    const submission = await Submission.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true, runValidators: true }
-    );
+      const submission = await Submission.findById(id).session(session);
 
-    if (!submission) {
-      return res.status(404).json({ error: "No submission with that id" });
-    }
+      if (!submission) {
+          await session.abortTransaction();
+          session.endSession();
+          return res.status(404).json({ error: "No submission found with that id" });
+      }
 
-    res.status(200).json(submission);
+      submission.status = status;
+      await submission.save({ session });
+      
+      if (status === "Approved") {
+          try {
+              switch (submission.requestType) {
+                  case "credit-card":
+                      const creditCard = await createCreditCard(submission.user, submission.details.cardName, submission.details.expiryDate);
+                      console.log("Credit card created:", creditCard);
+                      break;
+                  case "new-account":
+                      if (submission.details.accountType === "Loan") {
+                        console.log(submission.details);
+                          await createLoanAccount(submission.user, submission.details, session);
+                      } else {
+                          await createAccount(submission.user, submission.details, session);
+                      }
+                      break;
+                  default:
+                      throw new Error("Invalid request type");
+              }
+          } catch (error) {
+              throw new Error(`Failed to process approved submission: ${error.message}`);
+          }
+      }
+
+      await session.commitTransaction();
+      session.endSession();
+      res.status(200).json(submission);
   } catch (error) {
-    res.status(500).json({ error: "Server error: " + error.message });
+      await session.abortTransaction();
+      session.endSession();
+      console.error("Transaction failed:", error);
+      res.status(500).json({ error: "Transaction failed: " + error.message });
   }
 };
+
+
+
+
+
+
+const generateUniqueCardNumber = async () => {
+  const generateRandomNumber = () => {
+      return Math.floor(1000000000000000 + Math.random() * 9000000000000000); // Generate a 16-digit number
+  };
+
+  let cardNumber;
+  let isUnique = false;
+
+  while (!isUnique) {
+      cardNumber = generateRandomNumber();
+      const existingCard = await CreditCards.findOne({ card_number: cardNumber });
+      if (!existingCard) {
+          isUnique = true;
+      }
+  }
+
+  return cardNumber;
+};
+
+const createCreditCard = async (userId, card_name, expiry) => {
+
+ if (expiry <= new Date()) {
+      return { error: "Expiry date must be in the future." };
+  }
+  let credit_limit;
+  let available_credit;
+  switch (card_name) {
+      case "Platinum Card":
+          credit_limit = 20000;
+          available_credit = 20000;
+          break;
+      case "Gold Card":
+          credit_limit = 10000;
+          available_credit = 10000;
+          break;
+      case "Silver Card":
+          credit_limit = 5000;
+          available_credit = 5000;
+          break;
+      default:
+          throw new Error("Invalid card name.");
+  }
+
+  const existingCard = await CreditCards.findOne({ user: userId, card_name });
+  if (existingCard) {
+      throw new Error(`User already has a ${card_name}.`);
+  }
+
+  const card_number = await generateUniqueCardNumber();
+
+  return await CreditCards.create({
+      card_number,
+      user: userId,
+      card_name,
+      expiry_date: expiry,
+      credit_limit,
+      available_credit,
+  });
+};
+
+
+// Create a new loan account, checking eligibility
+const createLoanAccount = async (userId, loanDetails, session) => {
+  if (!userId || !loanDetails.loanType || !loanDetails.amount || !loanDetails.loanTerm) {
+      throw new Error("All loan fields are required.");
+  }
+
+  const userDoc = await Users.findById(userId).session(session);
+  if (!userDoc) {
+    throw new Error("User not found.");
+  }
+  
+  if (!userDoc.is_eligible_for_loan) {
+    throw new Error("User is not eligible for a loan.");
+  }
+
+  const interest_rate = (loanDetails.loanTerm / 12) * 4; // Example calculation for interest rate
+
+  const newLoan = new Loans({
+    user: userId,
+    type: loanDetails.loanType,
+    amount: loanDetails.amount,
+    interest_rate,
+    loan_term: loanDetails.loanTerm,
+    status: "Active",
+  });
+
+  await newLoan.save({ session });
+
+  // Update user eligibility
+  userDoc.is_eligible_for_loan = false;
+  await userDoc.save({ session });
+};
+
+
+
+
+
+
+
 
 // Delete a submission
 const deleteSubmission = async (req, res) => {

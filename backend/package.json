@@ -12,7 +12,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@sendgrid/mail": "^8.1.3",
     "bank": "file:../frontend",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",

@@ -161,8 +161,6 @@ const Submissions = () => {
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
               <CircularProgress color="primary" />
             </Box>
-          ) : error ? (
-            <Typography color="error">{error}</Typography>
           ) : (
             <Paper elevation={3} sx={{ padding: 4, borderRadius: 2, marginTop: 3 }}>
               <div style={{ height: 600, width: "100%" }}>
