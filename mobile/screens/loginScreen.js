@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, StyleSheet, StatusBar, Dimensions } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  StatusBar,
+  Dimensions,
+} from "react-native";
 import {
   Button,
   TextInput,
@@ -10,39 +16,31 @@ import {
 import * as Animatable from "react-native-animatable";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-const { width } = Dimensions.get("window"); // Get the width of the device screen
-
+// Custom dark theme configuration
 const theme = {
   ...DefaultTheme,
+  roundness: 2,
   colors: {
     ...DefaultTheme.colors,
-    primary: "#0f969c",
-    accent: "#6da5c0",
-    background: "#05161a",
-    surface: "#072e33",
-    text: "#ffffff",
-    disabled: "#294d61",
-    placeholder: "#6da5c0",
+    primary: "#0f969c", // Light teal for primary actions
+    accent: "#6da5c0", // Sky blue for secondary elements and accents
+    background: "#05161a", // Darkest blue as the background for the whole app
+    surface: "#072e33", // Dark blue for card-like surfaces
+    text: "#ffffff", // White text for contrast against dark backgrounds
+    disabled: "#294d61", // Medium blue for disabled elements
+    placeholder: "#6da5c0", // Lighter text for placeholders to ensure readability
   },
 };
+const { width } = Dimensions.get("window"); // Get the width of the device screen
 
-const SignupScreen = () => {
-  const [fullName, setFullName] = useState("");
+
+const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [address, setAddress] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
 
-  const handleSignupPress = () => {
-    console.log("Signup attempt with:", {
-      fullName,
-      email,
-      password,
-      confirmPassword,
-      address,
-      phoneNumber,
-    });
+  const handleLoginPress = () => {
+    console.log("Login attempt with:", email, password);
+    // Placeholder for further actions, e.g., navigation or API call
   };
 
   return (
@@ -64,25 +62,18 @@ const SignupScreen = () => {
           width: width, // Use the full width of the screen
         }}
       >
+        
         <Animatable.View
           animation="fadeInUp"
           duration={800}
-          style={styles.signupBox}
+          style={styles.loginBox}
         >
-          <Text style={styles.title}>Sign Up</Text>
+          <Text style={styles.title}>LogIn</Text>
           <Animatable.View
             animation="fadeInLeft"
             delay={300}
             style={{ width: "100%" }}
           >
-            <TextInput
-              label="Full Name"
-              value={fullName}
-              onChangeText={setFullName}
-              style={styles.input}
-              mode="flat"
-              underlineColor={theme.colors.accent}
-            />
             <TextInput
               label="Email"
               value={email}
@@ -90,40 +81,33 @@ const SignupScreen = () => {
               style={styles.input}
               mode="flat"
               underlineColor={theme.colors.accent}
+              theme={{
+                colors: {
+                  text: theme.colors.text,
+                  primary: theme.colors.accent,
+                },
+              }}
             />
+          </Animatable.View>
+          <Animatable.View
+            animation="fadeInRight"
+            delay={600}
+            style={{ width: "100%" }}
+          >
             <TextInput
               label="Password"
               value={password}
               onChangeText={setPassword}
+              style={styles.input}
+              mode="flat"
               secureTextEntry
-              style={styles.input}
-              mode="flat"
               underlineColor={theme.colors.accent}
-            />
-            <TextInput
-              label="Confirm Password"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry
-              style={styles.input}
-              mode="flat"
-              underlineColor={theme.colors.accent}
-            />
-            <TextInput
-              label="Address"
-              value={address}
-              onChangeText={setAddress}
-              style={styles.input}
-              mode="flat"
-              underlineColor={theme.colors.accent}
-            />
-            <TextInput
-              label="Phone Number"
-              value={phoneNumber}
-              onChangeText={setPhoneNumber}
-              style={styles.input}
-              mode="flat"
-              underlineColor={theme.colors.accent}
+              theme={{
+                colors: {
+                  text: theme.colors.text,
+                  primary: theme.colors.accent,
+                },
+              }}
             />
           </Animatable.View>
           <Animatable.View
@@ -133,11 +117,11 @@ const SignupScreen = () => {
           >
             <Button
               mode="contained"
-              onPress={handleSignupPress}
+              onPress={handleLoginPress}
               style={styles.button}
               labelStyle={{ color: theme.colors.text }}
             >
-              Sign Up
+              Log In
             </Button>
           </Animatable.View>
         </Animatable.View>
@@ -149,10 +133,12 @@ const SignupScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: theme.colors.background,
   },
-  signupBox: {
-    width: width * 0.95, // Make the box take up 95% of the screen width
+  loginBox: {
+    width: "90%",
     padding: 20,
     backgroundColor: theme.colors.surface,
     borderRadius: 8,
@@ -178,4 +164,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignupScreen;
+export default LoginScreen;
