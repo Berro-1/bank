@@ -6,7 +6,7 @@ import MainPage from './screens/mainPage';
 export default function App() {
   return (
     <View style={styles.container}>
-      <MainPage />
+      <Signup />
       <StatusBar style="auto" />
     </View>
   );
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    // alignItems: 'center',
+    alignItems: 'center',
     justifyContent: 'center',
   },
 });
