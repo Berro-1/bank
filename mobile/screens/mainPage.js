@@ -1,100 +1,93 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, SafeAreaView, StatusBar } from 'react-native';
-import Carousel from 'react-native-snap-carousel';
-import * as Animatable from 'react-native-animatable';
+import React from "react";
+import { ScrollView, View, Text, StyleSheet, Button } from "react-native";
+import { Card, Title, Paragraph } from "react-native-paper";
 
-const { width } = Dimensions.get('window');
-
-const darkTheme = {
-  backgroundColor: '#111827',
-  color: '#ffffff',
-  primary: '#64CCC5',
-  secondary: '#03dac6',
-};
-
-const services = [
-  {
-    title: 'Savings Account',
-    description: `Secure your future with our high-interest savings accounts.`,
-    image: require('../assets/savings.jpg'), // Ensure this path is correct
-  },
-  {
-    title: 'Loans',
-    description: `Get the financial support you need with our loan services.`,
-    image: require('../assets/loan.jpg'), // Ensure this path is correct
-  },
-  // Add more services as needed
-];
-
-const MainPage = () => {
-  const renderItem = ({ item, index }) => (
-    <Animatable.View
-      animation="fadeInUp"
-      delay={index * 100}
-      style={styles.card}
-    >
-      <Image source={item.image} style={styles.image} />
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.description}>{item.description}</Text>
-    </Animatable.View>
-  );
+const mainPage = () => {
+  const accountBalance = "12,345.67";
+  const recentTransactions = [
+    { id: 1, type: "Deposit", amount: "500.00", date: "2024-06-08" },
+    { id: 2, type: "Withdrawal", amount: "200.00", date: "2024-06-07" },
+  ];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={darkTheme.backgroundColor} />
-      <Text style={styles.header}>Our Services</Text>
-      <Carousel
-        data={services}
-        renderItem={renderItem}
-        sliderWidth={width}
-        itemWidth={width * 0.8}
-        loop={true}
-      />
-    </SafeAreaView>
+    <ScrollView style={styles.container}>
+      <View style={styles.balanceSection}>
+        <Text style={styles.balanceText}>Your Balance</Text>
+        <Text style={styles.balance}>{`$${accountBalance}`}</Text>
+      </View>
+
+      <View style={styles.actionSection}>
+        <Button
+          color="#0c7076"
+          title="Send Money"
+          onPress={() => alert("Send Money")}
+        />
+        <Button
+          color="#0c7076"
+          title="Pay Bills"
+          onPress={() => alert("Pay Bills")}
+        />
+        <Button
+          color="#0c7076"
+          title="Deposit"
+          onPress={() => alert("Deposit")}
+        />
+      </View>
+
+      <View style={styles.transactionsSection}>
+        <Text style={styles.sectionTitle}>Recent Transactions</Text>
+        {recentTransactions.map((transaction) => (
+          <Card key={transaction.id} style={styles.card}>
+            <Card.Content style={{ backgroundColor: "#fff" }}>
+              <Title>{transaction.type}</Title>
+              <Paragraph>{`$${transaction.amount}`}</Paragraph>
+              <Paragraph>{transaction.date}</Paragraph>
+            </Card.Content>
+          </Card>
+        ))}
+      </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: darkTheme.backgroundColor,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  header: {
-    fontSize: 24,
-    color: darkTheme.primary,
-    fontWeight: 'bold',
-    marginVertical: 20,
-  },
-  card: {
-    backgroundColor: '#1a2238',
-    borderRadius: 12,
     padding: 20,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    backgroundColor: "#05161a",
   },
-  image: {
-    width: '100%',
-    height: 200,
-    borderRadius: 12,
+  balanceSection: {
     marginBottom: 20,
   },
-  title: {
-    fontSize: 20,
-    color: darkTheme.primary,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    textAlign: 'center',
+  balanceText: {
+    marginTop: 25,
+    fontSize: 18,
+    color: "#6da5c0",
+    marginBottom: 5,
   },
-  description: {
-    fontSize: 14,
-    color: '#ffffff',
-    textAlign: 'center',
+  balance: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#0f969c",
+  },
+  actionSection: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 20,
+  },
+  transactionsSection: {
+    marginTop: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "#0c7076",
+  },
+  card: {
+    marginBottom: 10,
+    backgroundColor: "#072e33",
   },
 });
 
-export default MainPage;
+export default mainPage;
