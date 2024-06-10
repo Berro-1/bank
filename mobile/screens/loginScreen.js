@@ -22,25 +22,26 @@ const theme = {
   roundness: 2,
   colors: {
     ...DefaultTheme.colors,
-    primary: "#0f969c", // Light teal for primary actions
-    accent: "#6da5c0", // Sky blue for secondary elements and accents
-    background: "#05161a", // Darkest blue as the background for the whole app
-    surface: "#072e33", // Dark blue for card-like surfaces
-    text: "#ffffff", // White text for contrast against dark backgrounds
-    disabled: "#294d61", // Medium blue for disabled elements
-    placeholder: "#6da5c0", // Lighter text for placeholders to ensure readability
+    primary: "#0f969c",
+    accent: "#6da5c0",
+    background: "#05161a",
+    surface: "#072e33",
+    text: "#ffffff",
+    disabled: "#294d61",
+    placeholder: "#6da5c0",
   },
 };
-const { width } = Dimensions.get("window"); // Get the width of the device screen
 
+const { width } = Dimensions.get("window");
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
+  // Ensure the navigation prop is destructured here
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLoginPress = () => {
     console.log("Login attempt with:", email, password);
-    // Placeholder for further actions, e.g., navigation or API call
+    navigation.navigate("Home"); // This uses the navigation prop
   };
 
   return (
@@ -57,18 +58,17 @@ const LoginScreen = () => {
         contentContainerStyle={{
           flexGrow: 1,
           backgroundColor: theme.colors.background,
-          justifyContent: "center", // Keep centered
-          alignItems: "center", // Ensure this is here to center horizontally
-          width: width, // Use the full width of the screen
+          justifyContent: "center",
+          alignItems: "center",
+          width: width,
         }}
       >
-        
         <Animatable.View
           animation="fadeInUp"
           duration={800}
           style={styles.loginBox}
         >
-          <Text style={styles.title}>LogIn</Text>
+          <Text style={styles.title}>Log In</Text>
           <Animatable.View
             animation="fadeInLeft"
             delay={300}

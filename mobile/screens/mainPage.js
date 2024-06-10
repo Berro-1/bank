@@ -1,8 +1,44 @@
-import React from "react";
-import { ScrollView, View, Text, StyleSheet, Button } from "react-native";
+import React, { useRef, useEffect } from "react";
+import {
+  ScrollView,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+} from "react-native";
 import { Card, Title, Paragraph } from "react-native-paper";
 
-const mainPage = () => {
+const FadeInView = (props) => {
+  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  }, [fadeAnim]);
+
+  return (
+    <Animated.View // Special animatable View
+      style={{
+        ...props.style,
+        opacity: fadeAnim, // Bind opacity to animated value
+      }}
+    >
+      {props.children}
+    </Animated.View>
+  );
+};
+
+const CustomButton = ({ title, onPress, style }) => (
+  <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
+    <Text style={styles.buttonText}>{title}</Text>
+  </TouchableOpacity>
+);
+
+const MainPage = () => {
   const accountBalance = "12,345.67";
   const recentTransactions = [
     { id: 1, type: "Deposit", amount: "500.00", date: "2024-06-08" },
@@ -11,30 +47,30 @@ const mainPage = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.balanceSection}>
+      <FadeInView style={styles.balanceSection}>
         <Text style={styles.balanceText}>Your Balance</Text>
         <Text style={styles.balance}>{`$${accountBalance}`}</Text>
-      </View>
+      </FadeInView>
 
       <View style={styles.actionSection}>
-        <Button
-          color="#0c7076"
+        <CustomButton
           title="Send Money"
           onPress={() => alert("Send Money")}
+          style={{ backgroundColor: "#0c7076", marginHorizontal:1 }}
         />
-        <Button
-          color="#0c7076"
-          title="Pay Bills"
-          onPress={() => alert("Pay Bills")}
+        <CustomButton
+          title="Pay Loan"
+          onPress={() => alert("Pay Loan")}
+          style={{ backgroundColor: "#347d85", marginHorizontal: 1 }}
         />
-        <Button
-          color="#0c7076"
-          title="Deposit"
-          onPress={() => alert("Deposit")}
+        <CustomButton
+          title="Check Accounts"
+          onPress={() => alert("Check Accounts")}
+          style={{ backgroundColor: "#589a9e", marginHorizontal:1 }}
         />
       </View>
 
-      <View style={styles.transactionsSection}>
+      <FadeInView style={styles.transactionsSection}>
         <Text style={styles.sectionTitle}>Recent Transactions</Text>
         {recentTransactions.map((transaction) => (
           <Card key={transaction.id} style={styles.card}>
@@ -45,7 +81,7 @@ const mainPage = () => {
             </Card.Content>
           </Card>
         ))}
-      </View>
+      </FadeInView>
     </ScrollView>
   );
 };
@@ -72,8 +108,24 @@ const styles = StyleSheet.create({
   },
   actionSection: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     marginBottom: 20,
+  },
+  button: {
+    padding: 10,
+    borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    minWidth: 110,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
   },
   transactionsSection: {
     marginTop: 20,
@@ -87,7 +139,12 @@ const styles = StyleSheet.create({
   card: {
     marginBottom: 10,
     backgroundColor: "#072e33",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });
 
-export default mainPage;
+export default MainPage;

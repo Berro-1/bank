@@ -1,14 +1,32 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import Signup from './screens/signup';
-import LoginScreen from './screens/loginScreen'
-import MainPage from './screens/mainPage';
-import Tabs from './components/tabs'
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Signup from "./screens/signup";
+import LoginScreen from "./screens/loginScreen";
+import MainPage from "./screens/mainPage";
+import Tabs from "./components/tabs"; // Ensure this or any other screen component does not include another NavigationContainer
+import TabsUser from "./components/tabsUser";
+
 export default function App() {
+  const Stack = createNativeStackNavigator();
+
   return (
     <View style={styles.container}>
-       {/* <Tabs/>  */}
-      <MainPage/>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Tabs"
+          screenOptions={{
+            headerShown: false, // This hides the header globally
+          }}
+        >
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Home" component={TabsUser} />
+          <Stack.Screen name="SignUp" component={Signup} />
+          <Stack.Screen name="MainPage" component={MainPage} />
+          <Stack.Screen name="Tabs" component={Tabs} />
+        </Stack.Navigator>
+      </NavigationContainer>
       <StatusBar style="auto" />
     </View>
   );
@@ -17,7 +35,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-   
+    backgroundColor: "#fff",
   },
 });
