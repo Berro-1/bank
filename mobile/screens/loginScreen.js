@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  SafeAreaView,
   StyleSheet,
   View,
   StatusBar,
@@ -15,40 +14,48 @@ import {
 } from "react-native-paper";
 import * as Animatable from "react-native-animatable";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_URL } from 'react-native-dotenv';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 // Custom dark theme configuration
 const theme = {
   ...DefaultTheme,
-  roundness: 2,
   colors: {
     ...DefaultTheme.colors,
-    primary: "#0f969c", // Light teal for primary actions
-    accent: "#6da5c0", // Sky blue for secondary elements and accents
-    background: "#05161a", // Darkest blue as the background for the whole app
-    surface: "#072e33", // Dark blue for card-like surfaces
-    text: "#ffffff", // White text for contrast against dark backgrounds
-    disabled: "#294d61", // Medium blue for disabled elements
-    placeholder: "#6da5c0", // Lighter text for placeholders to ensure readability
+    primary: "#0f969c",
+    accent: "#6da5c0",
+    background: "#05161a",
+    surface: "#072e33",
+    text: "#ffffff",
+    disabled: "#294d61",
+    placeholder: "#6da5c0",
   },
 };
-const { width } = Dimensions.get("window"); // Get the width of the device screen
-
+const { width } = Dimensions.get("window");
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLoginPress = () => {
-    console.log("Login attempt with:", email, password);
-    // Placeholder for further actions, e.g., navigation or API call
+  const handleLoginPress = async () => {
+    try {
+      const response = await axios.post(`${API_URL}/api/auth/login`, { email, password });
+      const { token, user } = response.data;
+      await AsyncStorage.setItem("jwtToken", token);
+      console.log("Login successful:", user);
+    } catch (err) {
+      console.error("Login failed:", err);
+      setError("Login failed. Please check your credentials and try again.");
+    }
   };
 
   return (
     <PaperProvider theme={theme}>
-      <StatusBar
-        backgroundColor={theme.colors.background}
-        barStyle="light-content"
-      />
+      <StatusBar backgroundColor={theme.colors.background} barStyle="light-content" />
       <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
         enableOnAndroid={true}
@@ -56,65 +63,44 @@ const LoginScreen = () => {
         style={{ flex: 1 }}
         contentContainerStyle={{
           flexGrow: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          width,
           backgroundColor: theme.colors.background,
-          justifyContent: "center", // Keep centered
-          alignItems: "center", // Ensure this is here to center horizontally
-          width: width, // Use the full width of the screen
         }}
       >
-        
-        <Animatable.View
-          animation="fadeInUp"
-          duration={800}
-          style={styles.loginBox}
-        >
-          <Text style={styles.title}>LogIn</Text>
-          <Animatable.View
-            animation="fadeInLeft"
-            delay={300}
-            style={{ width: "100%" }}
-          >
+        <Animatable.View animation="fadeInUpBig" duration={800} style={styles.loginBox}>
+          <Text style={styles.title}>Login</Text>
+          <Animatable.View animation="fadeInLeft" delay={300} style={styles.inputContainer}>
+            <MaterialCommunityIcons name="email-outline" size={20} color={theme.colors.accent} />
             <TextInput
               label="Email"
               value={email}
               onChangeText={setEmail}
               style={styles.input}
               mode="flat"
-              underlineColor={theme.colors.accent}
-              theme={{
-                colors: {
-                  text: theme.colors.text,
-                  primary: theme.colors.accent,
-                },
-              }}
+              underlineColor="transparent"
+              dense
+              theme={{ colors: { text: theme.colors.text, primary: theme.colors.accent } }}
             />
           </Animatable.View>
-          <Animatable.View
-            animation="fadeInRight"
-            delay={600}
-            style={{ width: "100%" }}
-          >
+          <Animatable.View animation="fadeInRight" delay={600} style={styles.inputContainer}>
+            <MaterialCommunityIcons name="lock-outline" size={20} color={theme.colors.accent} />
             <TextInput
               label="Password"
               value={password}
               onChangeText={setPassword}
               style={styles.input}
               mode="flat"
-              secureTextEntry
-              underlineColor={theme.colors.accent}
-              theme={{
-                colors: {
-                  text: theme.colors.text,
-                  primary: theme.colors.accent,
-                },
-              }}
+              secureTextEntry={!showPassword}
+              underlineColor="transparent"
+              dense
+              right={<TextInput.Icon name={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword(!showPassword)} />}
+              theme={{ colors: { text: theme.colors.text, primary: theme.colors.accent } }}
             />
           </Animatable.View>
-          <Animatable.View
-            animation="bounceIn"
-            delay={900}
-            style={{ width: "100%" }}
-          >
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          <Animatable.View animation="bounceIn" delay={900} style={styles.buttonContainer}>
             <Button
               mode="contained"
               onPress={handleLoginPress}
@@ -126,41 +112,55 @@ const LoginScreen = () => {
           </Animatable.View>
         </Animatable.View>
       </KeyboardAwareScrollView>
-    </PaperProvider>
-  );
+    </PaperProvider>);
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: theme.colors.background,
-  },
   loginBox: {
     width: "90%",
     padding: 20,
     backgroundColor: theme.colors.surface,
-    borderRadius: 8,
-    elevation: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
+    borderRadius: theme.roundness,
+    elevation: 15,
+    shadowColor: theme.colors.text,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
   },
   title: {
-    fontSize: 26,
-    marginBottom: 20,
+    fontSize: 28,
+    marginBottom: 30,
     color: theme.colors.text,
+    fontWeight: 'bold',
     textAlign: "center",
   },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+    borderBottomWidth: 2,
+    borderBottomColor: theme.colors.accent,
+  },
   input: {
-    marginBottom: 20,
+    flex: 1,
+    marginLeft: 10,
     backgroundColor: "transparent",
+    color: theme.colors.text,
+  },
+  buttonContainer: {
+    width: "100%",
+    paddingVertical: 12,
   },
   button: {
     paddingVertical: 8,
     backgroundColor: theme.colors.primary,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 14,
+    textAlign: "center",
+    marginTop: 10,
+    marginBottom: 20,
   },
 });
 
