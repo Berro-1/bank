@@ -48,6 +48,7 @@ const LoginScreen = ({ navigation }) => {
       const { token, user } = response.data;
       await AsyncStorage.setItem("jwtToken", token);
       console.log("Login successful:", user);
+      navigation.navigate('Home')
     } catch (err) {
       console.error("Login failed:", err);
       setError("Login failed. Please check your credentials and try again.");
