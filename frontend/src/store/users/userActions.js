@@ -2,7 +2,7 @@ import axios from "axios";
 import { userActions } from "./userSlice";
 
 
-export const getAllUsers = () => async (dispatch, getState) => {
+export const getAllUsers = () => async (dispatch) => {
   dispatch(userActions.fetchRequest());
 
   // // Get the token from the state

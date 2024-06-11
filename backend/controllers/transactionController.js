@@ -192,11 +192,11 @@ const getAllTransactions = async (req, res) => {
 };
 
 const getLatestTransactions = async (req, res) => {
-  const { id } = req.params;
+  const { accountId } = req.params;
 
   try {
     const transactions = await Transaction.find({
-      $or: [{ sender: id }, { receiver: id }],
+      $or: [{ sender: accountId }, { receiver: accountId }],
     })
       .sort({ createdAt: -1 })
       .limit(5);

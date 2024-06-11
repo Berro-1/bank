@@ -1,4 +1,6 @@
 import React, { useRef, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import {
   ScrollView,
   View,
@@ -8,17 +10,24 @@ import {
   Animated,
 } from "react-native";
 import { Card, Title, Paragraph } from "react-native-paper";
+import { getAllAccounts } from "../store/accounts/accountsActions";
+import { getLatestTransactions } from "../store/transactions/transactionsActions";
+
 
 const FadeInView = (props) => {
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
 
   useEffect(() => {
+
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 1000,
       useNativeDriver: true,
     }).start();
+
+    
   }, [fadeAnim]);
+
 
   return (
     <Animated.View // Special animatable View
@@ -40,11 +49,41 @@ const CustomButton = ({ title, onPress, style }) => (
 
 const MainPage = () => {
   const accountBalance = "12,345.67";
-  const recentTransactions = [
-    { id: 1, type: "Deposit", amount: "500.00", date: "2024-06-08" },
-    { id: 2, type: "Withdrawal", amount: "200.00", date: "2024-06-07" },
-  ];
+  const userId = "66577a78511763b4296b4311"; // This should be dynamically obtained in a real application
+  const dispatch = useDispatch();
+const accountId = "665cd4f1a1fe882d71c8269d";
+  const { accounts } = useSelector((state) => state.accounts);
+  const { transactions } = useSelector((state) => state.transactions);
 
+  useEffect(() => {
+    dispatch(getLatestTransactions(accountId));
+    if (userId) {
+      dispatch(getAllAccounts(userId));
+    }
+  }, [dispatch, userId]);
+
+  const formatDate = (dateString) => {
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+const transactionDetail = (transaction, accountId) => {
+  if (transaction.sender === accountId) {
+    return `To: ${transaction.receiverName}`;
+  } else {
+    if (transaction.receiverModel === "Loan") {
+      return `To: ${transaction.senderName} (Loan)`;
+    } else {
+      return `From: ${transaction.senderName}`;
+    }
+  }
+};
   return (
     <ScrollView style={styles.container}>
       <FadeInView style={styles.balanceSection}>
@@ -56,35 +95,37 @@ const MainPage = () => {
         <CustomButton
           title="Send Money"
           onPress={() => alert("Send Money")}
-          style={{ backgroundColor: "#0c7076", marginHorizontal:1 }}
+          style={{ backgroundColor: "#0c7076", marginHorizontal: 1 }}
         />
         <CustomButton
           title="Pay Loan"
           onPress={() => alert("Pay Loan")}
-          style={{ backgroundColor: "#347d85", marginHorizontal: 1 }}
+          style={{ backgroundColor: "#347d85", marginOfficial: 1 }}
         />
         <CustomButton
           title="Check Accounts"
           onPress={() => alert("Check Accounts")}
-          style={{ backgroundColor: "#589a9e", marginHorizontal:1 }}
+          style={{ backgroundColor: "#589a9e", marginHorizontal: 1 }}
         />
       </View>
 
       <FadeInView style={styles.transactionsSection}>
         <Text style={styles.sectionTitle}>Recent Transactions</Text>
-        {recentTransactions.map((transaction) => (
-          <Card key={transaction.id} style={styles.card}>
-            <Card.Content style={{ backgroundColor: "#fff" }}>
-              <Title>{transaction.type}</Title>
-              <Paragraph>{`$${transaction.amount}`}</Paragraph>
-              <Paragraph>{transaction.date}</Paragraph>
-            </Card.Content>
-          </Card>
-        ))}
+        {transactions &&
+          transactions.map((transaction) => (
+            <Card key={transaction._id} style={styles.card}>
+              <Card.Content style={{ backgroundColor: "#fff" }}>
+                <Title>{transactionDetail(transaction, userId)}</Title>
+                <Paragraph>{`$${transaction.amount}`}</Paragraph>
+                <Paragraph>{formatDate(transaction.createdAt)}</Paragraph>
+              </Card.Content>
+            </Card>
+          ))}
       </FadeInView>
     </ScrollView>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

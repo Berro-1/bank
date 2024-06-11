@@ -7,28 +7,31 @@ import LoginScreen from "./screens/loginScreen";
 import MainPage from "./screens/mainPage";
 import Tabs from "./components/tabs"; // Ensure this or any other screen component does not include another NavigationContainer
 import TabsUser from "./components/tabsUser";
-
+import { Provider } from "react-redux";
+import store from './store/store'
 export default function App() {
   const Stack = createNativeStackNavigator();
 
   return (
-    <View style={styles.container}>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="Tabs"
-          screenOptions={{
-            headerShown: false, // This hides the header globally
-          }}
-        >
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Home" component={TabsUser} />
-          <Stack.Screen name="SignUp" component={Signup} />
-          <Stack.Screen name="MainPage" component={MainPage} />
-          <Stack.Screen name="Tabs" component={Tabs} />
-        </Stack.Navigator>
-      </NavigationContainer>
-      <StatusBar style="auto" />
-    </View>
+    <Provider store={store}>
+      <View style={styles.container}>
+        <NavigationContainer>
+          <Stack.Navigator
+            initialRouteName="Tabs"
+            screenOptions={{
+              headerShown: false, // This hides the header globally
+            }}
+          >
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Home" component={TabsUser} />
+            <Stack.Screen name="SignUp" component={Signup} />
+            <Stack.Screen name="MainPage" component={MainPage} />
+            <Stack.Screen name="Tabs" component={Tabs} />
+          </Stack.Navigator>
+        </NavigationContainer>
+        <StatusBar style="auto" />
+      </View>
+    </Provider>
   );
 }
 
