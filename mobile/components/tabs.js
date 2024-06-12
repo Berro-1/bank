@@ -10,7 +10,7 @@ const Tabs = () => {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerShown: false, // This hides the header globally
+        headerShown: false,
       }}
     >
       <Tab.Screen

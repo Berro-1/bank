@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { View, Text, StyleSheet, TouchableOpacity, Animated } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import MainPage from "../screens/mainPage";
 import Submissions from "../screens/submissions";
@@ -39,7 +45,13 @@ const CustomTabBarButton = ({ children, onPress, focused }) => {
       onPressOut={handlePressOut}
       style={styles.customTabBarButton}
     >
-      <Animated.View style={[styles.customTabBarButtonView, focused ? styles.customTabBarButtonViewFocused : null, { transform: [{ scale }] }]}>
+      <Animated.View
+        style={[
+          styles.customTabBarButtonView,
+          focused ? styles.customTabBarButtonViewFocused : null,
+          { transform: [{ scale }] },
+        ]}
+      >
         {children}
       </Animated.View>
     </TouchableOpacity>
@@ -47,7 +59,9 @@ const CustomTabBarButton = ({ children, onPress, focused }) => {
 };
 
 const TabBarLabel = ({ focused, label }) => (
-  <Text style={[styles.tabBarLabel, focused ? styles.tabBarLabelFocused : null]}>
+  <Text
+    style={[styles.tabBarLabel, focused ? styles.tabBarLabelFocused : null]}
+  >
     {label}
   </Text>
 );
@@ -58,6 +72,8 @@ const TabsUser = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
+        
+
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -68,21 +84,130 @@ const TabsUser = () => {
           } else if (route.name === "UserDetails") {
             iconName = focused ? "user" : "user-o";
           }
-          return (
-            <View style={styles.iconContainer}>
-              <Icon name={iconName} size={size} color={color} />
-              {/* <TabBarLabel focused={focused} label={route.name} /> */}
-            </View>
-          );
+          return <Icon name={iconName} size={size} color={color} />;
+        },
+        tabBarLabel: ({ focused }) => {
+          let label;
+          if (route.name === "MainPage") {
+            label = "Home";
+          } else if (route.name === "Submissions") {
+            label = "Submissions";
+          } else if (route.name === "UserDetails") {
+            label = "Details";
+          }
+          return <TabBarLabel focused={focused} label={label} />;
         },
         tabBarActiveTintColor: "#FF6347",
         tabBarInactiveTintColor: "gray",
         tabBarStyle: styles.tabBar,
       })}
     >
-      <Tab.Screen name="MainPage" component={MainPage} options={{ tabBarLabel: "Home" }} />
-      <Tab.Screen name="Submissions" component={Submissions} options={{ tabBarLabel: "Submissions" }} />
-      <Tab.Screen name="UserDetails" component={UserDetails} options={{ tabBarLabel: "Details" }} />
+      <Tab.Screen
+        name="MainPage"
+        component={MainPage}
+        options={{
+          tabBarButton: (props) => (
+            <TouchableOpacity
+              {...props}
+              onPress={() => {
+                setSelectedTab("MainPage");
+                props.onPress();
+              }}
+            >
+              <View style={styles.defaultTabBarButtonView}>
+                <Icon
+                  name="home"
+                  size={30}
+                  color={selectedTab === "MainPage" ? "#FF6347" : "gray"}
+                />
+                <Text
+                  style={
+                    selectedTab === "MainPage"
+                      ? styles.tabBarLabelFocused
+                      : styles.tabBarLabel
+                  }
+                >
+                  Home
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Submissions"
+        component={Submissions}
+        options={{
+          tabBarButton: (props) => (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                flex: 1,
+              }}
+            >
+              <CustomTabBarButton
+                {...props}
+                focused={selectedTab === "Submissions"}
+                onPress={() => {
+                  setSelectedTab("Submissions");
+                  props.onPress();
+                }}
+              >
+                <Icon
+                  name={selectedTab === "Submissions" ? "send" : "send-o"}
+                  size={30}
+                  color={selectedTab === "Submissions" ? "#FF6347" : "#fff"}
+                  style={{right:2}}
+                />
+              </CustomTabBarButton>
+              <Text
+                style={[
+                  styles.tabBarLabel,
+                  selectedTab === "Submissions"
+                    ? styles.tabBarLabelFocused
+                    : { color: "gray" },
+                  styles.tabBarLabelNoWrap,
+                ]}
+              >
+                Submissions
+              </Text>
+            </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="UserDetails"
+        component={UserDetails}
+        options={{
+          tabBarButton: (props) => (
+            <TouchableOpacity
+              {...props}
+              onPress={() => {
+                setSelectedTab("UserDetails");
+                props.onPress();
+              }}
+            >
+              <View style={styles.defaultTabBarButtonView}>
+                <Icon
+                  name="user"
+                  size={30}
+                  color={selectedTab === "UserDetails" ? "#FF6347" : "gray"}
+                />
+                <Text
+                  style={
+                    selectedTab === "UserDetails"
+                      ? styles.tabBarLabelFocused
+                      : styles.tabBarLabel
+                  }
+                >
+                  Details
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };
@@ -99,15 +224,22 @@ const styles = StyleSheet.create({
     height: 70,
     paddingBottom: 10,
     paddingTop: 10,
+    marginBottom:10
   },
   tabBarLabel: {
-    fontSize: 12,
+    fontSize: 14,
     textAlign: "center",
-    marginTop: 5,
     fontWeight: "600",
+    color: "gray",
   },
   tabBarLabelFocused: {
     color: "#FF6347",
+  },
+  tabBarLabelNoWrap: {
+    position: "absolute",
+
+    bottom: 1,
+    whiteSpace: "nowrap",
   },
   shadow: {
     shadowColor: "#7F5DF0",
@@ -132,9 +264,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  customTabBarButtonFocused: {
-    top: -25,
-  },
   customTabBarButtonViewFocused: {
     backgroundColor: "white",
   },
@@ -147,6 +276,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     flex: 1,
+    right: 3,
   },
 });
 

@@ -17,7 +17,7 @@ export default function App() {
       <View style={styles.container}>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="Tabs"
+            initialRouteName="Home"
             screenOptions={{
               headerShown: false, // This hides the header globally
             }}
