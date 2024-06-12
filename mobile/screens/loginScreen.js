@@ -47,8 +47,8 @@ const LoginScreen = ({ navigation }) => {
       const response = await axios.post(`${API_URL}/api/auth/login`, { email, password });
       const { token, user } = response.data;
       await AsyncStorage.setItem("jwtToken", token);
-      console.log("Login successful:", user,token);
-      navigation.navigate("Home")
+      console.log("Login successful:", user);
+      navigation.navigate('Home')
     } catch (err) {
       console.error("Login failed:", err);
       setError("Login failed. Please check your credentials and try again.");
