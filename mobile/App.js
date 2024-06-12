@@ -9,6 +9,7 @@ import Tabs from "./components/tabs"; // Ensure this or any other screen compone
 import TabsUser from "./components/tabsUser";
 import { Provider } from "react-redux";
 import store from './store/store'
+import AccountsScreen from "./screens/accountsScreen";
 export default function App() {
   const Stack = createNativeStackNavigator();
 
@@ -27,6 +28,7 @@ export default function App() {
             <Stack.Screen name="SignUp" component={Signup} />
             <Stack.Screen name="MainPage" component={MainPage} />
             <Stack.Screen name="Tabs" component={Tabs} />
+            <Stack.Screen name="Accounts" component={AccountsScreen} />
           </Stack.Navigator>
         </NavigationContainer>
         <StatusBar style="auto" />

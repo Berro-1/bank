@@ -13,21 +13,16 @@ import { Card, Title, Paragraph } from "react-native-paper";
 import { getAllAccounts } from "../store/accounts/accountsActions";
 import { getLatestTransactions } from "../store/transactions/transactionsActions";
 
-
 const FadeInView = (props) => {
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
 
   useEffect(() => {
-
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 1000,
       useNativeDriver: true,
     }).start();
-
-    
   }, [fadeAnim]);
-
 
   return (
     <Animated.View // Special animatable View
@@ -47,11 +42,10 @@ const CustomButton = ({ title, onPress, style }) => (
   </TouchableOpacity>
 );
 
-const MainPage = () => {
-  const accountBalance = "12,345.67";
+const MainPage = ({ navigation }) => {
   const userId = "66577a78511763b4296b4311"; // This should be dynamically obtained in a real application
   const dispatch = useDispatch();
-const accountId = "665cd4f1a1fe882d71c8269d";
+  const accountId = "665cd4f1a1fe882d71c8269d";
   const { accounts } = useSelector((state) => state.accounts);
   const { transactions } = useSelector((state) => state.transactions);
 
@@ -73,22 +67,26 @@ const accountId = "665cd4f1a1fe882d71c8269d";
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-const transactionDetail = (transaction, accountId) => {
-  if (transaction.sender === accountId) {
-    return `To: ${transaction.receiverName}`;
-  } else {
-    if (transaction.receiverModel === "Loan") {
-      return `To: ${transaction.senderName} (Loan)`;
+  const transactionDetail = (transaction, accountId) => {
+    if (transaction.sender === accountId) {
+      return `To: ${transaction.receiverName}`;
     } else {
-      return `From: ${transaction.senderName}`;
+      if (transaction.receiverModel === "Loan") {
+        return `To: ${transaction.senderName} (Loan)`;
+      } else {
+        return `From: ${transaction.senderName}`;
+      }
     }
-  }
-};
+  };
   return (
     <ScrollView style={styles.container}>
       <FadeInView style={styles.balanceSection}>
         <Text style={styles.balanceText}>Your Balance</Text>
-        <Text style={styles.balance}>{`$${accountBalance}`}</Text>
+        {accounts.map((account) => (
+          <Text key={account._id} style={styles.balance}>
+            {`$${account.balance}`}
+          </Text>
+        ))}
       </FadeInView>
 
       <View style={styles.actionSection}>
@@ -104,7 +102,7 @@ const transactionDetail = (transaction, accountId) => {
         />
         <CustomButton
           title="Check Accounts"
-          onPress={() => alert("Check Accounts")}
+          onPress={() => navigation.navigate("Accounts")}
           style={{ backgroundColor: "#589a9e", marginHorizontal: 1 }}
         />
       </View>
@@ -125,7 +123,6 @@ const transactionDetail = (transaction, accountId) => {
     </ScrollView>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {

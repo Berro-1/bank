@@ -26,6 +26,7 @@
     "react-native-animatable": "^1.4.0",
     "react-native-dotenv": "^3.4.11",
     "react-native-gesture-handler": "^2.16.2",
+    "react-native-home-indicator": "^0.2.10",
     "react-native-keyboard-avoiding-view": "^1.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-paper": "^5.12.3",
