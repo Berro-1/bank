@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
 import transactionSlice from "./transactions/transactionSlice";
 import accountsSlice from "./accounts/accountsSlice";
-// import cardsSlice from "./cards/cardsSlice";
+import creditCardsSlice from "./creditCards/creditCardsSlice";
 // import loanSlice from "./Loans/loansSlice";
 // import submissionSlice from "./submissions/submissionsSlice";
 // import transfersSlice from "./transfers/transfersSlice";
@@ -12,7 +12,7 @@ import accountsSlice from "./accounts/accountsSlice";
 const rootReducer = combineReducers({
   transactions: transactionSlice.reducer,
   accounts: accountsSlice.reducer,
-//   cards: cardsSlice.reducer,
+  cards: creditCardsSlice.reducer,
 //   loans: loanSlice.reducer,
 //   submissions: submissionSlice.reducer,
 //   transfers: transfersSlice.reducer,

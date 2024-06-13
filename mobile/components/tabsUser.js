@@ -14,6 +14,7 @@ import UserDetails from "../screens/userDetails";
 
 const Tab = createBottomTabNavigator();
 
+
 const CustomTabBarButton = ({ children, onPress, focused }) => {
   const scaleValue = new Animated.Value(0);
 
