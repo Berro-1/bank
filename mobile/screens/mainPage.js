@@ -1,12 +1,10 @@
 import React, { useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import {
   ScrollView,
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   Animated,
 } from "react-native";
 import { Card, Title, Paragraph } from "react-native-paper";
@@ -35,12 +33,6 @@ const FadeInView = (props) => {
     </Animated.View>
   );
 };
-
-const CustomButton = ({ title, onPress, style }) => (
-  <TouchableOpacity onPress={onPress} style={[styles.button, style]}>
-    <Text style={styles.buttonText}>{title}</Text>
-  </TouchableOpacity>
-);
 
 const MainPage = ({ navigation }) => {
   const userId = "66577a78511763b4296b4311"; // This should be dynamically obtained in a real application
@@ -78,6 +70,7 @@ const MainPage = ({ navigation }) => {
       }
     }
   };
+
   return (
     <ScrollView style={styles.container}>
       <FadeInView style={styles.balanceSection}>
@@ -89,33 +82,17 @@ const MainPage = ({ navigation }) => {
         ))}
       </FadeInView>
 
-      <View style={styles.actionSection}>
-        <CustomButton
-          title="Send Money"
-          onPress={() => alert("Send Money")}
-          style={{ backgroundColor: "#0c7076", marginHorizontal: 1 }}
-        />
-        <CustomButton
-          title="Pay Loan"
-          onPress={() => alert("Pay Loan")}
-          style={{ backgroundColor: "#347d85", marginOfficial: 1 }}
-        />
-        <CustomButton
-          title="Check Accounts"
-          onPress={() => navigation.navigate("Accounts")}
-          style={{ backgroundColor: "#589a9e", marginHorizontal: 1 }}
-        />
-      </View>
-
       <FadeInView style={styles.transactionsSection}>
         <Text style={styles.sectionTitle}>Recent Transactions</Text>
         {transactions &&
           transactions.map((transaction) => (
             <Card key={transaction._id} style={styles.card}>
-              <Card.Content style={{ backgroundColor: "#fff" }}>
-                <Title>{transactionDetail(transaction, userId)}</Title>
-                <Paragraph>{`$${transaction.amount}`}</Paragraph>
-                <Paragraph>{formatDate(transaction.createdAt)}</Paragraph>
+              <Card.Content style={styles.cardContent}>
+                <Title style={styles.cardTitle}>
+                  {transactionDetail(transaction, userId)}
+                </Title>
+                <Paragraph style={styles.cardAmount}>{`$${transaction.amount}`}</Paragraph>
+                <Paragraph style={styles.cardDate}>{formatDate(transaction.createdAt)}</Paragraph>
               </Card.Content>
             </Card>
           ))}
@@ -127,61 +104,70 @@ const MainPage = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
     backgroundColor: "#05161a",
   },
   balanceSection: {
     marginBottom: 20,
+    padding: 20,
+    borderRadius: 10,
+    backgroundColor: "#072e33",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 10,
+    marginHorizontal: 10,
   },
   balanceText: {
-    marginTop: 25,
-    fontSize: 18,
+    fontSize: 20,
     color: "#6da5c0",
-    marginBottom: 5,
+    marginBottom: 10,
+    fontWeight: "bold",
   },
   balance: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: "bold",
     color: "#0f969c",
   },
-  actionSection: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-  },
-  button: {
-    padding: 10,
-    borderRadius: 5,
-    justifyContent: "center",
-    alignItems: "center",
-    minWidth: 110,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
   transactionsSection: {
     marginTop: 20,
+    paddingBottom: 20,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#0c7076",
+    color: "#6da5c0",
+    textAlign: "center",
   },
   card: {
-    marginBottom: 10,
-    backgroundColor: "#072e33",
+    marginBottom: 15,
+    borderRadius: 10,
+    backgroundColor: "#0a2e36",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    marginHorizontal: 10,
+  },
+  cardContent: {
+    backgroundColor: "#0a2e36",
+  },
+  cardTitle: {
+    color: "#6da5c0",
+    fontWeight: "bold",
+  },
+  cardAmount: {
+    color: "#0f969c",
+    fontSize: 18,
+  },
+  cardDate: {
+    color: "#a9a9a9",
+    fontSize: 14,
   },
 });
 

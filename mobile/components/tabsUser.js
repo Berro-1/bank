@@ -11,9 +11,12 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import MainPage from "../screens/mainPage";
 import Submissions from "../screens/submissions";
 import UserDetails from "../screens/userDetails";
+import Payments from "../screens/Payments"; // Assuming you have this screen
+import Accounts from "../screens/accountsScreen"; // Assuming you have this screen
+import AccountsScreen from "../screens/accountsScreen";
+
 
 const Tab = createBottomTabNavigator();
-
 
 const CustomTabBarButton = ({ children, onPress, focused }) => {
   const scaleValue = new Animated.Value(0);
@@ -73,8 +76,6 @@ const TabsUser = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        
-
         headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
@@ -84,6 +85,10 @@ const TabsUser = () => {
             iconName = focused ? "send" : "send-o";
           } else if (route.name === "UserDetails") {
             iconName = focused ? "user" : "user-o";
+          } else if (route.name === "Payments") {
+            iconName = "credit-card";
+          } else if (route.name === "Accounts") {
+            iconName = "briefcase";
           }
           return <Icon name={iconName} size={size} color={color} />;
         },
@@ -95,6 +100,10 @@ const TabsUser = () => {
             label = "Submissions";
           } else if (route.name === "UserDetails") {
             label = "Details";
+          } else if (route.name === "Payments") {
+            label = "Payments";
+          } else if (route.name === "Accounts") {
+            label = "Accounts";
           }
           return <TabBarLabel focused={focused} label={label} />;
         },
@@ -136,6 +145,38 @@ const TabsUser = () => {
         }}
       />
       <Tab.Screen
+        name="Payments"
+        component={Payments}
+        options={{
+          tabBarButton: (props) => (
+            <TouchableOpacity
+              {...props}
+              onPress={() => {
+                setSelectedTab("Payments");
+                props.onPress();
+              }}
+            >
+              <View style={styles.defaultTabBarButtonView}>
+                <Icon
+                  name="credit-card"
+                  size={30}
+                  color={selectedTab === "Payments" ? "#FF6347" : "gray"}
+                />
+                <Text
+                  style={
+                    selectedTab === "Payments"
+                      ? styles.tabBarLabelFocused
+                      : styles.tabBarLabel
+                  }
+                >
+                  Payments
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Tab.Screen
         name="Submissions"
         component={Submissions}
         options={{
@@ -144,7 +185,7 @@ const TabsUser = () => {
               style={{
                 alignItems: "center",
                 justifyContent: "center",
-                flex: 1,
+                flex: 1.5,
               }}
             >
               <CustomTabBarButton
@@ -159,7 +200,7 @@ const TabsUser = () => {
                   name={selectedTab === "Submissions" ? "send" : "send-o"}
                   size={30}
                   color={selectedTab === "Submissions" ? "#FF6347" : "#fff"}
-                  style={{right:2}}
+                  style={{ right: 2 }}
                 />
               </CustomTabBarButton>
               <Text
@@ -174,6 +215,38 @@ const TabsUser = () => {
                 Submissions
               </Text>
             </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Accounts"
+        component={AccountsScreen}
+        options={{
+          tabBarButton: (props) => (
+            <TouchableOpacity
+              {...props}
+              onPress={() => {
+                setSelectedTab("Accounts");
+                props.onPress();
+              }}
+            >
+              <View style={styles.defaultTabBarButtonView}>
+                <Icon
+                  name="briefcase"
+                  size={30}
+                  color={selectedTab === "Accounts" ? "#FF6347" : "gray"}
+                />
+                <Text
+                  style={
+                    selectedTab === "Accounts"
+                      ? styles.tabBarLabelFocused
+                      : styles.tabBarLabel
+                  }
+                >
+                  Accounts
+                </Text>
+              </View>
+            </TouchableOpacity>
           ),
         }}
       />
@@ -225,7 +298,6 @@ const styles = StyleSheet.create({
     height: 70,
     paddingBottom: 10,
     paddingTop: 10,
-    marginBottom:10
   },
   tabBarLabel: {
     fontSize: 14,
@@ -238,7 +310,6 @@ const styles = StyleSheet.create({
   },
   tabBarLabelNoWrap: {
     position: "absolute",
-
     bottom: 1,
     whiteSpace: "nowrap",
   },
