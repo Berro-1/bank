@@ -12,55 +12,72 @@ import { SelectList } from "react-native-dropdown-select-list";
 import { getAllAccounts } from "../store/accounts/accountsActions";
 import { getCards } from "../store/creditCards/creditCardsActions";
 import { useDispatch, useSelector } from "react-redux";
+import { createTransfer } from "../store/transfers/transfersActions";
 
 const TransfersScreen = () => {
   const [selectedAccount, setSelectedAccount] = useState("");
   const [accountId, setAccountId] = useState("");
   const [amount, setAmount] = useState("");
   const fadeAnim = useRef(new Animated.Value(1)).current; // Initialize fadeAnim with a value of 1
+  const [combinedData, setCombinedData] = useState([]);
+const dynamicKey = combinedData.reduce((prev, curr) => prev + curr.value, "");
+
 
   const userId = "66577a78511763b4296b4311";
-  const { accounts } = useSelector((state) => state.accounts);
-  const { cards } = useSelector((state) => state.cards);
+const accounts = useSelector((state) => state.accounts.accounts);
+const cards = useSelector((state) => state.cards.cards);
+
 
   const dispatch = useDispatch();
-  useEffect(() => {
-    if (userId) {
-      dispatch(getAllAccounts(userId));
-      dispatch(getCards(userId));
-    }
-  }, [dispatch, userId]);
+ useEffect(() => {
+   dispatch(getAllAccounts(userId));
+   dispatch(getCards(userId));
+ }, [dispatch]);
 
-  const combinedData = [
-    ...accounts.map((account) => ({
-      key: account._id,
-      value: account.type + " (Account) $" + account.balance,
-      itemType: "account",
-    })),
-    ...cards.map((card) => ({
-      key: card._id,
-      value: card.card_name + " (Card) $" + card.available_credit,
-      itemType: "card",
-    })),
-  ];
+ useEffect(() => {
+   // Combine accounts and cards whenever there's a change
+   const newCombinedData = [
+     ...accounts.map((account) => ({
+       key: account._id,
+       value: `${account.type} (Account) $${account.balance}`,
+       itemType: "account",
+     })),
+     ...cards.map((card) => ({
+       key: card._id,
+       value: `${card.card_name} (Card) $${card.available_credit}`,
+       itemType: "card",
+     })),
+   ];
+   setCombinedData(newCombinedData);
+   console.log("new data:   ",combinedData);
+ }, [accounts, cards]);
 
-  const handlePress = () => {
-    Animated.sequence([
-      Animated.timing(fadeAnim, {
-        toValue: 0.5, // Fade to half opacity
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(fadeAnim, {
-        toValue: 1, // Fade back to full opacity
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      // Original function call
-      console.log(selectedAccount);
-    });
-  };
+  
+
+ const handlePress = async () => {
+   await dispatch(
+     createTransfer(selectedAccount, accountId, amount, "Transfer", userId)
+   );
+
+   // Refetch accounts and cards data
+   dispatch(getAllAccounts(userId));
+   dispatch(getCards(userId));
+
+   // Animation sequence
+   Animated.sequence([
+     Animated.timing(fadeAnim, {
+       toValue: 0.5, // Fade to half opacity
+       duration: 300,
+       useNativeDriver: true,
+     }),
+     Animated.timing(fadeAnim, {
+       toValue: 1, // Fade back to full opacity
+       duration: 300,
+       useNativeDriver: true,
+     }),
+   ]).start();
+ };
+
 
   return (
     <ScrollView style={styles.container}>
@@ -69,6 +86,7 @@ const TransfersScreen = () => {
       </View>
       <View style={styles.list}>
         <SelectList
+          key={dynamicKey} // Dynamic key based on content changes
           setSelected={(val) => setSelectedAccount(val)}
           data={combinedData}
           placeholder="Select Sender Account"
