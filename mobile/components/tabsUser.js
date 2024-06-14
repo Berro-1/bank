@@ -15,7 +15,6 @@ import Payments from "../screens/Payments"; // Assuming you have this screen
 import Accounts from "../screens/accountsScreen"; // Assuming you have this screen
 import AccountsScreen from "../screens/accountsScreen";
 
-
 const Tab = createBottomTabNavigator();
 
 const CustomTabBarButton = ({ children, onPress, focused }) => {
@@ -107,8 +106,8 @@ const TabsUser = () => {
           }
           return <TabBarLabel focused={focused} label={label} />;
         },
-        tabBarActiveTintColor: "#FF6347",
-        tabBarInactiveTintColor: "gray",
+        tabBarActiveTintColor: "#0f969c",
+        tabBarInactiveTintColor: "#6da5c0",
         tabBarStyle: styles.tabBar,
       })}
     >
@@ -128,7 +127,7 @@ const TabsUser = () => {
                 <Icon
                   name="home"
                   size={30}
-                  color={selectedTab === "MainPage" ? "#FF6347" : "gray"}
+                  color={selectedTab === "MainPage" ? "#0f969c" : "#6da5c0"}
                 />
                 <Text
                   style={
@@ -160,7 +159,7 @@ const TabsUser = () => {
                 <Icon
                   name="credit-card"
                   size={30}
-                  color={selectedTab === "Payments" ? "#FF6347" : "gray"}
+                  color={selectedTab === "Payments" ? "#0f969c" : "#6da5c0"}
                 />
                 <Text
                   style={
@@ -199,7 +198,7 @@ const TabsUser = () => {
                 <Icon
                   name={selectedTab === "Submissions" ? "send" : "send-o"}
                   size={30}
-                  color={selectedTab === "Submissions" ? "#FF6347" : "#fff"}
+                  color={selectedTab === "Submissions" ? "#0f969c" : "#fff"}
                   style={{ right: 2 }}
                 />
               </CustomTabBarButton>
@@ -208,7 +207,7 @@ const TabsUser = () => {
                   styles.tabBarLabel,
                   selectedTab === "Submissions"
                     ? styles.tabBarLabelFocused
-                    : { color: "gray" },
+                    : { color: "#6da5c0" },
                   styles.tabBarLabelNoWrap,
                 ]}
               >
@@ -234,7 +233,7 @@ const TabsUser = () => {
                 <Icon
                   name="briefcase"
                   size={30}
-                  color={selectedTab === "Accounts" ? "#FF6347" : "gray"}
+                  color={selectedTab === "Accounts" ? "#0f969c" : "#6da5c0"}
                 />
                 <Text
                   style={
@@ -266,7 +265,7 @@ const TabsUser = () => {
                 <Icon
                   name="user"
                   size={30}
-                  color={selectedTab === "UserDetails" ? "#FF6347" : "gray"}
+                  color={selectedTab === "UserDetails" ? "#0f969c" : "#6da5c0"}
                 />
                 <Text
                   style={
@@ -306,7 +305,7 @@ const styles = StyleSheet.create({
     color: "gray",
   },
   tabBarLabelFocused: {
-    color: "#FF6347",
+    color: "#0f969c",
   },
   tabBarLabelNoWrap: {
     position: "absolute",
@@ -332,7 +331,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: "#FF6347",
+    backgroundColor: "#0f969c",
     justifyContent: "center",
     alignItems: "center",
   },

@@ -32,7 +32,7 @@ const AccountItem = ({ item, isExpanded, onPress, navigation }) => {
             {item.itemType === "account" ? formatBalance(item.balance) : formatBalance(item.available_credit)}
           </Text>
           <Animated.View style={{ transform: [{ rotate }] }}>
-            <Icon name="chevron-down" size={20} color="#6da5c0" />
+            <Icon name="chevron-down" size={20} color="#0c7076" />
           </Animated.View>
         </View>
       </TouchableOpacity>
@@ -49,8 +49,8 @@ const AccountItem = ({ item, isExpanded, onPress, navigation }) => {
 
 const AccountsScreen = ({ navigation }) => {
   const userId = "66577a78511763b4296b4311";
-  const { accounts } = useSelector((state) => state.accounts);
-  const { cards } = useSelector((state) => state.cards);
+  const { accounts } = useSelector((state) => state.accounts || { accounts: [] });
+  const { cards } = useSelector((state) => state.cards || { cards: [] });
 
   const [expandedAccount, setExpandedAccount] = useState(null);
 
@@ -85,12 +85,16 @@ const AccountsScreen = ({ navigation }) => {
       <View style={styles.titleview}>
         <Text style={styles.title}>Your Accounts</Text>
       </View>
-      <FlatList
-        data={combinedData}
-        keyExtractor={(item) => item._id}
-        renderItem={renderItem}
-        contentContainerStyle={styles.listContent}
-      />
+      {combinedData.length === 0 ? (
+        <Text style={styles.emptyText}>No accounts or cards available.</Text>
+      ) : (
+        <FlatList
+          data={combinedData}
+          keyExtractor={(item) => item._id}
+          renderItem={renderItem}
+          contentContainerStyle={styles.listContent}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -98,11 +102,11 @@ const AccountsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05161a",
+    backgroundColor: "#f5f5f5",
     paddingHorizontal: 20,
   },
   titleview: {
-    borderBottomColor: "#6da5c0",
+    borderBottomColor: "#0c7076",
     borderBottomWidth: 2,
     paddingBottom: 10,
     marginBottom: 20,
@@ -110,7 +114,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    color: "#ffffff",
+    color: "#0c7076",
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -119,7 +123,7 @@ const styles = StyleSheet.create({
   },
   accountItemContainer: {
     marginBottom: 20,
-    borderRadius: 10,
+    borderRadius: 15,
     overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
@@ -128,7 +132,7 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   accountItem: {
-    backgroundColor: "#072e33",
+    backgroundColor: "#ffffff",
     padding: 20,
     flexDirection: "row",
     justifyContent: "space-between",
@@ -139,26 +143,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   dropdownContent: {
-    backgroundColor: "#0a2e36",
+    backgroundColor: "#e0f7fa",
     padding: 15,
     borderTopWidth: 1,
-    borderTopColor: "#6da5c0",
+    borderTopColor: "#0c7076",
   },
   accountType: {
     fontSize: 20,
-    color: "#ffffff",
+    color: "#0c7076",
     fontWeight: "600",
   },
   accountBalance: {
     fontSize: 20,
-    color: "#6da5c0",
+    color: "#0c7076",
     marginRight: 10,
     fontWeight: "600",
   },
   viewTransactionsText: {
     fontSize: 18,
-    color: "#6da5c0",
+    color: "#0c7076",
     fontWeight: "bold",
+  },
+  emptyText: {
+    fontSize: 18,
+    color: "#0c7076",
+    textAlign: "center",
+    marginTop: 20,
   },
 });
 

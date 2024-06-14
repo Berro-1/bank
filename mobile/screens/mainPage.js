@@ -1,32 +1,43 @@
 import React, { useRef, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import {
   ScrollView,
   View,
   Text,
   StyleSheet,
   Animated,
+  TouchableOpacity,
 } from "react-native";
 import { Card, Title, Paragraph } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
 import { getAllAccounts } from "../store/accounts/accountsActions";
 import { getLatestTransactions } from "../store/transactions/transactionsActions";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
-const FadeInView = (props) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
+const FadeInUpView = (props) => {
+  const fadeAnim = useRef(new Animated.Value(50)).current; // Start position for the slide effect
+  const opacityAnim = useRef(new Animated.Value(0)).current; // Initial opacity
 
   useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 1000,
-      useNativeDriver: true,
-    }).start();
-  }, [fadeAnim]);
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: 1,
+        duration: 1000,
+        useNativeDriver: true,
+      })
+    ]).start();
+  }, [fadeAnim, opacityAnim]);
 
   return (
-    <Animated.View // Special animatable View
+    <Animated.View
       style={{
         ...props.style,
-        opacity: fadeAnim, // Bind opacity to animated value
+        opacity: opacityAnim,
+        transform: [{ translateY: fadeAnim }],
       }}
     >
       {props.children}
@@ -34,140 +45,183 @@ const FadeInView = (props) => {
   );
 };
 
-const MainPage = ({ navigation }) => {
-  const userId = "66577a78511763b4296b4311"; // This should be dynamically obtained in a real application
+const MainPage = () => {
+  const accounts = useSelector((state)=> state.accounts.accounts || {accounts:[]})
+  const transactions = useSelector((state)=> state.transactions.transactions || {transactions:[]})
+
+  const userId = "66577a78511763b4296b4311"; // This should be dynamically obtained
   const dispatch = useDispatch();
   const accountId = "665cd4f1a1fe882d71c8269d";
-  const { accounts } = useSelector((state) => state.accounts);
-  const { transactions } = useSelector((state) => state.transactions);
 
   useEffect(() => {
+    dispatch(getAllAccounts(userId));
     dispatch(getLatestTransactions(accountId));
-    if (userId) {
-      dispatch(getAllAccounts(userId));
-    }
-  }, [dispatch, userId]);
+  }, [dispatch, userId, accountId]);
+
+  useEffect(() => {
+    console.log("Accounts:", accounts);
+    console.log("Transactions:", transactions);
+  }, [accounts, transactions]);
 
   const formatDate = (dateString) => {
-    const options = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
-
-  const transactionDetail = (transaction, accountId) => {
-    if (transaction.sender === accountId) {
-      return `To: ${transaction.receiverName}`;
-    } else {
-      if (transaction.receiverModel === "Loan") {
-        return `To: ${transaction.senderName} (Loan)`;
-      } else {
-        return `From: ${transaction.senderName}`;
-      }
-    }
+    return new Date(dateString).toLocaleDateString(undefined, {
+      year: "numeric", month: "long", day: "numeric",
+      hour: "2-digit", minute: "2-digit",
+    });
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <FadeInView style={styles.balanceSection}>
-        <Text style={styles.balanceText}>Your Balance</Text>
-        {accounts.map((account) => (
-          <Text key={account._id} style={styles.balance}>
-            {`$${account.balance}`}
-          </Text>
-        ))}
-      </FadeInView>
-
-      <FadeInView style={styles.transactionsSection}>
-        <Text style={styles.sectionTitle}>Recent Transactions</Text>
-        {transactions &&
-          transactions.map((transaction) => (
+    <View style={styles.container}>
+      <Animated.View style={styles.header}>
+        <Text style={styles.headerTitle}>Dashboard</Text>
+      </Animated.View>
+      <ScrollView style={styles.scrollContainer}>
+        <FadeInUpView style={styles.balanceSection}>
+          <Text style={styles.balanceText}>Your Balance</Text>
+          {accounts && accounts.map((account) => (
+            <Text key={account._id} style={styles.balance}>
+              {`$${account.balance}`}
+            </Text>
+          ))}
+        </FadeInUpView>
+        <FadeInUpView style={styles.transactionsSection}>
+          <Text style={styles.sectionTitle}>Recent Transactions</Text>
+          {transactions && transactions.map((transaction) => (
             <Card key={transaction._id} style={styles.card}>
               <Card.Content style={styles.cardContent}>
-                <Title style={styles.cardTitle}>
-                  {transactionDetail(transaction, userId)}
-                </Title>
-                <Paragraph style={styles.cardAmount}>{`$${transaction.amount}`}</Paragraph>
-                <Paragraph style={styles.cardDate}>{formatDate(transaction.createdAt)}</Paragraph>
+                <View style={styles.iconContainer}>
+                  <Icon
+                    name={transaction.sender === accountId ? "send" : "receipt"}
+                    size={24}
+                    color="#0c7076"
+                  />
+                </View>
+                <View style={styles.textContainer}>
+                  <Title>{transaction.receiverName || transaction.senderName}</Title>
+                  <Paragraph>{`$${transaction.amount}`}</Paragraph>
+                  <Paragraph>{formatDate(transaction.createdAt)}</Paragraph>
+                </View>
               </Card.Content>
             </Card>
           ))}
-      </FadeInView>
-    </ScrollView>
+        </FadeInUpView>
+      </ScrollView>
+      {/* <TouchableOpacity style={styles.fab}>
+        <Icon name="add" size={24} color="#fff" />
+      </TouchableOpacity> */}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 20,
+    backgroundColor: "#f5f5f5",
+  },
+  header: {
+    backgroundColor: "#0c7076",
+    padding: 20,
+    paddingTop: 50,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
+    elevation: 8,
+  },
+  headerTitle: {
+    fontSize: 24,
+    color: "#fff",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  scrollContainer: {
     paddingHorizontal: 10,
-    backgroundColor: "#05161a",
+    paddingBottom: 80, // Space for the FAB
   },
   balanceSection: {
-    marginBottom: 20,
+    marginVertical: 20,
     padding: 20,
-    borderRadius: 10,
-    backgroundColor: "#072e33",
+    borderRadius: 15,
+    backgroundColor: "#ffffff",
     alignItems: "center",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 5 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 10,
-    marginHorizontal: 10,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
+    elevation: 8,
+    backgroundImage: 'linear-gradient(45deg, #0c7076, #6da5c0)',
   },
   balanceText: {
-    fontSize: 20,
-    color: "#6da5c0",
+    fontSize: 22,
+    color: "#333333",
     marginBottom: 10,
     fontWeight: "bold",
   },
   balance: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#0f969c",
+    color: "#0c7076",
   },
   transactionsSection: {
     marginTop: 20,
     paddingBottom: 20,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#6da5c0",
+    color: "#333333",
     textAlign: "center",
   },
   card: {
     marginBottom: 15,
-    borderRadius: 10,
-    backgroundColor: "#0a2e36",
+    borderRadius: 15,
+    backgroundColor: "#ffffff",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-    marginHorizontal: 10,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
+    elevation: 8,
   },
   cardContent: {
-    backgroundColor: "#0a2e36",
+    flexDirection: "row",
+    alignItems: "center",
   },
-  cardTitle: {
-    color: "#6da5c0",
-    fontWeight: "bold",
+  iconContainer: {
+    marginRight: 15,
   },
-  cardAmount: {
-    color: "#0f969c",
-    fontSize: 18,
+  textContainer: {
+    flex: 1,
   },
-  cardDate: {
-    color: "#a9a9a9",
-    fontSize: 14,
+  fab: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    backgroundColor: "#0c7076",
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
+    elevation: 8,
   },
 });
 

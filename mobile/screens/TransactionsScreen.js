@@ -34,17 +34,26 @@ const TransactionsScreen = ({ route }) => {
   };
 
   const transactionDetail = (transaction, accountId) => {
-    return transaction.sender === accountId ? 
-      `To: ${transaction.receiverName}` : 
-      `From: ${transaction.senderName}`;
+    return transaction.sender === accountId
+      ? `To: ${transaction.receiverName}`
+      : `From: ${transaction.senderName}`;
   };
 
   const renderItem = ({ item }) => (
     <Card key={item._id.toString()} style={styles.card}>
-      <Card.Content>
-        <Title style={styles.title}>{transactionDetail(item, accountId)}</Title>
-        <Paragraph style={styles.amount}>{`$${item.amount}`}</Paragraph>
-        <Paragraph style={styles.date}>{formatDate(item.createdAt)}</Paragraph>
+      <Card.Content style={styles.cardContent}>
+        <View style={styles.iconContainer}>
+          <Icon
+            name={item.sender === accountId ? "send" : "receipt"}
+            size={24}
+            color="#0c7076"
+          />
+        </View>
+        <View style={styles.textContainer}>
+          <Title style={styles.title}>{transactionDetail(item, accountId)}</Title>
+          <Paragraph style={styles.amount}>{`$${item.amount}`}</Paragraph>
+          <Paragraph style={styles.date}>{formatDate(item.createdAt)}</Paragraph>
+        </View>
       </Card.Content>
     </Card>
   );
@@ -70,44 +79,71 @@ const TransactionsScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#041F1E",
+    backgroundColor: "#f5f5f5",
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
     padding: 20,
-    backgroundColor: "#026873",
+    paddingTop: 50,
+    backgroundColor: "#0c7076",
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
+    elevation: 8,
   },
   backButton: {
     marginRight: 16,
   },
   headerTitle: {
     fontSize: 22,
-    color: "#FFFFFF",
+    color: "#fff",
     fontWeight: "bold",
   },
   card: {
     marginHorizontal: 10,
     marginVertical: 8,
-    borderRadius: 8,
-    backgroundColor: "#033E3E",
-    elevation: 4,
+    borderRadius: 15,
+    backgroundColor: "#ffffff",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
+    elevation: 8,
+  },
+  cardContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  iconContainer: {
+    marginRight: 15,
+  },
+  textContainer: {
+    flex: 1,
   },
   title: {
     fontSize: 18,
-    color: "#CDE0C9",
+    color: "#0c7076",
     fontWeight: "bold",
   },
   amount: {
     fontSize: 16,
     marginTop: 5,
     marginBottom: 5,
-    color: "#A7D2CB",
+    color: "#0c7076",
   },
   date: {
     fontSize: 14,
-    color: "#789F8A",
+    color: "#333333",
   },
   listContent: {
     paddingBottom: 20,
