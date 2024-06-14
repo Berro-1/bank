@@ -82,13 +82,14 @@ const AccountsScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.titleview}>
-        <Text style={styles.title}>Your Accounts</Text>
-      </View>
+      <Animated.View style={styles.header}>
+        <Text style={styles.headerTitle}>Accounts</Text>
+      </Animated.View>
       {combinedData.length === 0 ? (
         <Text style={styles.emptyText}>No accounts or cards available.</Text>
       ) : (
         <FlatList
+        style={{padding:10}}
           data={combinedData}
           keyExtractor={(item) => item._id}
           renderItem={renderItem}
@@ -103,18 +104,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-    paddingHorizontal: 20,
   },
-  titleview: {
-    borderBottomColor: "#0c7076",
-    borderBottomWidth: 2,
-    paddingBottom: 10,
-    marginBottom: 20,
-    marginTop: 30,
+  header: {
+    width: '100%',
+    backgroundColor: "#0c7076",
+    padding: 20,
+    paddingTop: 50,
+    paddingBottom: 20,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
+    elevation: 8,
   },
-  title: {
-    fontSize: 28,
-    color: "#0c7076",
+  headerTitle: {
+    fontSize: 24,
+    color: "#fff",
     fontWeight: "bold",
     textAlign: "center",
   },

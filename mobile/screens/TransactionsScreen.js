@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Card, Title, Paragraph } from "react-native-paper";
-import { getLatestTransactions } from "../store/transactions/transactionsActions";
+import { getAllTransactions, getLatestTransactions } from "../store/transactions/transactionsActions";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -19,7 +19,7 @@ const TransactionsScreen = ({ route }) => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    dispatch(getLatestTransactions(accountId));
+    dispatch(getAllTransactions(accountId));
   }, [dispatch, accountId]);
 
   const formatDate = (dateString) => {
@@ -82,11 +82,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
+    width: '100%',
+    backgroundColor: "#0c7076",
     padding: 20,
     paddingTop: 50,
-    backgroundColor: "#0c7076",
+    paddingBottom: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     shadowColor: "#000",
@@ -97,6 +97,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.30,
     shadowRadius: 4.65,
     elevation: 8,
+    flexDirection: 'row', // Added to make items in a row
+    alignItems: 'center', // Center items vertically
   },
   backButton: {
     marginRight: 16,
@@ -105,6 +107,8 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: "#fff",
     fontWeight: "bold",
+    flex: 1, // This ensures the title takes up remaining space
+    alignItems:'center',
   },
   card: {
     marginHorizontal: 10,
