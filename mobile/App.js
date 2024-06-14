@@ -11,6 +11,7 @@ import { Provider } from "react-redux";
 import store from './store/store'
 import AccountsScreen from "./screens/accountsScreen";
 import TransfersScreen from "./screens/transfersScreen";
+import TransactionsScreen from "./screens/TransactionsScreen";
 export default function App() {
   const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,7 @@ export default function App() {
             <Stack.Screen name="MainPage" component={MainPage} />
             <Stack.Screen name="Tabs" component={Tabs} />
             <Stack.Screen name="Accounts" component={AccountsScreen} />
+            <Stack.Screen name="Transactions" component={TransactionsScreen} />
             <Stack.Screen name="Transfers" component={TransfersScreen} />
           </Stack.Navigator>
         </NavigationContainer>
