@@ -14,8 +14,7 @@ export const getLatestTransactions = (accountId) => async (dispatch) => {
       error.response.status === 404 &&
       error.response.data.error === "No transactions found for this account"
     ) {
-      // Dispatch empty transactions when there are no transactions found
-      dispatch(transactionActions.fetchSuccess([])); // Treat no transactions as an empty state, not an error
+      dispatch(transactionActions.fetchSuccess([])); 
     } else {
       const errorMessage = error.response
         ? error.response.data
@@ -40,7 +39,6 @@ export const getAllTransactions = (accountId) => async (dispatch) => {
       error.response.status === 404 &&
       error.response.data.error === "No transactions found for this account"
     ) {
-      // Dispatch empty transactions when there are no transactions found
       dispatch(transactionActions.fetchFail([]));
     } else {
       const errorMessage = error.response

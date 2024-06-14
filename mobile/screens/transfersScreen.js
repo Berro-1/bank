@@ -18,88 +18,79 @@ const TransfersScreen = () => {
   const [selectedAccount, setSelectedAccount] = useState("");
   const [accountId, setAccountId] = useState("");
   const [amount, setAmount] = useState("");
-  const fadeAnim = useRef(new Animated.Value(1)).current; // Initialize fadeAnim with a value of 1
+  const fadeAnim = useRef(new Animated.Value(1)).current;
   const [combinedData, setCombinedData] = useState([]);
-const dynamicKey = combinedData.reduce((prev, curr) => prev + curr.value, "");
-
+  const dynamicKey = combinedData.reduce((prev, curr) => prev + curr.value, "");
 
   const userId = "66577a78511763b4296b4311";
-const accounts = useSelector((state) => state.accounts.accounts);
-const cards = useSelector((state) => state.cards.cards);
-
+  const accounts = useSelector((state) => state.accounts.accounts);
+  const cards = useSelector((state) => state.cards.cards);
 
   const dispatch = useDispatch();
- useEffect(() => {
-   dispatch(getAllAccounts(userId));
-   dispatch(getCards(userId));
- }, [dispatch]);
+  useEffect(() => {
+    dispatch(getAllAccounts(userId));
+    dispatch(getCards(userId));
+  }, [dispatch]);
 
- useEffect(() => {
-   // Combine accounts and cards whenever there's a change
-   const newCombinedData = [
-     ...accounts.map((account) => ({
-       key: account._id,
-       value: `${account.type} (Account) $${account.balance}`,
-       itemType: "account",
-     })),
-     ...cards.map((card) => ({
-       key: card._id,
-       value: `${card.card_name} (Card) $${card.available_credit}`,
-       itemType: "card",
-     })),
-   ];
-   setCombinedData(newCombinedData);
-   console.log("new data:   ",combinedData);
- }, [accounts, cards]);
+  useEffect(() => {
+    const newCombinedData = [
+      ...accounts.map((account) => ({
+        key: account._id,
+        value: `${account.type} (Account) $${account.balance}`,
+        itemType: "account",
+      })),
+      ...cards.map((card) => ({
+        key: card._id,
+        value: `${card.card_name} (Card) $${card.available_credit}`,
+        itemType: "card",
+      })),
+    ];
+    setCombinedData(newCombinedData);
+  }, [accounts, cards]);
 
-  
+  const handlePress = async () => {
+    await dispatch(
+      createTransfer(selectedAccount, accountId, amount, "Transfer", userId)
+    );
 
- const handlePress = async () => {
-   await dispatch(
-     createTransfer(selectedAccount, accountId, amount, "Transfer", userId)
-   );
+    dispatch(getAllAccounts(userId));
+    dispatch(getCards(userId));
 
-   // Refetch accounts and cards data
-   dispatch(getAllAccounts(userId));
-   dispatch(getCards(userId));
-
-   // Animation sequence
-   Animated.sequence([
-     Animated.timing(fadeAnim, {
-       toValue: 0.5, // Fade to half opacity
-       duration: 300,
-       useNativeDriver: true,
-     }),
-     Animated.timing(fadeAnim, {
-       toValue: 1, // Fade back to full opacity
-       duration: 300,
-       useNativeDriver: true,
-     }),
-   ]).start();
- };
-
+    Animated.sequence([
+      Animated.timing(fadeAnim, {
+        toValue: 0.5,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Transfer Funds</Text>
+        <Text style={styles.headerTitle}>Transfer Funds</Text>
       </View>
       <View style={styles.list}>
         <SelectList
-          key={dynamicKey} // Dynamic key based on content changes
+          key={dynamicKey}
           setSelected={(val) => setSelectedAccount(val)}
           data={combinedData}
           placeholder="Select Sender Account"
-          inputStyles={{ color: "#6da5c0" }}
-          dropdownTextStyles={{ color: "#6da5c0" }}
+          inputStyles={{ color: "#0c7076" }}
+          dropdownTextStyles={{ color: "#0c7076" }}
           dropdownStyles={{
-            borderColor: "#6da5c0",
-            backgroundColor: "#072e33",
+            borderColor: "#0c7076",
+            backgroundColor: "#ffffff",
           }}
           maxHeight={125}
           boxStyles={{
-            backgroundColor: "#072e33",
-            borderColor: "#6da5c0",
+            backgroundColor: "#ffffff",
+            borderColor: "#0c7076",
             width: "90%",
           }}
         />
@@ -112,7 +103,7 @@ const cards = useSelector((state) => state.cards.cards);
           onChangeText={(text) => setAccountId(text)}
           value={accountId}
           placeholder="Enter account ID"
-          placeholderTextColor="#6da5c0"
+          placeholderTextColor="#0c7076"
         />
       </View>
 
@@ -124,7 +115,7 @@ const cards = useSelector((state) => state.cards.cards);
           value={amount}
           placeholder="Enter amount"
           keyboardType="numeric"
-          placeholderTextColor="#6da5c0"
+          placeholderTextColor="#0c7076"
         />
       </View>
 
@@ -142,49 +133,60 @@ const cards = useSelector((state) => state.cards.cards);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#05161a",
-    paddingHorizontal: 20,
+    backgroundColor: "#f5f5f5",
+  },
+  header: {
+    width: '100%',
+    backgroundColor: "#0c7076",
+    padding: 20,
+    paddingTop: 50,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
+    elevation: 8,
+    alignItems: "center",
+  },
+  headerTitle: {
+    fontSize: 24,
+    color: "#fff",
+    fontWeight: "bold",
+    textAlign: "center",
   },
   list: {
     alignItems: "center",
     marginTop: 20,
   },
-  header: {
-    padding: 20,
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#294d61",
-  },
-  title: {
-    fontSize: 24,
-    color: "#6da5c0",
-    marginTop: 30,
-    fontWeight: "bold",
-  },
   card: {
-    backgroundColor: "#072e33",
-    marginVertical: 10,
+    backgroundColor: "#ffffff",
+    marginHorizontal: 20,
+    marginVertical:10,
     padding: 20,
     borderRadius: 15,
-    elevation: 3,
+    elevation: 8,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
   },
   label: {
-    color: "#6da5c0",
+    color: "#333333",
     marginBottom: 10,
     fontSize: 16,
     fontWeight: "500",
   },
   input: {
     height: 40,
-    borderColor: "#294d61",
+    borderColor: "#0c7076",
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 10,
-    color: "#6da5c0",
+    color: "#0c7076",
     backgroundColor: "transparent",
   },
   buttonContainer: {
@@ -192,7 +194,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    backgroundColor: "#072e33",
+    backgroundColor: "#0c7076",
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 30,
@@ -203,7 +205,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
   },
   buttonText: {
-    color: "#6da5c0",
+    color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
   },
