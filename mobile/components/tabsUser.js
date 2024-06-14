@@ -12,9 +12,8 @@ import MainPage from "../screens/mainPage";
 import Submissions from "../screens/submissions";
 import UserDetails from "../screens/userDetails";
 import Payments from "../screens/Payments"; // Assuming you have this screen
-import Accounts from "../screens/accountsScreen"; // Assuming you have this screen
 import AccountsScreen from "../screens/accountsScreen";
-
+import TransfersScreen from "../screens/transfersScreen";
 const Tab = createBottomTabNavigator();
 
 const CustomTabBarButton = ({ children, onPress, focused }) => {
