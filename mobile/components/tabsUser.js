@@ -14,6 +14,7 @@ import UserDetails from "../screens/userDetails";
 import Payments from "../screens/Payments"; // Assuming you have this screen
 import Accounts from "../screens/accountsScreen"; // Assuming you have this screen
 import AccountsScreen from "../screens/accountsScreen";
+import TransfersScreen from "../screens/transfersScreen";
 
 
 const Tab = createBottomTabNavigator();
@@ -146,13 +147,13 @@ const TabsUser = () => {
       />
       <Tab.Screen
         name="Payments"
-        component={Payments}
+        component={TransfersScreen}
         options={{
           tabBarButton: (props) => (
             <TouchableOpacity
               {...props}
               onPress={() => {
-                setSelectedTab("Payments");
+                setSelectedTab("transfersScreen");
                 props.onPress();
               }}
             >
@@ -160,11 +161,11 @@ const TabsUser = () => {
                 <Icon
                   name="credit-card"
                   size={30}
-                  color={selectedTab === "Payments" ? "#FF6347" : "gray"}
+                  color={selectedTab === "transfersScreen" ? "#FF6347" : "gray"}
                 />
                 <Text
                   style={
-                    selectedTab === "Payments"
+                    selectedTab === "transfersScreen"
                       ? styles.tabBarLabelFocused
                       : styles.tabBarLabel
                   }
