@@ -145,13 +145,13 @@ const TabsUser = () => {
       />
       <Tab.Screen
         name="Payments"
-        component={Payments}
+        component={TransfersScreen}
         options={{
           tabBarButton: (props) => (
             <TouchableOpacity
               {...props}
               onPress={() => {
-                setSelectedTab("Payments");
+                setSelectedTab("transfersScreen");
                 props.onPress();
               }}
             >
@@ -163,7 +163,7 @@ const TabsUser = () => {
                 />
                 <Text
                   style={
-                    selectedTab === "Payments"
+                    selectedTab === "transfersScreen"
                       ? styles.tabBarLabelFocused
                       : styles.tabBarLabel
                   }
