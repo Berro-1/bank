@@ -10,6 +10,7 @@ import TabsUser from "./components/tabsUser";
 import { Provider } from "react-redux";
 import store from './store/store'
 import AccountsScreen from "./screens/accountsScreen";
+import TransfersScreen from "./screens/transfersScreen";
 export default function App() {
   const Stack = createNativeStackNavigator();
 
@@ -18,7 +19,7 @@ export default function App() {
       <View style={styles.container}>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="Home"
+            initialRouteName="Tabs"
             screenOptions={{
               headerShown: false, // This hides the header globally
             }}
@@ -29,6 +30,7 @@ export default function App() {
             <Stack.Screen name="MainPage" component={MainPage} />
             <Stack.Screen name="Tabs" component={Tabs} />
             <Stack.Screen name="Accounts" component={AccountsScreen} />
+            <Stack.Screen name="Transfers" component={TransfersScreen} />
           </Stack.Navigator>
         </NavigationContainer>
         <StatusBar style="auto" />

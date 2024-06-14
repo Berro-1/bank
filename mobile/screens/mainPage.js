@@ -92,7 +92,7 @@ const MainPage = ({ navigation }) => {
       <View style={styles.actionSection}>
         <CustomButton
           title="Send Money"
-          onPress={() => alert("Send Money")}
+          onPress={() => navigation.navigate("Transfers")}
           style={{ backgroundColor: "#0c7076", marginHorizontal: 1 }}
         />
         <CustomButton
