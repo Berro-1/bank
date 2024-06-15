@@ -49,9 +49,8 @@ const FadeInUpView = (props) => {
 
 const MainPage = () => {
   const accounts = useSelector((state) => state.accounts.accounts || []);
-  const transactions = useSelector((state) => state.transactions.transactions || []);
-
-  const userId = "66577a78511763b4296b4311"; // This should be dynamically obtained
+  const transactions = useSelector((state) => state.transactions.transactions || {transactions:[]});
+  const userId = "66577a78511763b4296b4311";
   const dispatch = useDispatch();
   const accountId = "665cd4f1a1fe882d71c8269d";
 

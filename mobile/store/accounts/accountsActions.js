@@ -1,6 +1,5 @@
 import axios from "axios";
 import { accountsActions } from "./accountsSlice";
-import { toast } from "react-toastify";
 import { API_URL } from "react-native-dotenv";
 
 export const getAllAccounts = (userId) => async (dispatch) => {

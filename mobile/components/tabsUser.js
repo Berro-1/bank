@@ -14,6 +14,7 @@ import UserDetails from "../screens/userDetails";
 import Payments from "../screens/Payments"; // Assuming you have this screen
 import AccountsScreen from "../screens/accountsScreen";
 import TransfersScreen from "../screens/transfersScreen";
+import SubmissionsScreen from "../screens/Submissions/submissionsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -177,7 +178,7 @@ const TabsUser = () => {
       />
       <Tab.Screen
         name="Submissions"
-        component={Submissions}
+        component={SubmissionsScreen}
         options={{
           tabBarButton: (props) => (
             <View
