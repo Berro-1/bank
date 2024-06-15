@@ -11,7 +11,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import MainPage from "../screens/mainPage";
 import Submissions from "../screens/submissions";
 import UserDetails from "../screens/userDetails";
-import Payments from "../screens/Payments"; // Assuming you have this screen
+import PaymentsScreen from "../screens/Payments"; // Assuming you have this screen
 import AccountsScreen from "../screens/accountsScreen";
 import TransfersScreen from "../screens/transfersScreen";
 import LoanScreen from "../screens/loansScreen";
@@ -147,13 +147,13 @@ const TabsUser = () => {
       />
       <Tab.Screen
         name="Payments"
-        component={LoanScreen}
+        component={PaymentsScreen}
         options={{
           tabBarButton: (props) => (
             <TouchableOpacity
               {...props}
               onPress={() => {
-                setSelectedTab("LoanScreen");
+                setSelectedTab("Payments");
                 props.onPress();
               }}
             >
@@ -165,7 +165,7 @@ const TabsUser = () => {
                 />
                 <Text
                   style={
-                    selectedTab === "LoanScreen"
+                    selectedTab === "Payments"
                       ? styles.tabBarLabelFocused
                       : styles.tabBarLabel
                   }

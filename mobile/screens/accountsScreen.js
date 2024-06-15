@@ -89,7 +89,7 @@ const AccountsScreen = ({ navigation }) => {
         <Text style={styles.emptyText}>No accounts or cards available.</Text>
       ) : (
         <FlatList
-        style={{padding:10}}
+        style={{padding:10,paddingTop:20}}
           data={combinedData}
           keyExtractor={(item) => item._id}
           renderItem={renderItem}
