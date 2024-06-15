@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import {
   ScrollView,
   View,
@@ -12,6 +12,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllAccounts } from "../store/accounts/accountsActions";
 import { getLatestTransactions } from "../store/transactions/transactionsActions";
 import Icon from "react-native-vector-icons/MaterialIcons";
+
+const conversionRate = 89000; // Conversion rate from Dollar to LBP
 
 const FadeInUpView = (props) => {
   const fadeAnim = useRef(new Animated.Value(50)).current; // Start position for the slide effect
@@ -28,7 +30,7 @@ const FadeInUpView = (props) => {
         toValue: 1,
         duration: 1000,
         useNativeDriver: true,
-      })
+      }),
     ]).start();
   }, [fadeAnim, opacityAnim]);
 
@@ -46,8 +48,8 @@ const FadeInUpView = (props) => {
 };
 
 const MainPage = () => {
-  const accounts = useSelector((state)=> state.accounts.accounts || {accounts:[]})
-  const transactions = useSelector((state)=> state.transactions.transactions || {transactions:[]})
+  const accounts = useSelector((state) => state.accounts.accounts || []);
+  const transactions = useSelector((state) => state.transactions.transactions || []);
 
   const userId = "66577a78511763b4296b4311"; // This should be dynamically obtained
   const dispatch = useDispatch();
@@ -65,10 +67,66 @@ const MainPage = () => {
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString(undefined, {
-      year: "numeric", month: "long", day: "numeric",
-      hour: "2-digit", minute: "2-digit",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
+
+  const [fabOpen, setFabOpen] = useState(false);
+  const [currency, setCurrency] = useState('Dollar');
+
+  const toggleFab = () => {
+    setFabOpen(!fabOpen);
+  };
+
+  const fabAnimation = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(fabAnimation, {
+      toValue: fabOpen ? 1 : 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [fabOpen, fabAnimation]);
+
+  const lbpStyle = {
+    transform: [
+      {
+        scale: fabAnimation,
+      },
+      {
+        translateY: fabAnimation.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, -70],
+        }),
+      },
+    ],
+    opacity: fabAnimation,
+  };
+
+  const dollarStyle = {
+    transform: [
+      {
+        scale: fabAnimation,
+      },
+      {
+        translateY: fabAnimation.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, -140],
+        }),
+      },
+    ],
+    opacity: fabAnimation,
+  };
+
+  const convertAmount = (amount) => {
+    return currency === 'Dollar' ? amount : amount * conversionRate;
+  };
+
+  const currencySymbol = currency === 'Dollar' ? '$' : 'LBP';
 
   return (
     <View style={styles.container}>
@@ -78,15 +136,15 @@ const MainPage = () => {
       <ScrollView style={styles.scrollContainer}>
         <FadeInUpView style={styles.balanceSection}>
           <Text style={styles.balanceText}>Your Balance</Text>
-          {accounts && accounts.map((account) => (
+          {accounts.map((account) => (
             <Text key={account._id} style={styles.balance}>
-              {`$${account.balance}`}
+              {`${currencySymbol} ${convertAmount(account.balance)}`}
             </Text>
           ))}
         </FadeInUpView>
         <FadeInUpView style={styles.transactionsSection}>
           <Text style={styles.sectionTitle}>Recent Transactions</Text>
-          {transactions && transactions.map((transaction) => (
+          {transactions.map((transaction) => (
             <Card key={transaction._id} style={styles.card}>
               <Card.Content style={styles.cardContent}>
                 <View style={styles.iconContainer}>
@@ -98,7 +156,7 @@ const MainPage = () => {
                 </View>
                 <View style={styles.textContainer}>
                   <Title>{transaction.receiverName || transaction.senderName}</Title>
-                  <Paragraph>{`$${transaction.amount}`}</Paragraph>
+                  <Paragraph>{`${currencySymbol} ${convertAmount(transaction.amount)}`}</Paragraph>
                   <Paragraph>{formatDate(transaction.createdAt)}</Paragraph>
                 </View>
               </Card.Content>
@@ -106,9 +164,23 @@ const MainPage = () => {
           ))}
         </FadeInUpView>
       </ScrollView>
-      {/* <TouchableOpacity style={styles.fab}>
-        <Icon name="add" size={24} color="#fff" />
-      </TouchableOpacity> */}
+      {fabOpen && (
+        <>
+          <Animated.View style={[styles.fabOption, lbpStyle]}>
+            <TouchableOpacity onPress={() => { setCurrency('LBP'); setFabOpen(false); }}>
+              <Text style={styles.fabOptionText}>LBP</Text>
+            </TouchableOpacity>
+          </Animated.View>
+          <Animated.View style={[styles.fabOption, dollarStyle]}>
+            <TouchableOpacity onPress={() => { setCurrency('Dollar'); setFabOpen(false); }}>
+              <Text style={styles.fabOptionText}>Dollar</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        </>
+      )}
+      <TouchableOpacity style={styles.fab} onPress={toggleFab}>
+        <Icon name="attach-money" size={24} color="#fff" />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -222,6 +294,31 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.30,
     shadowRadius: 4.65,
     elevation: 8,
+  },
+  fabOption: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    backgroundColor: "#0c7076",
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
+    elevation: 8,
+    marginBottom: 10,
+  },
+  fabOptionText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 

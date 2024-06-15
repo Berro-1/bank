@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { getAllAccounts } from "../accounts/accountsActions";
 import { getCards } from "../creditCards/creditCardsActions";
 import { API_URL } from 'react-native-dotenv';
+import { getLatestTransactions } from "../transactions/transactionsActions";
 export const createTransfer =
   (accountId, recieverAccountId, amountTransfer, transfer_type_back, userId) =>
   async (dispatch) => {
@@ -26,6 +27,7 @@ export const createTransfer =
         theme: "colored",
       });
       dispatch(getAllAccounts(userId));
+      dispatch(getLatestTransactions(accountId));
       dispatch(getCards(userId));
     } catch (e) {
       console.log(e);
