@@ -13,6 +13,7 @@ import AccountsScreen from "./screens/accountsScreen";
 import TransfersScreen from "./screens/transfersScreen";
 import TransactionsScreen from "./screens/TransactionsScreen";
 import LoansScreen from "./screens/loansScreen";
+import PaymentsScreen from "./screens/Payments";
 export default function App() {
   const Stack = createNativeStackNavigator();
 
@@ -21,7 +22,7 @@ export default function App() {
       <View style={styles.container}>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="Tabs"
+            initialRouteName="Home"
             screenOptions={{
               headerShown: false, // This hides the header globally
             }}
@@ -35,6 +36,7 @@ export default function App() {
             <Stack.Screen name="Transactions" component={TransactionsScreen} />
             <Stack.Screen name="Transfers" component={TransfersScreen} />
             <Stack.Screen name="Loans" component={LoansScreen} />
+            <Stack.Screen name="Payments" component={PaymentsScreen} />
           </Stack.Navigator>
         </NavigationContainer>
         <StatusBar style="auto" />

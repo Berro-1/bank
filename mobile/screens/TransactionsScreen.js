@@ -67,6 +67,7 @@ const TransactionsScreen = ({ route }) => {
         <Text style={styles.headerTitle}>Transactions</Text>
       </View>
       <FlatList
+        style={{paddingTop:10}}
         data={transactions}
         keyExtractor={(item) => item._id.toString()}
         renderItem={renderItem}
@@ -104,11 +105,10 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 24,
     color: "#fff",
     fontWeight: "bold",
-    flex: 1, // This ensures the title takes up remaining space
-    alignItems:'center',
+    textAlign: "center",
   },
   card: {
     marginHorizontal: 10,

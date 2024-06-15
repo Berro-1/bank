@@ -6,12 +6,14 @@ import {
   StyleSheet,
   Animated,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { Card, Title, Paragraph } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllAccounts } from "../store/accounts/accountsActions";
 import { getLatestTransactions } from "../store/transactions/transactionsActions";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import Easing from 'react-native/Libraries/Animated/Easing';
 
 const conversionRate = 89000; // Conversion rate from Dollar to LBP
 
@@ -50,8 +52,7 @@ const FadeInUpView = (props) => {
 const MainPage = () => {
   const accounts = useSelector((state) => state.accounts.accounts || []);
   const transactions = useSelector((state) => state.transactions.transactions || []);
-
-  const userId = "66577a78511763b4296b4311"; // This should be dynamically obtained
+  const userId = "66577a78511763b4296b4311";
   const dispatch = useDispatch();
   const accountId = "665cd4f1a1fe882d71c8269d";
 
@@ -82,44 +83,31 @@ const MainPage = () => {
     setFabOpen(!fabOpen);
   };
 
-  const fabAnimation = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(Dimensions.get('window').height)).current;
 
   useEffect(() => {
-    Animated.timing(fabAnimation, {
-      toValue: fabOpen ? 1 : 0,
-      duration: 300,
+    Animated.timing(slideAnim, {
+      toValue: fabOpen ? 0 : Dimensions.get('window').height,
+      duration: 400, // Smooth transition duration
+      easing: Easing.inOut(Easing.ease),
       useNativeDriver: true,
     }).start();
-  }, [fabOpen, fabAnimation]);
+  }, [fabOpen]);
 
-  const lbpStyle = {
-    transform: [
-      {
-        scale: fabAnimation,
-      },
-      {
-        translateY: fabAnimation.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, -70],
-        }),
-      },
-    ],
-    opacity: fabAnimation,
+  const handleOptionPress = (currencyType) => {
+    setCurrency(currencyType);
+    Animated.timing(slideAnim, {
+      toValue: Dimensions.get('window').height,
+      duration: 400, // Smooth transition duration
+      easing: Easing.inOut(Easing.ease),
+      useNativeDriver: true,
+    }).start(() => setFabOpen(false));
   };
 
-  const dollarStyle = {
-    transform: [
-      {
-        scale: fabAnimation,
-      },
-      {
-        translateY: fabAnimation.interpolate({
-          inputRange: [0, 1],
-          outputRange: [0, -140],
-        }),
-      },
-    ],
-    opacity: fabAnimation,
+  const slideUpStyle = {
+    transform: [{
+      translateY: slideAnim,
+    }],
   };
 
   const convertAmount = (amount) => {
@@ -130,9 +118,9 @@ const MainPage = () => {
 
   return (
     <View style={styles.container}>
-      <Animated.View style={styles.header}>
+      <View style={styles.header}>
         <Text style={styles.headerTitle}>Dashboard</Text>
-      </Animated.View>
+      </View>
       <ScrollView style={styles.scrollContainer}>
         <FadeInUpView style={styles.balanceSection}>
           <Text style={styles.balanceText}>Your Balance</Text>
@@ -165,18 +153,25 @@ const MainPage = () => {
         </FadeInUpView>
       </ScrollView>
       {fabOpen && (
-        <>
-          <Animated.View style={[styles.fabOption, lbpStyle]}>
-            <TouchableOpacity onPress={() => { setCurrency('LBP'); setFabOpen(false); }}>
-              <Text style={styles.fabOptionText}>LBP</Text>
+        <View style={styles.overlay}>
+          <TouchableOpacity style={styles.overlayBackground} onPress={toggleFab} />
+          <Animated.View style={[styles.fabOptions, slideUpStyle]}>
+            <TouchableOpacity style={styles.fabOption} onPress={() => handleOptionPress('LBP')}>
+              <Icon name="money" size={24} color="#0c7076" />
+              <View style={styles.optionTextContainer}>
+                <Text style={styles.fabOptionTitle}>LBP</Text>
+                <Text style={styles.fabOptionDescription}>Switch to Lebanese Pounds</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.fabOption} onPress={() => handleOptionPress('Dollar')}>
+              <Icon name="attach-money" size={24} color="#0c7076" />
+              <View style={styles.optionTextContainer}>
+                <Text style={styles.fabOptionTitle}>Dollar</Text>
+                <Text style={styles.fabOptionDescription}>Switch to US Dollars</Text>
+              </View>
             </TouchableOpacity>
           </Animated.View>
-          <Animated.View style={[styles.fabOption, dollarStyle]}>
-            <TouchableOpacity onPress={() => { setCurrency('Dollar'); setFabOpen(false); }}>
-              <Text style={styles.fabOptionText}>Dollar</Text>
-            </TouchableOpacity>
-          </Animated.View>
-        </>
+        </View>
       )}
       <TouchableOpacity style={styles.fab} onPress={toggleFab}>
         <Icon name="attach-money" size={24} color="#fff" />
@@ -194,6 +189,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#0c7076",
     padding: 20,
     paddingTop: 50,
+    paddingBottom: 20,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
     shadowColor: "#000",
@@ -229,7 +225,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.30,
     shadowRadius: 4.65,
     elevation: 8,
-    backgroundImage: 'linear-gradient(45deg, #0c7076, #6da5c0)',
   },
   balanceText: {
     fontSize: 22,
@@ -260,8 +255,7 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 4,
-    },
+      height: 4 },
     shadowOpacity: 0.30,
     shadowRadius: 4.65,
     elevation: 8,
@@ -295,30 +289,46 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
     elevation: 8,
   },
-  fabOption: {
+  overlay: {
     position: "absolute",
-    bottom: 20,
-    right: 20,
-    backgroundColor: "#0c7076",
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.30,
-    shadowRadius: 4.65,
-    elevation: 8,
-    marginBottom: 10,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "flex-end",
   },
-  fabOptionText: {
-    color: "#fff",
-    fontSize: 16,
+  overlayBackground: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  fabOptions: {
+    backgroundColor: "#fff",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    paddingBottom: 40,
+    width: '100%',
+  },
+  fabOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  optionTextContainer: {
+    marginLeft: 15,
+  },
+  fabOptionTitle: {
+    color: "#0c7076",
+    fontSize: 18,
     fontWeight: "bold",
+  },
+  fabOptionDescription: {
+    color: "#333",
+    fontSize: 14,
   },
 });
 
