@@ -1,7 +1,7 @@
 import axios from "axios";
 import { loansActions } from "./loansSlice";
 import { getAllAccounts } from "../accounts/accountsActions";
-import { toast } from "react-toastify";
+import { Alert } from 'react-native';
 import { API_URL } from 'react-native-dotenv';
 
 export const getAllLoans = (userId) => async (dispatch) => {
@@ -36,11 +36,10 @@ export const createLoanPayment =
       console.log("userid", userId);
       dispatch(getAllLoans(userId));
       dispatch(getAllAccounts(userId));
-      toast.success("Payment Done Successfully", {
-        autoClose: 1000,
-        theme: "colored",
-      });
       dispatch(loansActions.fetchSuccess(response.data));
+      Alert.alert("Success", "Payment Done Successfully", [
+        { text: "OK", onPress: () => console.log("OK Pressed") },
+      ]);
     } catch (error) {
       console.log("Error making payment:", error);
       if (error.response) {
@@ -48,9 +47,12 @@ export const createLoanPayment =
       } else {
         dispatch.loansActions.fetchFail("Network error or no response");
       }
-      toast.error(`Payment Failed: ${error.response.data.mssg}`, {
-        autoClose: 1000,
-        theme: "colored",
-      });
+      Alert.alert(
+        "Error",
+        `Payment Failed: ${
+          error.response ? error.response.data.mssg : "Unknown error"
+        }`,
+        [{ text: "OK", onPress: () => console.log("OK Pressed") }]
+      );
     }
   };

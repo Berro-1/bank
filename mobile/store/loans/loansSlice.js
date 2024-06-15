@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  loans: [],
   loading: false,
   error: null,
-  loans: [],
 };
 
 const loanSlice = createSlice({
