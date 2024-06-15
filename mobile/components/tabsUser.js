@@ -14,7 +14,7 @@ import UserDetails from "../screens/userDetails";
 import Payments from "../screens/Payments"; // Assuming you have this screen
 import AccountsScreen from "../screens/accountsScreen";
 import TransfersScreen from "../screens/transfersScreen";
-
+import LoanScreen from "../screens/loansScreen";
 const Tab = createBottomTabNavigator();
 
 const CustomTabBarButton = ({ children, onPress, focused }) => {
@@ -145,13 +145,13 @@ const TabsUser = () => {
       />
       <Tab.Screen
         name="Payments"
-        component={TransfersScreen}
+        component={LoanScreen}
         options={{
           tabBarButton: (props) => (
             <TouchableOpacity
               {...props}
               onPress={() => {
-                setSelectedTab("transfersScreen");
+                setSelectedTab("LoanScreen");
                 props.onPress();
               }}
             >
@@ -163,7 +163,7 @@ const TabsUser = () => {
                 />
                 <Text
                   style={
-                    selectedTab === "transfersScreen"
+                    selectedTab === "LoanScreen"
                       ? styles.tabBarLabelFocused
                       : styles.tabBarLabel
                   }
