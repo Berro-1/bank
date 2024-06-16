@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import MainPage from "../screens/mainPage";
-import Submissions from "../screens/submissions";
 import UserDetails from "../screens/userDetails";
 import PaymentsScreen from "../screens/Payments"; // Assuming you have this screen
 import AccountsScreen from "../screens/accountsScreen";

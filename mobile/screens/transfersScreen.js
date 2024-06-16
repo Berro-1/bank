@@ -7,30 +7,64 @@ import {
   ScrollView,
   Animated,
   TouchableOpacity,
+  Modal,
+  Alert,
 } from "react-native";
+import { BarCodeScanner } from "expo-barcode-scanner";
+import { MaterialIcons as Icon } from "@expo/vector-icons";
+
 import { SelectList } from "react-native-dropdown-select-list";
 import { getAllAccounts } from "../store/accounts/accountsActions";
 import { getCards } from "../store/creditCards/creditCardsActions";
 import { useDispatch, useSelector } from "react-redux";
 import { createTransfer } from "../store/transfers/transfersActions";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
 
 const TransfersScreen = () => {
   const [selectedAccount, setSelectedAccount] = useState("");
   const [accountId, setAccountId] = useState("");
   const [amount, setAmount] = useState("");
+  const [scannerModalVisible, setScannerModalVisible] = useState(false);
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const [combinedData, setCombinedData] = useState([]);
-  const dynamicKey = combinedData.reduce((prev, curr) => prev + curr.value, "");
+  const [hasPermission, setHasPermission] = useState(null);
+  const [isScanning, setIsScanning] = useState(false); // State to control scanning
 
-  const userId = "66577a78511763b4296b4311";
+  const dynamicKey = combinedData.reduce((prev, curr) => prev + curr.value, "");
+  const [userId, setUserId] = useState(null);
   const accounts = useSelector((state) => state.accounts.accounts);
   const cards = useSelector((state) => state.cards.cards);
 
   const dispatch = useDispatch();
+
   useEffect(() => {
-    dispatch(getAllAccounts(userId));
-    dispatch(getCards(userId));
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
   }, [dispatch]);
+
+ useEffect(() => {
+   const loadUserData = async () => {
+     try {
+       const token = await AsyncStorage.getItem("jwtToken");
+       if (token) {
+         const decoded = jwtDecode(token);
+         setUserId(decoded.id); // Assuming 'id' is the field in the token
+         dispatch(getAllAccounts(decoded.id)); // Dispatch actions with decoded data
+         dispatch(getCards(decoded.id));
+       } else {
+         console.log("No token found");
+       }
+     } catch (error) {
+       console.error("Failed to load user data:", error);
+     }
+   };
+
+   loadUserData();
+ }, [dispatch]);
+
 
   useEffect(() => {
     const newCombinedData = [
@@ -48,6 +82,19 @@ const TransfersScreen = () => {
     setCombinedData(newCombinedData);
   }, [accounts, cards]);
 
+  const handleBarCodeScanned = ({ type, data }) => {
+    if (!isScanning) {
+      // Check if another scan is allowed
+      setIsScanning(true); // Set scanning to true to block further scans
+      setAccountId(data);
+      setScannerModalVisible(false); // Close scanner modal after scanning
+      Alert.alert("QR Code Scanned", `Account ID: ${data}`);
+
+      setTimeout(() => {
+        setIsScanning(false); // Reset scanning state after 2 seconds
+      }, 2000);
+    }
+  };
   const handlePress = async () => {
     await dispatch(
       createTransfer(selectedAccount, accountId, amount, "Transfer", userId)
@@ -69,6 +116,13 @@ const TransfersScreen = () => {
       }),
     ]).start();
   };
+
+  if (hasPermission === null) {
+    return <Text>Requesting for camera permission</Text>;
+  }
+  if (hasPermission === false) {
+    return <Text>No access to camera</Text>;
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -97,21 +151,50 @@ const TransfersScreen = () => {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.label}>To Account ID:</Text>
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => setAccountId(text)}
-          value={accountId}
-          placeholder="Enter account ID"
-          placeholderTextColor="#0c7076"
-        />
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            onChangeText={setAccountId}
+            value={accountId}
+            placeholder="Scan or enter account ID"
+            placeholderTextColor="#0c7076"
+            multiline={false} // Ensuring TextInput is single-line
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          <TouchableOpacity
+            onPress={() => setScannerModalVisible(true)}
+            style={styles.icon}
+          >
+            <Icon name="qr-code-scanner" size={24} color="#0c7076" />
+          </TouchableOpacity>
+        </View>
       </View>
+
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={scannerModalVisible}
+        onRequestClose={() => setScannerModalVisible(false)}
+      >
+        <BarCodeScanner
+          onBarCodeScanned={handleBarCodeScanned}
+          style={StyleSheet.absoluteFillObject}
+        >
+          <TouchableOpacity
+            style={styles.modalCloseButton}
+            onPress={() => setScannerModalVisible(false)}
+          >
+            <Text style={styles.modalCloseButtonText}>Close Scanner</Text>
+          </TouchableOpacity>
+        </BarCodeScanner>
+      </Modal>
 
       <View style={styles.card}>
         <Text style={styles.label}>Amount:</Text>
         <TextInput
-          style={styles.input}
-          onChangeText={(text) => setAmount(text)}
+          style={styles.inputAmount}
+          onChangeText={setAmount}
           value={amount}
           placeholder="Enter amount"
           keyboardType="numeric"
@@ -136,7 +219,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
   },
   header: {
-    width: '100%',
+    width: "100%",
     backgroundColor: "#0c7076",
     padding: 20,
     paddingTop: 50,
@@ -147,7 +230,7 @@ const styles = StyleSheet.create({
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.30,
+    shadowOpacity: 0.3,
     shadowRadius: 4.65,
     elevation: 8,
     alignItems: "center",
@@ -162,16 +245,42 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 20,
   },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderColor: "#0c7076",
+    borderWidth: 1,
+    borderRadius: 5,
+    width: "100%", // Ensure the container takes full width
+    position: "relative", // Required for absolute positioning of the icon
+  },
+  input: {
+    flex: 1, // Allows the text input to expand and fill the space
+    height: 40,
+    paddingLeft: 10,
+    paddingRight: 44,
+    color: "#0c7076",
+    backgroundColor: "transparent",
+  },
+  icon: {
+    position: "absolute",
+    right: 10, // Place it towards the right, within the padding area of the TextInput
+    height: "100%",
+    justifyContent: "center",
+    padding: 10,
+    zIndex: 10, // Ensures the icon is clickable and not blocked by the TextInput
+  },
   card: {
     backgroundColor: "#ffffff",
     marginHorizontal: 20,
-    marginVertical:10,
+    marginVertical: 10,
     padding: 20,
     borderRadius: 15,
     elevation: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.30,
+    shadowOpacity: 0.3,
     shadowRadius: 4.65,
   },
   label: {
@@ -180,7 +289,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
   },
-  input: {
+  inputAmount: {
     height: 40,
     borderColor: "#0c7076",
     borderWidth: 1,
@@ -208,6 +317,18 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+  },
+
+  modalCloseButton: {
+    marginTop: 30,
+    alignSelf: "center",
+    backgroundColor: "#0c7076",
+    padding: 10,
+    borderRadius: 5,
+  },
+  modalCloseButtonText: {
+    color: "#fff",
+    fontSize: 18,
   },
 });
 

@@ -10,7 +10,7 @@ export default function Payments({ navigation }) {
 
   const handleLoanPaymentPress = () => {
     // Navigate to the Loan Payment screen or handle loan payment logic
-    navigation.navigate('LoanPayment');
+    navigation.navigate('Loans');
   };
 
   return (

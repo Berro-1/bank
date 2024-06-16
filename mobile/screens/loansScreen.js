@@ -18,9 +18,12 @@ import {
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { SelectList } from "react-native-dropdown-select-list";
 import { createLoanPayment } from "../store/loans/loansActions";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
+
 const LoanScreen = () => {
   const dispatch = useDispatch();
-  const userId = "6644dcb9c16b269cf9bae998";
+  const [userId, setUserId] = useState(null);
   const loans = useSelector((state) => state.loans.loans || []);
   const accounts = useSelector((state) => state.accounts.accounts || []);
 
@@ -33,21 +36,37 @@ const LoanScreen = () => {
     accountId: "",
     paymentAmount: "", // This will hold the amount input by the user in the TextInput
   });
-  const openModal = (loanId, amount) => {
+  const openModal = (loanId, amount,userId) => {
     setModalInfo({
       isVisible: true,
       loanId,
       amount,
       accountId: "",
       paymentAmount: "",
-      userId: "6644dcb9c16b269cf9bae998",
+      userId,
       key: new Date().getTime(), // Unique key based on the current time
     });
   };
   useEffect(() => {
-    dispatch(getAllLoans(userId));
-    dispatch(getAllAccounts(userId));
-  }, [dispatch, userId]);
+    const loadUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("jwtToken");
+        if (token) {
+          const decoded = jwtDecode(token);
+          setUserId(decoded.id); // Assuming 'id' is the field in the token
+          dispatch(getAllAccounts(decoded.id)); // Dispatch actions with decoded data
+          dispatch(getAllLoans(decoded.id));
+        } else {
+          console.log("No token found");
+        }
+      } catch (error) {
+        console.error("Failed to load user data:", error);
+      }
+    };
+
+    loadUserData();
+  }, [dispatch]);
+
 
   const rotation = Array.isArray(loans)
     ? loans.reduce((acc, loan) => {
@@ -158,7 +177,7 @@ const LoanScreen = () => {
                       size="sm"
                       variant="solid"
                       style={styles.button}
-                      onPress={() => openModal(loan._id, loan.amount)}
+                      onPress={() => openModal(loan._id, loan.amount,userId)}
                     >
                       <Text
                         style={{

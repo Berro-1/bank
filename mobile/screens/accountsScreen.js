@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllAccounts } from "../store/accounts/accountsActions";
 import { getCards } from "../store/creditCards/creditCardsActions";
 import Icon from "react-native-vector-icons/FontAwesome";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
 
 const AccountItem = ({ item, isExpanded, onPress, navigation }) => {
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -48,7 +50,7 @@ const AccountItem = ({ item, isExpanded, onPress, navigation }) => {
 };
 
 const AccountsScreen = ({ navigation }) => {
-  const userId = "66577a78511763b4296b4311";
+  const [userId, setUserId] = useState(null);
   const { accounts } = useSelector((state) => state.accounts || { accounts: [] });
   const { cards } = useSelector((state) => state.cards || { cards: [] });
 
@@ -56,11 +58,25 @@ const AccountsScreen = ({ navigation }) => {
 
   const dispatch = useDispatch();
   useEffect(() => {
-    if (userId) {
-      dispatch(getAllAccounts(userId));
-      dispatch(getCards(userId));
-    }
-  }, [dispatch, userId]);
+    const loadUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("jwtToken");
+        if (token) {
+          const decoded = jwtDecode(token);
+          setUserId(decoded.id); // Assuming 'id' is the field in the token
+          dispatch(getAllAccounts(decoded.id)); // Dispatch actions with decoded data
+          dispatch(getCards(decoded.id));
+        } else {
+          console.log("No token found");
+        }
+      } catch (error) {
+        console.error("Failed to load user data:", error);
+      }
+    };
+
+    loadUserData();
+  }, [dispatch]);
+
 
   const combinedData = [
     ...accounts.map((account) => ({ ...account, itemType: "account" })),

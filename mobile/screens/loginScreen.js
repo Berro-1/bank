@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  View,
-  StatusBar,
-  Dimensions,
-} from "react-native";
+import { StyleSheet, View, StatusBar, Dimensions } from "react-native";
 import {
   Button,
   TextInput,
@@ -16,8 +11,9 @@ import * as Animatable from "react-native-animatable";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { API_URL } from 'react-native-dotenv';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { API_URL } from "react-native-dotenv";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { jwtDecode } from "jwt-decode";
 
 // Custom dark theme configuration
 const theme = {
@@ -44,11 +40,16 @@ const LoginScreen = ({ navigation }) => {
 
   const handleLoginPress = async () => {
     try {
-      const response = await axios.post(`${API_URL}/api/auth/login`, { email, password });
-      const { token, user } = response.data;
+      const response = await axios.post(`${API_URL}/api/auth/login`, {
+        email,
+        password,
+      });
+      const { token } = response.data; // Ensure the token is being received
       await AsyncStorage.setItem("jwtToken", token);
-      console.log("Login successful:", user);
-      navigation.navigate('Home')
+      console.log("Login successful, token:", token);
+      const decoded = jwtDecode(token);
+      console.log("Decoded token:", decoded);
+      navigation.navigate("Home");
     } catch (err) {
       console.error("Login failed:", err);
       setError("Login failed. Please check your credentials and try again.");
@@ -57,7 +58,10 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <PaperProvider theme={theme}>
-      <StatusBar backgroundColor={theme.colors.background} barStyle="light-content" />
+      <StatusBar
+        backgroundColor={theme.colors.background}
+        barStyle="light-content"
+      />
       <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
         enableOnAndroid={true}
@@ -71,10 +75,22 @@ const LoginScreen = ({ navigation }) => {
           backgroundColor: theme.colors.background,
         }}
       >
-        <Animatable.View animation="fadeInUpBig" duration={800} style={styles.loginBox}>
+        <Animatable.View
+          animation="fadeInUpBig"
+          duration={800}
+          style={styles.loginBox}
+        >
           <Text style={styles.title}>Login</Text>
-          <Animatable.View animation="fadeInLeft" delay={300} style={styles.inputContainer}>
-            <MaterialCommunityIcons name="email-outline" size={20} color={theme.colors.accent} />
+          <Animatable.View
+            animation="fadeInLeft"
+            delay={300}
+            style={styles.inputContainer}
+          >
+            <MaterialCommunityIcons
+              name="email-outline"
+              size={20}
+              color={theme.colors.accent}
+            />
             <TextInput
               label="Email"
               value={email}
@@ -83,11 +99,24 @@ const LoginScreen = ({ navigation }) => {
               mode="flat"
               underlineColor="transparent"
               dense
-              theme={{ colors: { text: theme.colors.text, primary: theme.colors.accent } }}
+              theme={{
+                colors: {
+                  text: theme.colors.text,
+                  primary: theme.colors.accent,
+                },
+              }}
             />
           </Animatable.View>
-          <Animatable.View animation="fadeInRight" delay={600} style={styles.inputContainer}>
-            <MaterialCommunityIcons name="lock-outline" size={20} color={theme.colors.accent} />
+          <Animatable.View
+            animation="fadeInRight"
+            delay={600}
+            style={styles.inputContainer}
+          >
+            <MaterialCommunityIcons
+              name="lock-outline"
+              size={20}
+              color={theme.colors.accent}
+            />
             <TextInput
               label="Password"
               value={password}
@@ -97,12 +126,26 @@ const LoginScreen = ({ navigation }) => {
               secureTextEntry={!showPassword}
               underlineColor="transparent"
               dense
-              right={<TextInput.Icon name={showPassword ? "eye-off" : "eye"} onPress={() => setShowPassword(!showPassword)} />}
-              theme={{ colors: { text: theme.colors.text, primary: theme.colors.accent } }}
+              right={
+                <TextInput.Icon
+                  name={showPassword ? "eye-off" : "eye"}
+                  onPress={() => setShowPassword(!showPassword)}
+                />
+              }
+              theme={{
+                colors: {
+                  text: theme.colors.text,
+                  primary: theme.colors.accent,
+                },
+              }}
             />
           </Animatable.View>
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
-          <Animatable.View animation="bounceIn" delay={900} style={styles.buttonContainer}>
+          <Animatable.View
+            animation="bounceIn"
+            delay={900}
+            style={styles.buttonContainer}
+          >
             <Button
               mode="contained"
               onPress={handleLoginPress}
@@ -114,7 +157,8 @@ const LoginScreen = ({ navigation }) => {
           </Animatable.View>
         </Animatable.View>
       </KeyboardAwareScrollView>
-    </PaperProvider>);
+    </PaperProvider>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -133,12 +177,12 @@ const styles = StyleSheet.create({
     fontSize: 28,
     marginBottom: 30,
     color: theme.colors.text,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     textAlign: "center",
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 15,
     borderBottomWidth: 2,
     borderBottomColor: theme.colors.accent,

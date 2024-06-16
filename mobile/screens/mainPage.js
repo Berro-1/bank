@@ -13,7 +13,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllAccounts } from "../store/accounts/accountsActions";
 import { getLatestTransactions } from "../store/transactions/transactionsActions";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import Easing from 'react-native/Libraries/Animated/Easing';
+import Easing from "react-native/Libraries/Animated/Easing";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
 
 const conversionRate = 89000; // Conversion rate from Dollar to LBP
 
@@ -51,20 +53,32 @@ const FadeInUpView = (props) => {
 
 const MainPage = () => {
   const accounts = useSelector((state) => state.accounts.accounts || []);
-  const transactions = useSelector((state) => state.transactions.transactions || []);
-  const userId = "66577a78511763b4296b4311";
+  const transactions = useSelector(
+    (state) => state.transactions.transactions || []
+  );
+  const [userId, setUserId] = useState(null);
   const dispatch = useDispatch();
   const accountId = "665cd4f1a1fe882d71c8269d";
 
   useEffect(() => {
-    dispatch(getAllAccounts(userId));
-    dispatch(getLatestTransactions(accountId));
-  }, [dispatch, userId, accountId]);
+    const loadUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("jwtToken");
+        if (token) {
+          const decoded = jwtDecode(token);
+          setUserId(decoded.id); // Assuming 'id' is the field in the token
+          dispatch(getAllAccounts(decoded.id)); // Dispatch actions with decoded data
+          dispatch(getLatestTransactions(accountId));
+        } else {
+          console.log("No token found");
+        }
+      } catch (error) {
+        console.error("Failed to load user data:", error);
+      }
+    };
 
-  useEffect(() => {
-    console.log("Accounts:", accounts);
-    console.log("Transactions:", transactions);
-  }, [accounts, transactions]);
+    loadUserData();
+  }, [dispatch]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString(undefined, {
@@ -77,17 +91,19 @@ const MainPage = () => {
   };
 
   const [fabOpen, setFabOpen] = useState(false);
-  const [currency, setCurrency] = useState('Dollar');
+  const [currency, setCurrency] = useState("Dollar");
 
   const toggleFab = () => {
     setFabOpen(!fabOpen);
   };
 
-  const slideAnim = useRef(new Animated.Value(Dimensions.get('window').height)).current;
+  const slideAnim = useRef(
+    new Animated.Value(Dimensions.get("window").height)
+  ).current;
 
   useEffect(() => {
     Animated.timing(slideAnim, {
-      toValue: fabOpen ? 0 : Dimensions.get('window').height,
+      toValue: fabOpen ? 0 : Dimensions.get("window").height,
       duration: 400, // Smooth transition duration
       easing: Easing.inOut(Easing.ease),
       useNativeDriver: true,
@@ -97,7 +113,7 @@ const MainPage = () => {
   const handleOptionPress = (currencyType) => {
     setCurrency(currencyType);
     Animated.timing(slideAnim, {
-      toValue: Dimensions.get('window').height,
+      toValue: Dimensions.get("window").height,
       duration: 400, // Smooth transition duration
       easing: Easing.inOut(Easing.ease),
       useNativeDriver: true,
@@ -105,16 +121,18 @@ const MainPage = () => {
   };
 
   const slideUpStyle = {
-    transform: [{
-      translateY: slideAnim,
-    }],
+    transform: [
+      {
+        translateY: slideAnim,
+      },
+    ],
   };
 
   const convertAmount = (amount) => {
-    return currency === 'Dollar' ? amount : amount * conversionRate;
+    return currency === "Dollar" ? amount : amount * conversionRate;
   };
 
-  const currencySymbol = currency === 'Dollar' ? '$' : 'LBP';
+  const currencySymbol = currency === "Dollar" ? "$" : "LBP";
 
   return (
     <View style={styles.container}>
@@ -143,8 +161,12 @@ const MainPage = () => {
                   />
                 </View>
                 <View style={styles.textContainer}>
-                  <Title>{transaction.receiverName || transaction.senderName}</Title>
-                  <Paragraph>{`${currencySymbol} ${convertAmount(transaction.amount)}`}</Paragraph>
+                  <Title>
+                    {transaction.receiverName || transaction.senderName}
+                  </Title>
+                  <Paragraph>{`${currencySymbol} ${convertAmount(
+                    transaction.amount
+                  )}`}</Paragraph>
                   <Paragraph>{formatDate(transaction.createdAt)}</Paragraph>
                 </View>
               </Card.Content>
@@ -154,20 +176,33 @@ const MainPage = () => {
       </ScrollView>
       {fabOpen && (
         <View style={styles.overlay}>
-          <TouchableOpacity style={styles.overlayBackground} onPress={toggleFab} />
+          <TouchableOpacity
+            style={styles.overlayBackground}
+            onPress={toggleFab}
+          />
           <Animated.View style={[styles.fabOptions, slideUpStyle]}>
-            <TouchableOpacity style={styles.fabOption} onPress={() => handleOptionPress('LBP')}>
+            <TouchableOpacity
+              style={styles.fabOption}
+              onPress={() => handleOptionPress("LBP")}
+            >
               <Icon name="money" size={24} color="#0c7076" />
               <View style={styles.optionTextContainer}>
                 <Text style={styles.fabOptionTitle}>LBP</Text>
-                <Text style={styles.fabOptionDescription}>Switch to Lebanese Pounds</Text>
+                <Text style={styles.fabOptionDescription}>
+                  Switch to Lebanese Pounds
+                </Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.fabOption} onPress={() => handleOptionPress('Dollar')}>
+            <TouchableOpacity
+              style={styles.fabOption}
+              onPress={() => handleOptionPress("Dollar")}
+            >
               <Icon name="attach-money" size={24} color="#0c7076" />
               <View style={styles.optionTextContainer}>
                 <Text style={styles.fabOptionTitle}>Dollar</Text>
-                <Text style={styles.fabOptionDescription}>Switch to US Dollars</Text>
+                <Text style={styles.fabOptionDescription}>
+                  Switch to US Dollars
+                </Text>
               </View>
             </TouchableOpacity>
           </Animated.View>
@@ -197,7 +232,7 @@ const styles = StyleSheet.create({
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.30,
+    shadowOpacity: 0.3,
     shadowRadius: 4.65,
     elevation: 8,
   },
@@ -222,7 +257,7 @@ const styles = StyleSheet.create({
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.30,
+    shadowOpacity: 0.3,
     shadowRadius: 4.65,
     elevation: 8,
   },
@@ -255,8 +290,9 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 4 },
-    shadowOpacity: 0.30,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
     shadowRadius: 4.65,
     elevation: 8,
   },
@@ -285,7 +321,7 @@ const styles = StyleSheet.create({
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.30,
+    shadowOpacity: 0.3,
     shadowRadius: 4.65,
     elevation: 8,
   },
@@ -311,7 +347,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     padding: 20,
     paddingBottom: 40,
-    width: '100%',
+    width: "100%",
   },
   fabOption: {
     flexDirection: "row",

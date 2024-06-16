@@ -1,6 +1,6 @@
 import axios from "axios";
 import { transfersActions } from "./transfersSlice";
-import { toast } from "react-toastify";
+import { Alert } from "react-native";
 import { getAllAccounts } from "../accounts/accountsActions";
 import { getCards } from "../creditCards/creditCardsActions";
 import { API_URL } from 'react-native-dotenv';
@@ -22,10 +22,9 @@ export const createTransfer =
       );
       dispatch(transfersActions.fetchSuccess(response.data)); 
       console.log("transfer complete")
-      toast.success("Transfer Done Successfully", {
-        autoClose: 1000,
-        theme: "colored",
-      });
+       Alert.alert("Success", "Payment Done Successfully", [
+         { text: "OK", onPress: () => console.log("OK Pressed") },
+       ]);
       dispatch(getAllAccounts(userId));
       dispatch(getLatestTransactions(accountId));
       dispatch(getCards(userId));
@@ -36,5 +35,12 @@ export const createTransfer =
           e.response?.data?.error || "An error occurred"
         )
       );
+       Alert.alert(
+         "Error",
+         `Payment Failed: ${
+           error.response ? error.response.data.mssg : "Unknown error"
+         }`,
+         [{ text: "OK", onPress: () => console.log("OK Pressed") }]
+       );
     }
   };

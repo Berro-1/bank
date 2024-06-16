@@ -10,7 +10,8 @@ import {
 import { Card, Paragraph } from "react-native-paper";
 import { getSubmissions, submitNewAccountDetails, submitCreditCardDetails } from "../../store/submissions/submissionsActions";
 import ApplySubmissionModal from "./ApplySubmissionModal";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
 const StatusIndicator = ({ status }) => {
   const backgroundColor =
     status === "Approved"
@@ -37,10 +38,27 @@ const SubmissionsScreen = () => {
   const { loading, submissions } = useSelector((state) => state.submissions);
   const [isModalOpen, setModalOpen] = useState(false);
   const [filter, setFilter] = useState("All"); // Default filter
+  const [userId, setUserId] = useState(null);
 
-  useEffect(() => {
-    dispatch(getSubmissions('66577a78511763b4296b4311'));
-  }, [dispatch]);
+   useEffect(() => {
+     const loadUserData = async () => {
+       try {
+         const token = await AsyncStorage.getItem("jwtToken");
+         if (token) {
+           const decoded = jwtDecode(token);
+           setUserId(decoded.id); // Assuming 'id' is the field in the token
+           dispatch(getSubmissions(decoded.id)); // Dispatch actions with decoded data
+         } else {
+           console.log("No token found");
+         }
+       } catch (error) {
+         console.error("Failed to load user data:", error);
+       }
+     };
+
+     loadUserData();
+   }, [dispatch]);
+
 
   const toggleModal = () => setModalOpen(!isModalOpen);
 
