@@ -34,7 +34,8 @@ export const createLoanPayment =
         type: "Loan Payment",
       });
       console.log("userid", userId);
-      dispatch(getAllLoans(userId));
+      dispatch(getAllLoans(userId)).then (()=>(
+      console.log("dispatching loans",loans)));
       dispatch(getAllAccounts(userId));
       dispatch(loansActions.fetchSuccess(response.data));
       Alert.alert("Success", "Payment Done Successfully", [

@@ -11,11 +11,14 @@ import {
 import { Card, Title, Paragraph } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllAccounts } from "../store/accounts/accountsActions";
+import { getCards } from "../store/creditCards/creditCardsActions";
+import { getAllLoans } from "../store/loans/loansActions";
 import { getLatestTransactions } from "../store/transactions/transactionsActions";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import Easing from "react-native/Libraries/Animated/Easing";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { jwtDecode } from "jwt-decode";
+import { SelectList } from "react-native-dropdown-select-list";
 
 const conversionRate = 89000; // Conversion rate from Dollar to LBP
 
@@ -52,33 +55,103 @@ const FadeInUpView = (props) => {
 };
 
 const MainPage = () => {
-  const accounts = useSelector((state) => state.accounts.accounts || []);
+  const accounts = useSelector((state) => state.accounts.accounts);
+  const [selectedAccount, setSelectedAccount] = useState("");
+
+  const cards = useSelector((state) => state.cards.cards);
+  const loans = useSelector((state) => state.loans.loans);
   const transactions = useSelector(
     (state) => state.transactions.transactions || []
   );
+  const [combinedData, setCombinedData] = useState([]);
+  const [dynamicKey, setDynamicKey] = useState("");
+
   const [userId, setUserId] = useState(null);
   const dispatch = useDispatch();
   const accountId = "665cd4f1a1fe882d71c8269d";
+  const [fabOpen, setFabOpen] = useState(false);
+  const [currency, setCurrency] = useState("Dollar");
 
+  const toggleFab = () => {
+    setFabOpen(!fabOpen);
+  };
   useEffect(() => {
-    const loadUserData = async () => {
-      try {
-        const token = await AsyncStorage.getItem("jwtToken");
-        if (token) {
-          const decoded = jwtDecode(token);
-          setUserId(decoded.id); // Assuming 'id' is the field in the token
-          dispatch(getAllAccounts(decoded.id)); // Dispatch actions with decoded data
-          dispatch(getLatestTransactions(accountId));
-        } else {
-          console.log("No token found");
-        }
-      } catch (error) {
-        console.error("Failed to load user data:", error);
-      }
-    };
+    const newCombinedData = [
+      ...accounts.map((account) => ({
+        key: account._id,
+        value: `${account.type} (Account) $${account.balance}`,
+        itemType: "account",
+      })),
+      ...cards.map((card) => ({
+        key: card._id,
+        value: `${card.card_name} (Card) $${card.available_credit}`,
+        itemType: "card",
+      })),
+      ...loans.map((loan) => ({
+        key: loan._id,
+        value: `${loan.type} loan $${loan.amount}`,
+        itemType: "loan",
+      })),
+    ];
+    setCombinedData(newCombinedData);
+    setDynamicKey(
+      newCombinedData.reduce((prev, curr) => prev + curr.value, "")
+    );
+    console.log("combined Data", newCombinedData);
+  }, [accounts, cards, loans]);
 
-    loadUserData();
-  }, [dispatch]);
+   useEffect(() => {
+     const fetchUserData = async () => {
+       const token = await AsyncStorage.getItem("jwtToken");
+       if (!token) {
+         console.log("No token found");
+         return;
+       }
+
+       const decoded = jwtDecode(token);
+       setUserId(decoded.id);
+       await Promise.all([
+         dispatch(getAllAccounts(decoded.id)),
+         dispatch(getCards(decoded.id)),
+         dispatch(getAllLoans(decoded.id)),
+       ]);
+
+       const accountToQuery =
+         selectedAccount || (accounts.length > 0 ? accounts[0]._id : null);
+       if (accountToQuery) {
+         await dispatch(getLatestTransactions(accountToQuery));
+       }
+     };
+
+     fetchUserData();
+   }, [dispatch, selectedAccount]);
+
+  
+
+   useEffect(() => {
+     const newCombinedData = [
+       ...accounts.map((account) => ({
+         key: account._id,
+         value: `${account.type} (Account) $${account.balance}`,
+         itemType: "account",
+       })),
+       ...cards.map((card) => ({
+         key: card._id,
+         value: `${card.card_name} (Card) $${card.available_credit}`,
+         itemType: "card",
+       })),
+       ...loans.map((loan) => ({
+         key: loan._id,
+         value: `${loan.type} loan $${loan.amount}`,
+         itemType: "loan",
+       })),
+     ];
+     setCombinedData(newCombinedData);
+     setDynamicKey(
+       newCombinedData.reduce((prev, curr) => prev + curr.value, "")
+     );
+     console.log("combined Data", newCombinedData);
+   }, [accounts, cards, loans]);
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString(undefined, {
@@ -88,13 +161,6 @@ const MainPage = () => {
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
-
-  const [fabOpen, setFabOpen] = useState(false);
-  const [currency, setCurrency] = useState("Dollar");
-
-  const toggleFab = () => {
-    setFabOpen(!fabOpen);
   };
 
   const slideAnim = useRef(
@@ -150,6 +216,34 @@ const MainPage = () => {
         </FadeInUpView>
         <FadeInUpView style={styles.transactionsSection}>
           <Text style={styles.sectionTitle}>Recent Transactions</Text>
+          <SelectList
+            key={dynamicKey}
+            setSelected={(val) => setSelectedAccount(val)}
+            data={combinedData}
+            placeholder="Select Sender Account"
+            inputStyles={{ color: "#0c7076" }}
+            dropdownTextStyles={{ color: "#0c7076" }}
+            dropdownStyles={{
+              borderColor: "#0c7076",
+              backgroundColor: "#ffffff",
+              marginBottom:10,
+            }}
+            maxHeight={200}
+            boxStyles={{
+              backgroundColor: "#ffffff",
+              borderColor: "#0c7076",
+              width: "100%",
+              marginBottom: 10,
+              shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 4,
+              },
+              shadowOpacity: 0.3,
+              shadowRadius: 4.65,
+              elevation: 8,
+            }}
+          />
           {transactions.map((transaction) => (
             <Card key={transaction._id} style={styles.card}>
               <Card.Content style={styles.cardContent}>
@@ -236,6 +330,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
     elevation: 8,
   },
+
   headerTitle: {
     fontSize: 24,
     color: "#fff",
@@ -280,7 +375,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#333333",
+    color: "#0c7076",
     textAlign: "center",
   },
   card: {

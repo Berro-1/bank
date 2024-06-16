@@ -6,8 +6,9 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Platform,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import RNPickerSelect from "react-native-picker-select";
 
 const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
   const initialFormState = {
@@ -16,7 +17,9 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
 
   const initialCreditCardState = {
     cardName: "",
-    expiryDate: new Date(new Date().setFullYear(new Date().getFullYear() + 5)).toISOString().slice(0, 10),
+    expiryDate: new Date(new Date().setFullYear(new Date().getFullYear() + 5))
+      .toISOString()
+      .slice(0, 10),
     creditLimit: "",
   };
 
@@ -28,7 +31,9 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
   };
 
   const [formDetails, setFormDetails] = useState(initialFormState);
-  const [creditCardDetails, setCreditCardDetails] = useState(initialCreditCardState);
+  const [creditCardDetails, setCreditCardDetails] = useState(
+    initialCreditCardState
+  );
   const [accountDetails, setAccountDetails] = useState(initialAccountState);
 
   const resetForm = () => {
@@ -64,20 +69,14 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
   };
 
   const handleSubmit = () => {
-    // const user = JSON.parse(localStorage.getItem("user"));
-    // if (user && user.id) {
-      const userId = '66577a78511763b4296b4311';
-      if(userId){
-      if (formDetails.requestType === "Credit Card") {
-        onSubmit({ ...creditCardDetails, requestType: "Credit Card", userId });
-      } else if (formDetails.requestType === "New Account") {
-        onSubmit({ ...accountDetails, requestType: "New Account", userId });
-      }
-      toggle();
-      resetForm();
-    } else {
-      alert("User not found");
+    const userId = "66577a78511763b4296b4311"; // This should ideally be dynamic
+    if (formDetails.requestType === "Credit Card") {
+      onSubmit({ ...creditCardDetails, requestType: "Credit Card", userId });
+    } else if (formDetails.requestType === "New Account") {
+      onSubmit({ ...accountDetails, requestType: "New Account", userId });
     }
+    toggle();
+    resetForm();
   };
 
   const handleCancel = () => {
@@ -88,7 +87,7 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
   const renderLoanOptions = () => {
     let options = [];
     for (let i = 6; i <= 36; i += 6) {
-      options.push(<Picker.Item key={i} label={`${i} months`} value={i} />);
+      options.push({ label: `${i} months`, value: i });
     }
     return options;
   };
@@ -98,16 +97,18 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
       case "Credit Card":
         return (
           <>
-            <Picker
-              selectedValue={creditCardDetails.cardName}
-              onValueChange={(value) => handleCreditCardChange(value, "cardName")}
-              style={styles.picker}
-            >
-              <Picker.Item label="Select Card Name" value="" />
-              <Picker.Item label="Silver Card" value="Silver Card" />
-              <Picker.Item label="Gold Card" value="Gold Card" />
-              <Picker.Item label="Platinum Card" value="Platinum Card" />
-            </Picker>
+            <RNPickerSelect
+              onValueChange={(value) =>
+                handleCreditCardChange(value, "cardName")
+              }
+              items={[
+                { label: "Silver Card", value: "Silver Card" },
+                { label: "Gold Card", value: "Gold Card" },
+                { label: "Platinum Card", value: "Platinum Card" },
+              ]}
+              placeholder={{ label: "Select Card Name", value: null }}
+              style={pickerSelectStyles}
+            />
             {creditCardDetails.cardName && (
               <View style={styles.amountContainer}>
                 <TextInput
@@ -123,48 +124,51 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
       case "New Account":
         return (
           <>
-            <Picker
-              selectedValue={accountDetails.accountType}
-              onValueChange={(value) => handleAccountChange(value, "accountType")}
-              style={styles.picker}
-            >
-              <Picker.Item label="Select Account Type" value="" />
-              <Picker.Item label="Savings" value="Savings" />
-              <Picker.Item label="Loan" value="Loan" />
-            </Picker>
+            <RNPickerSelect
+              onValueChange={(value) =>
+                handleAccountChange(value, "accountType")
+              }
+              items={[
+                { label: "Savings", value: "Savings" },
+                { label: "Loan", value: "Loan" },
+              ]}
+              placeholder={{ label: "Select Account Type", value: null }}
+              style={pickerSelectStyles}
+            />
             {accountDetails.accountType === "Loan" && (
               <>
                 <View style={styles.amountContainer}>
                   <TextInput
                     style={styles.amountInput}
-                    onChangeText={(text) =>
-                      setAccountDetails({ ...accountDetails, amount: text })
-                    }
+                    onChangeText={(text) => handleAccountChange(text, "amount")}
                     value={accountDetails.amount}
                     placeholder="Enter amount"
                     keyboardType="numeric"
-                    placeholderTextColor="#0c7076 "
+                    placeholderTextColor="#0c7076"
                   />
                   <Text style={styles.amountText}>USD</Text>
                 </View>
-                <Picker
-                  selectedValue={accountDetails.loanType}
-                  onValueChange={(value) => handleAccountChange(value, "loanType")}
-                  style={styles.picker}
-                >
-                  <Picker.Item label="Select Loan Type" value="" />
-                  <Picker.Item label="Personal" value="Personal" />
-                  <Picker.Item label="Mortgage" value="Mortgage" />
-                  <Picker.Item label="Auto" value="Auto" />
-                  <Picker.Item label="Education" value="Education" />
-                </Picker>
-                <Picker
-                  selectedValue={accountDetails.loanTerm}
-                  onValueChange={(value) => handleAccountChange(value, "loanTerm")}
-                  style={styles.picker}
-                >
-                  {renderLoanOptions()}
-                </Picker>
+                <RNPickerSelect
+                  onValueChange={(value) =>
+                    handleAccountChange(value, "loanType")
+                  }
+                  items={[
+                    { label: "Personal", value: "Personal" },
+                    { label: "Mortgage", value: "Mortgage" },
+                    { label: "Auto", value: "Auto" },
+                    { label: "Education", value: "Education" },
+                  ]}
+                  placeholder={{ label: "Select Loan Type", value: null }}
+                  style={pickerSelectStyles}
+                />
+                <RNPickerSelect
+                  onValueChange={(value) =>
+                    handleAccountChange(value, "loanTerm")
+                  }
+                  items={renderLoanOptions()}
+                  placeholder={{ label: "Select Loan Term", value: null }}
+                  style={pickerSelectStyles}
+                />
               </>
             )}
           </>
@@ -179,21 +183,27 @@ const ApplySubmissionModal = ({ isOpen, toggle, onSubmit }) => {
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>New Submission</Text>
-          <Picker
-            selectedValue={formDetails.requestType}
+          <RNPickerSelect
             onValueChange={(value) => handleInputChange(value, "requestType")}
-            style={styles.picker}
-          >
-            <Picker.Item label="Select Request Type" value="" />
-            <Picker.Item label="Credit Card" value="Credit Card" />
-            <Picker.Item label="New Account" value="New Account" />
-          </Picker>
+            items={[
+              { label: "Credit Card", value: "Credit Card" },
+              { label: "New Account", value: "New Account" },
+            ]}
+            placeholder={{ label: "Select Request Type", value: null }}
+            style={pickerSelectStyles}
+          />
           {renderConditionalInputs()}
           <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={handleCancel} style={[styles.button, styles.cancelButton]}>
+            <TouchableOpacity
+              onPress={handleCancel}
+              style={[styles.button, styles.cancelButton]}
+            >
               <Text style={styles.buttonText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleSubmit} style={[styles.button, styles.submitButton]}>
+            <TouchableOpacity
+              onPress={handleSubmit}
+              style={[styles.button, styles.submitButton]}
+            >
               <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>
           </View>
@@ -287,6 +297,28 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+});
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 4,
+    color: "black",
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: "purple",
+    borderRadius: 8,
+    color: "black",
+    paddingRight: 30, // to ensure the text is never behind the icon
   },
 });
 

@@ -15,14 +15,19 @@ const loanSlice = createSlice({
       state.error = null;
     },
     fetchSuccess: (state, action) => {
+      state.loans = Array.isArray(action.payload) ? action.payload : [];
       state.loading = false;
-      state.loans = action.payload;
       state.error = null;
     },
+
     updateLoanSuccess: (state, action) => {
+      const index = state.loans.findIndex(
+        (loan) => loan._id === action.payload._id
+      );
+      if (index !== -1) {
+        state.loans[index] = action.payload;
+      }
       state.loading = false;
-      state.loans = action.payload;
-      state.error = null;
     },
     fetchFail: (state, action) => {
       state.loading = false;
