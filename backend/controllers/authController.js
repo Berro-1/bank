@@ -1,6 +1,9 @@
 const User = require("../models/User");
+const pendingUser = require("../models/PendingUsers");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const path = require("path");
 
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -8,60 +11,146 @@ const createToken = (id) => {
   });
 };
 
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // Go up one level from the backend directory and then into the uploads directory
+    cb(null, "../uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+
+
+// Initialize upload variable
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 1000000 }, // 1MB limit
+  fileFilter: function (req, file, cb) {
+    const filetypes = /jpeg|jpg|png|gif/;
+    const extname = filetypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
+    const mimetype = filetypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb("Error: Only JPEG, PNG & GIF files are allowed!");
+    }
+  },
+}).single("image");
+
+
 const signup = async (req, res) => {
-  const { name, password, email, address, phone_number, role } = req.body;
-
-  // Input Validation
-  if (!name || !password || !email || !address || !phone_number || !role) {
-    return res.status(400).json({ message: "All fields are required" });
-  }
-
-  // Validate role
-  if (!['user', 'admin'].includes(role)) {
-    return res.status(400).json({ message: "Invalid role provided" });
-  }
+  const { name, address, phone_number, email, type, DOB } = req.body;
+  const image = req.file.path; // Path where the image is saved
 
   try {
-    // Password Hashing
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create the user
-    const user = await User.create({
+    const user = new pendingUser({
       name,
-      password: hashedPassword,
-      email,
       address,
       phone_number,
-      role,
+      email,
+      type,
+      image, // Add the image path to the new user object
+      DOB,
     });
-    const token = createToken(user._id);
+    await user.save();
 
-    // You might want to exclude the password from the response
     const userResponse = {
       _id: user._id,
       name: user.name,
       email: user.email,
       address: user.address,
-      phone_number: user.phone_number,
+      phone_number: phone_number,
       type: user.type,
+      image: user.image, // Include image path in the response
+      DOB: user.DOB,
       is_eligible_for_loan: user.is_eligible_for_loan,
-      is_first_login: user.is_first_login,
       role: user.role,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
-      token: token,
     };
 
     res.status(201).json(userResponse);
   } catch (err) {
     console.error(err);
     if (err.code === 11000) {
-      // Check for duplicate key error
       return res.status(400).json({ message: "Email already exists" });
+    } else if (err.name === "ValidationError") {
+      let messages = Object.values(err.errors).map((val) => val.message);
+      return res
+        .status(400)
+        .json({ message: "User not created", errors: messages });
+    } else {
+      return res
+        .status(500)
+        .json({ message: "Server error", error: err.message });
     }
-    res.status(400).json({ message: "User not created", error: err.message });
   }
 };
+
+
+const deletePendingUser = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await pendingUser.findByIdAndDelete(id);
+    if (!user) {
+      return res.status(404).json({ error: "No user found" });
+    }
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Server error: " + err.message });
+  }
+};
+
+// Update a user
+const updatePendingUser = async (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+  try {
+    const user = await pendingUser.findByIdAndUpdate(id, updates, {
+      new: true,
+    });
+    if (!user) {
+      return res.status(404).json({ error: "No user found" });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ error: "Server error: " + err.message });
+  }
+};
+const getPendingUsers = async (req, res) => {
+  try {
+    const users = await pendingUser.find();
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ error: "Server error: " + err.message });
+  }
+};
+
+// Get a single user by id
+const getPendingUser = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await pendingUser.findById(id);
+    if (!user) {
+      return res.status(404).json({ error: "No user found" });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ error: "Server error: " + err.message });
+  }
+};
+
+
+
+
 
 
 const login = async (req, res) => {
@@ -116,6 +205,11 @@ const logout = () => {
 
 module.exports = {
   signup,
+  upload,
   login,
   logout,
+  getPendingUser,
+  getPendingUsers,
+  deletePendingUser,
+  updatePendingUser,
 };
