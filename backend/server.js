@@ -15,7 +15,6 @@ const qrRoutes = require("./routes/qrRoutes");
 const submissionRoutes =require("./routes/SubmissionRoutes")
 const authRoutes = require('./routes/authRoutes');
 const statisticsRoutes =require("./routes/statisticsRoutes")
-const PendingUsersRoutes=require("./routes/PendingUsersRoutes")
 const app = express();
 
 app.use(cors({
@@ -40,7 +39,6 @@ app.use("/api", qrRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/auth",authRoutes);
 app.use("/api/statistics",statisticsRoutes );
-app.use("/api/pending", PendingUsersRoutes);
 
 
 
