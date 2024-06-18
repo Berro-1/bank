@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const validator = require("validator"); // Import the validator library
 
-const UserSchema = new Schema(
+const pendingUsersSchema = new Schema(
   {
     name: {
       type: String,
@@ -54,10 +54,16 @@ const UserSchema = new Schema(
       type: String,
       required: false,
     },
+    status: {
+      type: String,
+      required: true,
+      enum: ["Pending", "Approved"],
+      default: "Pending",
+    },
   },
   {
     timestamps: true,
   }
 );
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model("pendingUsers", pendingUsersSchema);

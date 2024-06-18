@@ -26,10 +26,10 @@ const getUser = async (req, res) => {
 
 // Create a new user
 const createUser = async (req, res) => {
-  const { name, address, phone_number, email, type } = req.body;
+  const { name, address, phone_number, email, type,image,DOB } = req.body;
 
   try {
-    const user = new User({ name, address, phone_number, email, type });
+    const user = new User({ name, address, phone_number, email, type,image,DOB });
     await user.save();
     res.status(201).json(user);
   } catch (err) {

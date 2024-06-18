@@ -5,6 +5,9 @@ import QRCode from "react-native-qrcode-svg";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllAccounts } from "../store/accounts/accountsActions";
 import { MaterialIcons } from '@expo/vector-icons';
+import { getCards } from './../store/creditCards/creditCardsActions';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { jwtDecode } from "jwt-decode";
 
 const settingsData = [
   {
@@ -42,14 +45,33 @@ const settingsData = [
 ];
 
 const UserDetails = () => {
-  const userId = "6644dcb9c16b269cf9bae998";
+    const [userId, setUserId] = useState(null);
+
   const accounts = useSelector((state) => state.accounts.accounts || []);
+    const cards = useSelector((state) => state.cards.cards || []);
+
   const [expandedId, setExpandedId] = useState(null);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(getAllAccounts(userId));
-  }, [dispatch, userId]);
+   useEffect(() => {
+     const loadUserData = async () => {
+       try {
+         const token = await AsyncStorage.getItem("jwtToken");
+         if (token) {
+           const decoded = jwtDecode(token);
+           setUserId(decoded.id); // Assuming 'id' is the field in the token
+           dispatch(getAllAccounts(decoded.id)); // Dispatch actions with decoded data
+           dispatch(getCards(decoded.id));
+         } else {
+           console.log("No token found");
+         }
+       } catch (error) {
+         console.error("Failed to load user data:", error);
+       }
+     };
+
+     loadUserData();
+   }, [dispatch]);
 
   const toggleExpand = (settingId) => {
     setExpandedId(expandedId === settingId ? null : settingId);
@@ -83,7 +105,7 @@ const UserDetails = () => {
                   backgroundColor="transparent" 
                 />
                 <Text style={styles.qrText}>ID: {account._id}</Text>
-                <Text style={styles.qrText}>Balance: {account.balance}</Text>
+                <Text style={styles.qrText}>Balance: ${account.balance}</Text>
               </View>
             ))
           )}
