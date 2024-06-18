@@ -6,6 +6,7 @@ import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import ExitToAppOutlinedIcon from "@mui/icons-material/ExitToAppOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import { useDispatch } from "react-redux";
+import { faHourglassHalf } from "@fortawesome/free-solid-svg-icons";
 import { logout } from "../../../store/auth/authActions"; // Adjust the path as necessary
 
 const AdminSidebar = () => {
@@ -68,10 +69,21 @@ const AdminSidebar = () => {
               to="/admin/credit-cards"
               className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
             >
-              <FontAwesomeIcon icon={faCreditCard} className="mr-3" /> Submissions
+              <FontAwesomeIcon icon={faCreditCard} className="mr-3" />{" "}
+              Submissions
             </Link>
           </li>
-         
+
+          <li>
+            <Link
+              to="/admin/pendingUsers"
+              className="flex items-center py-2 px-4 rounded hover:bg-gray-700 transition-colors duration-200"
+            >
+              <FontAwesomeIcon icon={faHourglassHalf} className="mr-3" />{" "}
+              Pending Users
+            </Link>
+          </li>
+
           <li>
             <button
               onClick={handleLogout}

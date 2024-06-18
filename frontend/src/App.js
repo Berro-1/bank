@@ -28,7 +28,7 @@ import ServicesSection from "./pages/Services/Services.jsx";
 import ServiceDetail from "./pages/Services/servicesDetails/serviceDetails.jsx";
 import AboutUs from "./pages/aboutUs/aboutUs.jsx";
 import ContactUsSection from "./pages/contactPage/contact.jsx";
-
+import PendingUsers from "./pages/adminDashboard/pendingUsers/pendingUsers.jsx";
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -135,6 +135,14 @@ function App() {
           element={
             <ProtectedRoute requiredRole="admin">
               <CreditCardSubmissionsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/pendingUsers"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <PendingUsers />
             </ProtectedRoute>
           }
         />

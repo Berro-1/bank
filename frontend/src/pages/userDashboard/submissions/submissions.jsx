@@ -18,20 +18,38 @@ import {
   submitCreditCardDetails,
 } from "../../../store/submissions/submissionsActions";
 import ApplySubmissionModal from "./popupModal";
+import {
+  CheckCircleOutline,
+  HourglassEmpty,
+  ErrorOutline,
+} from "@mui/icons-material";
 
-const StatusIndicator = styled("span")(({ status }) => ({
-  height: "10px",
-  width: "10px",
-  borderRadius: "50%",
-  display: "inline-block",
-  marginLeft: "10px",
-  backgroundColor:
-    status === "Approved"
-      ? "#4CAF50" // Green
-      : status === "Rejected"
-      ? "#F44336" // Red
-      : "#F6B000", // Default color (yellow)
+const StatusIndicator = styled("div")(({ status, theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "start",
+  color:
+    status === "Pending"
+      ? theme.palette.warning.main
+      : status === "Approved"
+      ? theme.palette.success.main
+      : theme.palette.error.main,
 }));
+
+const StatusIcon = ({ status }) => {
+  switch (status) {
+    case "Pending":
+      return (
+        <HourglassEmpty style={{ fontSize: "1rem", marginRight: "5px" }} />
+      );
+    case "Approved":
+      return (
+        <CheckCircleOutline style={{ fontSize: "1rem", marginRight: "5px" }} />
+      );
+    default:
+      return <ErrorOutline style={{ fontSize: "1rem", marginRight: "5px" }} />;
+  }
+};
 
 const getRequestTypeLabel = (requestType, details) => {
   switch (requestType) {
@@ -84,13 +102,15 @@ const Submissions = () => {
       field: "date",
       headerName: "Date",
       flex: 1,
-      renderCell: (params) => new Date(params.row.createdAt).toLocaleDateString(),
+      renderCell: (params) =>
+        new Date(params.row.createdAt).toLocaleDateString(),
     },
     {
       field: "requestType",
       headerName: "Request Type",
       flex: 1,
-      renderCell: (params) => getRequestTypeLabel(params.row.details.requestType, params.row.details),
+      renderCell: (params) =>
+        getRequestTypeLabel(params.row.details.requestType, params.row.details),
     },
     {
       field: "amount",
@@ -102,13 +122,14 @@ const Submissions = () => {
     {
       field: "status",
       headerName: "Status",
-      flex: 1,
+      width: 150,
       renderCell: (params) => (
-        <>
-          <StatusIndicator status={params.row.status} />
-          {' '}
-          {params.row.status}
-        </>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <StatusIcon status={params.value} />
+          <StatusIndicator status={params.value}>
+            {params.value}
+          </StatusIndicator>
+        </div>
       ),
     },
   ];

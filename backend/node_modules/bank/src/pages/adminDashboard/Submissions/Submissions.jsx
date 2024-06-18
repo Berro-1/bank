@@ -27,21 +27,39 @@ import { styled } from "@mui/material/styles";
 import { getAllSubmissions, updateSubmissionStatus } from "../../../store/submissions/submissionsActions";
 import AdminSidebar from "../../../components/layout/adminSidebar/adminSidebar";
 import UpdateStatusDialog from "./dialogs/updateDialog"; // Import the new component
+import {
+  CheckCircleOutline,
+  HourglassEmpty,
+  ErrorOutline,
+} from "@mui/icons-material";
 
-const StatusIndicator = styled("span")(({ status, theme }) => ({
-  height: "10px",
-  width: "10px",
-  borderRadius: "50%",
-  display: "inline-block",
-  marginLeft: "10px",
-  marginRight: "5px",
-  backgroundColor:
+
+const StatusIndicator = styled("div")(({ status, theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "start",
+  color:
     status === "Pending"
-      ? "#F6B000" // Yellow
+      ? theme.palette.warning.main
       : status === "Approved"
-      ? "#4CAF50" // Green
-      : "#F44336", // Red
+      ? theme.palette.success.main
+      : theme.palette.error.main,
 }));
+
+const StatusIcon = ({ status }) => {
+  switch (status) {
+    case "Pending":
+      return (
+        <HourglassEmpty style={{ fontSize: "1rem", marginRight: "5px" }} />
+      );
+    case "Approved":
+      return (
+        <CheckCircleOutline style={{ fontSize: "1rem", marginRight: "5px" }} />
+      );
+    default:
+      return <ErrorOutline style={{ fontSize: "1rem", marginRight: "5px" }} />;
+  }
+};
 
 const SubmissionsPage = () => {
   const dispatch = useDispatch();
@@ -109,11 +127,14 @@ const SubmissionsPage = () => {
     {
       field: "status",
       headerName: "Status",
-      width: 180,
+      width: 150,
       renderCell: (params) => (
-        <>
-          <StatusIndicator status={params.value} /> {params.value}
-        </>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <StatusIcon status={params.value} />
+          <StatusIndicator status={params.value}>
+            {params.value}
+          </StatusIndicator>
+        </div>
       ),
     },
     {

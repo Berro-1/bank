@@ -16,6 +16,11 @@ const userSlice = createSlice({
     },
     fetchSuccess: (state, action) => {
       state.loading = false;
+      state.users = Array.isArray(action.payload) ? action.payload : [];
+      state.error = null;
+    },
+    updateUsersSuccess: (state, action) => {
+      state.loading = false;
       state.users = action.payload;
       state.error = null;
     },
