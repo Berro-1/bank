@@ -1,87 +1,91 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, FlatList, SafeAreaView } from "react-native";
-import * as Animatable from "react-native-animatable";
-import QRCode from "react-native-qrcode-svg";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllAccounts } from "../store/accounts/accountsActions";
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, FlatList, SafeAreaView } from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import QRCode from 'react-native-qrcode-svg';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllAccounts } from '../store/accounts/accountsActions';
 import { MaterialIcons } from '@expo/vector-icons';
 import { getCards } from './../store/creditCards/creditCardsActions';
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { jwtDecode } from "jwt-decode";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwtDecode from 'jwt-decode';
 
 const settingsData = [
   {
-    id: "1",
-    title: "Account Settings",
+    id: '1',
+    title: 'Account Settings',
     options: [
-      { id: "1-1", name: "Change Password" },
-      { id: "1-2", name: "Update Email" },
-      { id: "1-3", name: "Manage Addresses" },
+      { id: '1-1', name: 'Change Password', navigateTo: 'Password' },
+      { id: '1-2', name: 'Update Email', navigateTo: 'updateEmail' },
+      { id: '1-3', name: 'Manage Addresses', navigateTo: 'ManageAddress' },
     ],
   },
   {
-    id: "2",
-    title: "Privacy Settings",
+    id: '2',
+    title: 'Privacy Settings',
     options: [
-      { id: "2-1", name: "Manage Blocked Users" },
-      { id: "2-2", name: "Activity Status" },
-      { id: "2-3", name: "Data Download" },
+      { id: '2-1', name: 'Manage Blocked Users' },
+      { id: '2-2', name: 'Activity Status' },
+      { id: '2-3', name: 'Data Download' },
     ],
   },
   {
-    id: "3",
-    title: "Notification Settings",
+    id: '3',
+    title: 'Notification Settings',
     options: [
-      { id: "3-1", name: "Email Notifications" },
-      { id: "3-2", name: "Push Notifications" },
-      { id: "3-3", name: "SMS Notifications" },
+      { id: '3-1', name: 'Email Notifications' },
+      { id: '3-2', name: 'Push Notifications' },
+      { id: '3-3', name: 'SMS Notifications' },
     ],
   },
   {
-    id: "4",
-    title: "QR Code",
+    id: '4',
+    title: 'QR Code',
     options: [],
   },
 ];
 
-const UserDetails = () => {
-    const [userId, setUserId] = useState(null);
-
+const UserDetails = ({ navigation }) => {
+  const [userId, setUserId] = useState(null);
   const accounts = useSelector((state) => state.accounts.accounts || []);
-    const cards = useSelector((state) => state.cards.cards || []);
-
+  const cards = useSelector((state) => state.cards.cards || []);
   const [expandedId, setExpandedId] = useState(null);
   const dispatch = useDispatch();
 
-   useEffect(() => {
-     const loadUserData = async () => {
-       try {
-         const token = await AsyncStorage.getItem("jwtToken");
-         if (token) {
-           const decoded = jwtDecode(token);
-           setUserId(decoded.id); // Assuming 'id' is the field in the token
-           dispatch(getAllAccounts(decoded.id)); // Dispatch actions with decoded data
-           dispatch(getCards(decoded.id));
-         } else {
-           console.log("No token found");
-         }
-       } catch (error) {
-         console.error("Failed to load user data:", error);
-       }
-     };
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const token = await AsyncStorage.getItem('jwtToken');
+        if (token) {
+          const decoded = jwtDecode(token);
+          setUserId(decoded.id); // Assuming 'id' is the field in the token
+          dispatch(getAllAccounts(decoded.id)); // Dispatch actions with decoded data
+          dispatch(getCards(decoded.id));
+        } else {
+          console.log('No token found');
+        }
+      } catch (error) {
+        console.error('Failed to load user data:', error);
+      }
+    };
 
-     loadUserData();
-   }, [dispatch]);
+    loadUserData();
+  }, [dispatch]);
 
   const toggleExpand = (settingId) => {
     setExpandedId(expandedId === settingId ? null : settingId);
+  };
+
+  const handleOptionPress = (navigateTo) => {
+    if (navigateTo) {
+      navigation.navigate(navigateTo);
+    }
   };
 
   const renderSetting = ({ item }) => (
     <Animatable.View animation="fadeInUp" duration={800} style={styles.settingContainer}>
       <TouchableOpacity onPress={() => toggleExpand(item.id)} style={styles.settingHeader}>
         <Text style={styles.settingText}>{item.title}</Text>
-        <MaterialIcons name={expandedId === item.id ? "expand-less" : "expand-more"} size={24} color="#fff" />
+        <MaterialIcons name={expandedId === item.id ? 'expand-less' : 'expand-more'} size={24} color="#fff" />
       </TouchableOpacity>
       {expandedId === item.id && (
         <Animatable.View animation="fadeInUp" duration={800} style={styles.optionsContainer}>
@@ -89,7 +93,7 @@ const UserDetails = () => {
             item.options.map((option) => (
               <TouchableOpacity
                 key={option.id}
-                onPress={() => {}}
+                onPress={() => handleOptionPress(option.navigateTo)}
                 style={styles.option}
               >
                 <Text style={styles.optionText}>{option.name}</Text>
@@ -98,11 +102,11 @@ const UserDetails = () => {
           ) : (
             accounts.map((account) => (
               <View key={account._id} style={styles.qrContainer}>
-                <QRCode 
-                  value={account._id} 
-                  size={120} 
-                  color="#0c7076" 
-                  backgroundColor="transparent" 
+                <QRCode
+                  value={account._id}
+                  size={120}
+                  color="#0c7076"
+                  backgroundColor="transparent"
                 />
                 <Text style={styles.qrText}>ID: {account._id}</Text>
                 <Text style={styles.qrText}>Balance: ${account.balance}</Text>

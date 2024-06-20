@@ -4,7 +4,6 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Signup from "./screens/signup";
 import LoginScreen from "./screens/loginScreen";
-import MainPage from "./screens/mainPage";
 import Tabs from "./components/tabs"; // Ensure this or any other screen component does not include another NavigationContainer
 import TabsUser from "./components/tabsUser";
 import { Provider } from "react-redux";
@@ -15,6 +14,10 @@ import TransactionsScreen from "./screens/TransactionsScreen";
 import LoansScreen from "./screens/loansScreen";
 import PaymentsScreen from "./screens/Payments";
 import TestScreen from "./screens/testScreen";
+import MainPage from "./screens/mainPage";
+import ChangePassword from "./screens/ChangePasswordSreen";
+import UpdateEmail from "./screens/updateEmailScreen";
+import ManageAddresses from "./screens/updateAddressScreen";
 export default function App() {
   const Stack = createNativeStackNavigator();
 
@@ -39,6 +42,9 @@ export default function App() {
             <Stack.Screen name="Loans" component={LoansScreen} />
             <Stack.Screen name="Payments" component={PaymentsScreen} />
             <Stack.Screen name="Test" component={TestScreen} />
+            <Stack.Screen name="Password" component={ChangePassword} />
+            <Stack.Screen name="updateEmail" component={UpdateEmail} />
+            <Stack.Screen name="ManageAddress" component={ManageAddresses} />
           </Stack.Navigator>
         </NavigationContainer>
         <StatusBar style="auto" />
