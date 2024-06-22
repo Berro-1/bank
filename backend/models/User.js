@@ -37,7 +37,7 @@ const UserSchema = new Schema(
     },
     DOB: {
       type: Date,
-      required: true,
+      // required: true,
     },
 
     is_eligible_for_loan: {

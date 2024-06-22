@@ -3,8 +3,8 @@ import transactionSlice from "./transactions/transactionSlice";
 import accountsSlice from "./accounts/accountsSlice";
 import creditCardsSlice from "./creditCards/creditCardsSlice";
 import loanSlice from "./loans/loansSlice";
-
 import submissionSlice from "./submissions/submissionsSlice";
+import userSlice from "./users/usersSlice";
 // import transfersSlice from "./transfers/transfersSlice";
 // import userSlice from "./users/userSlice";
 // import authSlice from "./auth/authSlice";
@@ -17,8 +17,7 @@ const rootReducer = combineReducers({
   loans: loanSlice.reducer,
   loans: loanSlice.reducer,
   submissions: submissionSlice.reducer,
-//   transfers: transfersSlice.reducer,
-//   users: userSlice.reducer,
+  users: userSlice.reducer,
 //   auth: authSlice.reducer,
 //   statistics: statisticsSlice.reducer,
 });
