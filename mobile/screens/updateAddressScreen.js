@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Animated } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwtDecode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import Header from '../components/Header';
 import { updateUser } from '../store/users/userAction';
 import { getAllAccounts } from '../store/accounts/accountsActions';
@@ -31,10 +31,15 @@ const ManageAddresses = ({ navigation }) => {
         dispatch(getCards(decoded.id)),
         dispatch(getAllLoans(decoded.id)),
       ]);
+      console.log('user', decoded.id);
     };
 
     fetchUserData();
   }, [dispatch]);
+
+  useEffect(() => {
+    console.log('userId:', userId);
+  }, [userId]);
 
   const updateAddress = () => {
     if (!address) {
@@ -99,7 +104,7 @@ const ManageAddresses = ({ navigation }) => {
 
 const getErrorMessage = (error) => {
   if (typeof error === 'string') {
-    return error;
+    return error
   } else if (error && error.message) {
     return error.message;
   } else {
@@ -133,7 +138,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 10,
-    color: '#0c7076'
+    color: '#0c7076',
   },
   input: {
     fontSize: 16,
