@@ -5,10 +5,7 @@ import creditCardsSlice from "./creditCards/creditCardsSlice";
 import loanSlice from "./loans/loansSlice";
 import submissionSlice from "./submissions/submissionsSlice";
 import userSlice from "./users/usersSlice";
-// import transfersSlice from "./transfers/transfersSlice";
-// import userSlice from "./users/userSlice";
-// import authSlice from "./auth/authSlice";
-// import statisticsSlice from "./statistics/statisticsSlice";
+import OTPSlice from "./OTP/OTPSlice";
 
 const rootReducer = combineReducers({
   transactions: transactionSlice.reducer,
@@ -18,8 +15,8 @@ const rootReducer = combineReducers({
   loans: loanSlice.reducer,
   submissions: submissionSlice.reducer,
   users: userSlice.reducer,
-//   auth: authSlice.reducer,
-//   statistics: statisticsSlice.reducer,
+  OTP:OTPSlice.reducer,
+
 });
 
 export default rootReducer;

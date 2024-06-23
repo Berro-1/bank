@@ -8,14 +8,22 @@ admin.initializeApp({
 
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
-const OTP = require("../models/OTP"); 
-
-
+const OTP = require("../models/OTP");
 
 async function sendOTP(targetEmail) {
-  const otpCode = Math.floor(100000 + Math.random() * 900000); // Generate a 6-digit OTP
   try {
-    // Save OTP to the database
+    // Check if an active OTP already exists for this email
+    const existingOTP = await OTP.findOne({ email: targetEmail, is_usable: true });
+    if (existingOTP) {
+      // If OTP exists and is active, return an error response instead of throwing an error
+      console.error("An OTP has already been sent to this email and is still active.");
+      return { success: false, message: "An OTP has already been sent to this email and is still active." };
+    }
+
+    // Generate a new OTP
+    const otpCode = Math.floor(100000 + Math.random() * 900000);
+
+    // Save new OTP to the database
     const otpEntry = new OTP({
       email: targetEmail,
       OTP: otpCode,
@@ -29,8 +37,10 @@ async function sendOTP(targetEmail) {
       text: `Your OTP is: ${otpCode}`,
     });
     console.log("OTP sent to email successfully");
+    return { success: true, message: "OTP sent successfully" };
   } catch (error) {
     console.error("Failed to send OTP", error);
+    return { success: false, message: error.message || "Failed to send OTP due to an error." };
   }
 }
 
@@ -53,7 +63,6 @@ async function sendEmail({ to, subject, text }) {
 
   console.log("Message sent: %s", info.messageId);
 }
-
 async function verifyOTP(email, otpCode) {
   try {
     // Find the OTP entry for the email that is usable

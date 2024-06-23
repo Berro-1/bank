@@ -6,12 +6,9 @@ const { sendOTP, verifyOTP } = require("../controllers/email");
 
 // Route to send OTP to a user's email
 router.post("/send-otp", async (req, res) => {
-  try {
-    await sendOTP(req.body.email); // Expect email in the request body
-    res.status(200).send({ success: true, message: "OTP sent successfully" });
-  } catch (error) {
-    res.status(500).send({ success: false, message: error.message });
-  }
+  const { email } = req.body;
+  const result = await sendOTP(email);
+  res.status(result.success ? 200 : 400).json(result);
 });
 
 // Route to verify OTP provided by the user

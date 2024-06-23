@@ -25,8 +25,11 @@ const OTPSlice = createSlice({
       state.success = false;
       state.error = action.payload;
     },
+    resetSuccess: (state) => {
+      state.success = false;
+    },
   },
 });
 
 export const OTPActions = OTPSlice.actions;
-export default OTPSlice.reducer;
+export default OTPSlice;

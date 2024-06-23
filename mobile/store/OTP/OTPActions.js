@@ -10,7 +10,9 @@ export const sendOTP = (email) => async (dispatch) => {
     if (response.data.success) {
       dispatch(OTPActions.requestSuccess());
     } else {
-      dispatch(OTPActions.requestFail(response.data.message));
+      dispatch(
+        OTPActions.requestFail("Failed to send OTP: " + response.data.message)
+      );
     }
   } catch (error) {
     console.error("Error sending OTP:", error);
@@ -28,7 +30,11 @@ export const verifyOTP = (email, otpCode) => async (dispatch) => {
     if (response.data.success) {
       dispatch(OTPActions.requestSuccess());
     } else {
-      dispatch(OTPActions.requestFail(response.data.message));
+      dispatch(
+        OTPActions.requestFail(
+          "OTP verification failed: " + response.data.message
+        )
+      );
     }
   } catch (error) {
     console.error("Error verifying OTP:", error);
@@ -37,4 +43,4 @@ export const verifyOTP = (email, otpCode) => async (dispatch) => {
     );
   }
 };
-
+export const { resetSuccess } = OTPActions;
