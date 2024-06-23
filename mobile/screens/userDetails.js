@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, FlatList, SafeAreaView } from 'react-native';
-import * as Animatable from 'react-native-animatable';
-import QRCode from 'react-native-qrcode-svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllAccounts } from '../store/accounts/accountsActions';
 import { MaterialIcons } from '@expo/vector-icons';
 import { getCards } from './../store/creditCards/creditCardsActions';
+import { jwtDecode } from "jwt-decode";
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import jwtDecode from 'jwt-decode';
+import * as Animatable from 'react-native-animatable';
+import QRCode from 'react-native-qrcode-svg';
 
 const settingsData = [
   {
@@ -57,8 +58,8 @@ const UserDetails = ({ navigation }) => {
         const token = await AsyncStorage.getItem('jwtToken');
         if (token) {
           const decoded = jwtDecode(token);
-          setUserId(decoded.id); // Assuming 'id' is the field in the token
-          dispatch(getAllAccounts(decoded.id)); // Dispatch actions with decoded data
+          setUserId(decoded.id);
+          dispatch(getAllAccounts(decoded.id));
           dispatch(getCards(decoded.id));
         } else {
           console.log('No token found');
@@ -136,6 +137,7 @@ const UserDetails = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f0f4f7'
   },
   header: {
     backgroundColor: "#0c7076",
@@ -195,9 +197,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginVertical: 5,
   },
-  selectedOption: {
-    backgroundColor: "#0c7076",
-  },
   optionText: {
     fontSize: 16,
     color: "#000",
@@ -213,4 +212,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserDetails;
+export default UserDetails

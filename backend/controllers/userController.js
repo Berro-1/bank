@@ -1,4 +1,5 @@
 const User = require("../models/User"); // Changed from Customer to User for clarity and consistency
+const bcrypt = require('bcrypt');
 
 // Get all users
 const getUsers = async (req, res) => {
@@ -59,21 +60,56 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
-
-// Update a user
 const updateUser = async (req, res) => {
   const { id } = req.params;
-  const updates = req.body;
+  const { oldPassword, newPassword, newEmail, newAddress, ...otherUpdates } = req.body;
+
   try {
-    const user = await User.findByIdAndUpdate(id, updates, { new: true });
+    const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ error: "No user found" });
     }
+
+    // Handle password update
+    if (oldPassword && newPassword) {
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ error: "Old password is incorrect" });
+      }
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(newPassword, salt);
+      user.password = hashedPassword;
+    }
+
+    // Handle email update
+    if (newEmail) {
+      const emailExists = await User.findOne({ email: newEmail });
+      if (emailExists) {
+        return res.status(400).json({ error: "Email already in use" });
+      }
+      user.email = newEmail;
+    }
+
+    // Handle address update
+    if (newAddress) {
+      user.address = newAddress;
+    }
+
+    // Handle other updates
+    for (const key in otherUpdates) {
+      if (otherUpdates.hasOwnProperty(key)) {
+        user[key] = otherUpdates[key];
+      }
+    }
+
+    await user.save();
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
+
+
 
 module.exports = {
   createUser,

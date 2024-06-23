@@ -25,4 +25,4 @@ router.delete("/:id", deleteUser);
 // Update a user
 router.patch("/:id", updateUser);
 
-module.exports = router;  // Note: Make sure this is `module.exports = router;`
+module.exports = router;
