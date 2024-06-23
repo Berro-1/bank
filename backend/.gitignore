@@ -69,3 +69,7 @@ ehthumbs.db
 
 # React Native
 .expo/
+*.env
+# Google Cloud Service Account Credentials
+backend/safestream-hadi-firebase-adminsdk-sy4qu-7473dca255.json
+*.json

@@ -17,6 +17,10 @@ const authRoutes = require('./routes/authRoutes');
 const statisticsRoutes =require("./routes/statisticsRoutes")
 const path = require("path");
 const app = express();
+const admin = require('firebase-admin');
+const OTPRouter =require('./routes/OTPRoutes')
+
+
 
 app.use(cors({
     origin: 'http://localhost:3000', // Adjust based on your frontend URL
@@ -41,7 +45,7 @@ app.use("/api/submissions", submissionRoutes);
 app.use("/api/auth",authRoutes);
 app.use("/api/statistics",statisticsRoutes );
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
-
+app.use("/api/OTP",OTPRouter)
 
 
 
