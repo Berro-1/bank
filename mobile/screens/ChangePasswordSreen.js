@@ -34,7 +34,6 @@ const ChangePassword = ({ navigation }) => {
         dispatch(getAllLoans(decoded.id)),
       ]);
     };
-
     fetchUserData();
   }, [dispatch]);
 
