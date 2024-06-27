@@ -1,6 +1,7 @@
 import axios from "axios";
 import { userActions } from "./usersSlice";
-import {API_URL} from 'react-native-dotenv'
+import {API_URL} from 'react-native-dotenv';
+
 export const updateUser = (id, updates) => async (dispatch) => {
   console.log("updates: ", updates);
   dispatch(userActions.updateUserRequest());

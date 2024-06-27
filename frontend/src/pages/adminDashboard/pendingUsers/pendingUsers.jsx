@@ -103,7 +103,7 @@ export default function PendingUsers() {
   }
 
   const columns = [
-    { field: "name", headerName: "Name", width: 150 },
+    { field: "id", headerName: "Name", width: 150 },
     { field: "email", headerName: "Email", width: 250 },
     { field: "phone_number", headerName: "Phone Number", width: 130 },
     {
@@ -199,7 +199,7 @@ const rows = users.length>0
     columns={columns}
     checkboxSelection={false}
     autoHeight
-    components={{ Toolbar: GridToolbar }}
+    slots={{ toolbar: GridToolbar }}
   />
 ) : (
   <Typography>No users found.</Typography>

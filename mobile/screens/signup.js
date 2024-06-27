@@ -9,11 +9,11 @@ import {
   Animated,
   ActivityIndicator,
 } from "react-native";
-import { TextInput, Card } from "react-native-paper";
+import { TextInput, Card, Divider } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import LottieView from "lottie-react-native";
-import { sendOTP, verifyOTP,resetSuccess } from "../store/OTP/OTPActions";
+import { sendOTP, verifyOTP, resetSuccess } from "../store/OTP/OTPActions";
 import { useDispatch, useSelector } from "react-redux";
 
 const SignUpScreen = () => {
@@ -31,11 +31,11 @@ const SignUpScreen = () => {
     otp: "",
   });
   const dispatch = useDispatch();
-  const { loading, error, success } = useSelector((state) => state.OTP);
+  const { error, success } = useSelector((state) => state.OTP);
   const progress = useRef(new Animated.Value(0)).current;
   const [errors, setErrors] = useState({});
-
-  const [success1, setSuccess1] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [success1, setSuccess1] = useState(false);
 
   useEffect(() => {
     Animated.timing(progress, {
@@ -46,14 +46,13 @@ const SignUpScreen = () => {
   }, [step]);
 
   useEffect(() => {
-    console.log("success",success);
     if (error) {
       alert(`Error: ${error}`);
     }
     if (success) {
-      if (step === 1 || step === 4) {
+      if (step === 1 || step === 3) {
         setStep(step + 1);
-        dispatch(resetSuccess())
+        dispatch(resetSuccess());
       }
     }
   }, [success, error, step]);
@@ -66,10 +65,26 @@ const SignUpScreen = () => {
   const nextStep = async () => {
     if (step === 1) {
       dispatch(sendOTP(formData.email));
-    } else if (step === 4) {
+    } else if (step === 3) {
       dispatch(verifyOTP(formData.email, formData.otp));
     } else {
       setStep(step + 1);
+      console.log(formData);
+    }
+  };
+
+  const openCameraLib = async (field) => {
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      setFormData({ ...formData, [field]: uri });
+      setErrors({ ...errors, [field]: null });
+      console.log(formData);
     }
   };
 
@@ -95,7 +110,8 @@ const SignUpScreen = () => {
       setLoading(true);
       setTimeout(() => {
         setLoading(false);
-        // Assuming setSuccess1 is meant to handle a state update related to a successful submission
+        setSuccess1(true);
+        // Handle form submission
       }, 2000);
     }
   };
@@ -178,10 +194,82 @@ const SignUpScreen = () => {
               {errors.email && (
                 <Text style={styles.errorText}>{errors.email}</Text>
               )}
+              <Divider style={styles.divider} />
             </Card.Content>
           </Card>
         );
       case 2:
+        return (
+          <Card style={styles.card}>
+            <View style={styles.descriptionContainer}>
+              <Icon
+                name="home"
+                size={24}
+                color="#0c7076"
+                style={styles.descriptionIcon}
+              />
+              <Text style={styles.description}>
+                Enter your address and phone number.
+              </Text>
+            </View>
+            <Card.Content>
+              <TextInput
+                label="Address"
+                value={formData.address}
+                onChangeText={(text) => handleChange("address", text)}
+                style={styles.input}
+                mode="outlined"
+                error={!!errors.address}
+              />
+              {errors.address && (
+                <Text style={styles.errorText}>{errors.address}</Text>
+              )}
+              <TextInput
+                label="Phone Number"
+                value={formData.phoneNumber}
+                onChangeText={(text) => handleChange("phoneNumber", text)}
+                style={styles.input}
+                mode="outlined"
+                keyboardType="phone-pad"
+                error={!!errors.phoneNumber}
+              />
+              {errors.phoneNumber && (
+                <Text style={styles.errorText}>{errors.phoneNumber}</Text>
+              )}
+              <Divider style={styles.divider} />
+            </Card.Content>
+          </Card>
+        );
+      case 3:
+        return (
+          <Card style={styles.card}>
+            <View style={styles.descriptionContainer}>
+              <Icon
+                name="message"
+                size={24}
+                color="#0c7076"
+                style={styles.descriptionIcon}
+              />
+              <Text style={styles.description}>
+                Enter the OTP sent to your email or phone.
+              </Text>
+            </View>
+            <Card.Content>
+              <TextInput
+                label="OTP"
+                value={formData.otp}
+                onChangeText={(text) => handleChange("otp", text)}
+                style={styles.input}
+                mode="outlined"
+                keyboardType="numeric"
+                error={!!errors.otp}
+              />
+              {errors.otp && <Text style={styles.errorText}>{errors.otp}</Text>}
+              <Divider style={styles.divider} />
+            </Card.Content>
+          </Card>
+        );
+      case 4:
         return (
           <Card style={styles.card}>
             <View style={styles.descriptionContainer}>
@@ -220,75 +308,7 @@ const SignUpScreen = () => {
               {errors.confirmPassword && (
                 <Text style={styles.errorText}>{errors.confirmPassword}</Text>
               )}
-            </Card.Content>
-          </Card>
-        );
-      case 3:
-        return (
-          <Card style={styles.card}>
-            <View style={styles.descriptionContainer}>
-              <Icon
-                name="home"
-                size={24}
-                color="#0c7076"
-                style={styles.descriptionIcon}
-              />
-              <Text style={styles.description}>
-                Enter your address and phone number.
-              </Text>
-            </View>
-            <Card.Content>
-              <TextInput
-                label="Address"
-                value={formData.address}
-                onChangeText={(text) => handleChange("address", text)}
-                style={styles.input}
-                mode="outlined"
-                error={!!errors.address}
-              />
-              {errors.address && (
-                <Text style={styles.errorText}>{errors.address}</Text>
-              )}
-              <TextInput
-                label="Phone Number"
-                value={formData.phoneNumber}
-                onChangeText={(text) => handleChange("phoneNumber", text)}
-                style={styles.input}
-                mode="outlined"
-                keyboardType="phone-pad"
-                error={!!errors.phoneNumber}
-              />
-              {errors.phoneNumber && (
-                <Text style={styles.errorText}>{errors.phoneNumber}</Text>
-              )}
-            </Card.Content>
-          </Card>
-        );
-      case 4:
-        return (
-          <Card style={styles.card}>
-            <View style={styles.descriptionContainer}>
-              <Icon
-                name="message"
-                size={24}
-                color="#0c7076"
-                style={styles.descriptionIcon}
-              />
-              <Text style={styles.description}>
-                Enter the OTP sent to your email or phone.
-              </Text>
-            </View>
-            <Card.Content>
-              <TextInput
-                label="OTP"
-                value={formData.otp}
-                onChangeText={(text) => handleChange("otp", text)}
-                style={styles.input}
-                mode="outlined"
-                keyboardType="numeric"
-                error={!!errors.otp}
-              />
-              {errors.otp && <Text style={styles.errorText}>{errors.otp}</Text>}
+              <Divider style={styles.divider} />
             </Card.Content>
           </Card>
         );
@@ -317,12 +337,13 @@ const SignUpScreen = () => {
               {formData.selfie && (
                 <Image
                   source={{ uri: formData.selfie }}
-                  style={styles.selfieImage}
+                  style={styles.uploadedImage}
                 />
               )}
               {errors.selfie && (
                 <Text style={styles.errorText}>{errors.selfie}</Text>
               )}
+              <Divider style={styles.divider} />
             </Card.Content>
           </Card>
         );
@@ -351,7 +372,7 @@ const SignUpScreen = () => {
               {formData.idFront && (
                 <Image
                   source={{ uri: formData.idFront }}
-                  style={styles.selfieImage}
+                  style={styles.uploadedImage}
                 />
               )}
               {errors.idFront && (
@@ -367,12 +388,13 @@ const SignUpScreen = () => {
               {formData.idBack && (
                 <Image
                   source={{ uri: formData.idBack }}
-                  style={styles.selfieImage}
+                  style={styles.uploadedImage}
                 />
               )}
               {errors.idBack && (
                 <Text style={styles.errorText}>{errors.idBack}</Text>
               )}
+              <Divider style={styles.divider} />
             </Card.Content>
           </Card>
         );
@@ -402,19 +424,19 @@ const SignUpScreen = () => {
               {formData.selfie && (
                 <Image
                   source={{ uri: formData.selfie }}
-                  style={styles.selfieImage}
+                  style={styles.uploadedImage}
                 />
               )}
               {formData.idFront && (
                 <Image
                   source={{ uri: formData.idFront }}
-                  style={styles.selfieImage}
+                  style={styles.uploadedImage}
                 />
               )}
               {formData.idBack && (
                 <Image
                   source={{ uri: formData.idBack }}
-                  style={styles.selfieImage}
+                  style={styles.uploadedImage}
                 />
               )}
             </Card.Content>
@@ -511,6 +533,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#e0e0e0",
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+    transition: "background-color 0.3s ease",
   },
   progressBarStepActive: {
     backgroundColor: "#0c7076",
@@ -519,6 +547,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 4,
     backgroundColor: "#e0e0e0",
+    transition: "background-color 0.3s ease",
   },
   progressBarLineActive: {
     backgroundColor: "#0c7076",
@@ -526,6 +555,7 @@ const styles = StyleSheet.create({
   progressBarText: {
     color: "#fff",
     fontSize: 16,
+    fontWeight: "bold",
   },
   card: {
     marginBottom: 30,
@@ -537,6 +567,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
+    transition: "transform 0.3s ease",
   },
   cardTitle: {
     fontSize: 24,
@@ -546,8 +577,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   input: {
-    marginBottom: 5,
+    marginBottom: 10,
     backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#0c7076",
+    borderRadius: 10,
+    padding: 10,
   },
   buttonLabel: {
     fontSize: 18,
@@ -563,12 +598,11 @@ const styles = StyleSheet.create({
     color: "#212121",
     marginBottom: 10,
   },
-  selfieImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    marginTop: 20,
-    marginBottom: 20,
+  uploadedImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+    marginTop: 10,
     alignSelf: "center",
   },
   cameraContent: {
@@ -586,6 +620,11 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 50,
     margin: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
   },
   fabText: {
     color: "#fff",
@@ -599,6 +638,11 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 50,
     marginTop: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
   },
   cameraButtonText: {
     color: "#fff",
@@ -614,10 +658,10 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     width: "100%",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowRadius: 5,
+    elevation: 5,
   },
   descriptionIcon: {
     marginRight: 10,
@@ -627,11 +671,16 @@ const styles = StyleSheet.create({
     color: "#333",
     textAlign: "center",
     flex: 1,
+    fontWeight: "bold",
   },
   lottieView: {
     width: 150,
     height: 150,
     alignSelf: "center",
+  },
+  divider: {
+    marginVertical: 10,
+    backgroundColor: "#e0e0e0",
   },
 });
 

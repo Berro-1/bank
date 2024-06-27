@@ -50,7 +50,7 @@ const UserSchema = new Schema(
       enum: ["user", "admin"],
       default: "user",
     },
-    image: {
+    images: {
       type: String,
       required: false,
     },
