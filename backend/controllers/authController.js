@@ -12,6 +12,7 @@ const createToken = (id) => {
 };
 
 
+// Configure storage options
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     // Go up one level from the backend directory and then into the uploads directory
@@ -24,7 +25,6 @@ const storage = multer.diskStorage({
     );
   },
 });
-
 
 // Initialize upload variable
 const upload = multer({
@@ -43,21 +43,30 @@ const upload = multer({
       cb("Error: Only JPEG, PNG & GIF files are allowed!");
     }
   },
-}).single("image");
+}).fields([
+  { name: "selfie", maxCount: 1 },
+  { name: "idFront", maxCount: 1 },
+  { name: "idBack", maxCount: 1 },
+]);
 
 
 const signup = async (req, res) => {
   const { name, address, phone_number, email, type, DOB } = req.body;
-  const image = req.file.path; // Path where the image is saved
 
   try {
+    const images = [
+      req.files["selfie"] ? req.files["selfie"][0].path : null,
+      req.files["idFront"] ? req.files["idFront"][0].path : null,
+      req.files["idBack"] ? req.files["idBack"][0].path : null,
+    ].filter(Boolean); // Filter out any null values
+
     const user = new pendingUser({
       name,
       address,
       phone_number,
       email,
       type,
-      image, // Add the image path to the new user object
+      images, // Add the image paths to the new user object
       DOB,
     });
     await user.save();
@@ -69,7 +78,7 @@ const signup = async (req, res) => {
       address: user.address,
       phone_number: phone_number,
       type: user.type,
-      image: user.image, // Include image path in the response
+      images: user.images, // Include image paths in the response
       DOB: user.DOB,
       is_eligible_for_loan: user.is_eligible_for_loan,
       role: user.role,
@@ -95,7 +104,6 @@ const signup = async (req, res) => {
   }
 };
 
-
 const deletePendingUser = async (req, res) => {
   const { id } = req.params;
   try {
@@ -120,11 +128,31 @@ const updatePendingUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "No user found" });
     }
+
+    // Check if status is updated to "Approved"
+    if (updates.status === "Approved") {
+      const newUser = new User({
+        name: user.name,
+        password: user.password,
+        email: user.email,
+        address: user.address,
+        phone_number: user.phone_number,
+        DOB: user.DOB,
+        is_eligible_for_loan: user.is_eligible_for_loan,
+        role: user.role,
+        images: user.images,
+      });
+
+      await newUser.save();
+
+    }
+
     res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
+
 const getPendingUsers = async (req, res) => {
   try {
     const users = await pendingUser.find();

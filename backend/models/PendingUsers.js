@@ -50,8 +50,8 @@ const pendingUsersSchema = new Schema(
       enum: ["user", "admin"],
       default: "user",
     },
-    image: {
-      type: String,
+    images: {
+      type: [String],
       required: false,
     },
     status: {
