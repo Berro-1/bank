@@ -4,13 +4,13 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
+const { startSession } = require("mongoose");
 
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: process.env.TOKEN_EXPIRATION,
   });
 };
-
 
 // Configure storage options
 const storage = multer.diskStorage({
@@ -48,7 +48,6 @@ const upload = multer({
   { name: "idFront", maxCount: 1 },
   { name: "idBack", maxCount: 1 },
 ]);
-
 
 const signup = async (req, res) => {
   const { name, address, phone_number, email, type, DOB } = req.body;
@@ -121,11 +120,20 @@ const deletePendingUser = async (req, res) => {
 const updatePendingUser = async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
+
+  const session = await startSession(); // Start a session for transaction
+
   try {
+    session.startTransaction(); // Start the transaction
+
     const user = await pendingUser.findByIdAndUpdate(id, updates, {
       new: true,
+      session, // Pass session to this query to be part of the transaction
     });
+
     if (!user) {
+      await session.abortTransaction(); // Abort transaction if user not found
+      session.endSession();
       return res.status(404).json({ error: "No user found" });
     }
 
@@ -143,12 +151,17 @@ const updatePendingUser = async (req, res) => {
         images: user.images,
       });
 
-      await newUser.save();
+      await newUser.save({ session }); // Include this operation in the transaction
 
+      await pendingUser.findByIdAndDelete(user._id, { session }); // Delete approved user
     }
 
+    await session.commitTransaction(); // Commit the transaction
+    session.endSession();
     res.status(200).json(user);
   } catch (err) {
+    await session.abortTransaction(); // Abort transaction on error
+    session.endSession();
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
@@ -175,11 +188,6 @@ const getPendingUser = async (req, res) => {
     res.status(500).json({ error: "Server error: " + err.message });
   }
 };
-
-
-
-
-
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -210,7 +218,7 @@ const login = async (req, res) => {
             id: user._id,
             name: user.name,
             email: user.email,
-            role: user.role
+            role: user.role,
           },
         });
       } else {

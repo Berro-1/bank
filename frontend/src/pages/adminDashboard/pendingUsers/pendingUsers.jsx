@@ -12,6 +12,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grid,
 } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { styled } from "@mui/material/styles";
@@ -24,7 +25,6 @@ import {
 } from "@mui/icons-material";
 import { updatePendingUsers } from "../../../store/users/userActions";
 import UpdateStatusDialog from "./updateDialog";
-
 
 const StatusIndicator = styled("div")(({ status, theme }) => ({
   display: "flex",
@@ -67,11 +67,13 @@ export default function PendingUsers() {
     dispatch(getPendingUsers());
   }, [dispatch]);
 
-  const handleOpenImageDialog = (imageUrl) => {
-    const fullImageUrl = imageUrl
-      ? `http://localhost:4000/uploads/${imageUrl}`
-      : "Image not found";
-    setCurrentImage(fullImageUrl);
+  const handleOpenImageDialog = (imageUrls) => {
+    const fullImageUrls = imageUrls.map((imageUrl) =>
+      imageUrl
+        ? `http://localhost:4000/uploads/${imageUrl.split("\\").pop()}`
+        : "Image not found"
+    );
+    setCurrentImage(fullImageUrls);
     setOpenImageDialog(true);
   };
 
@@ -127,16 +129,16 @@ export default function PendingUsers() {
       ),
     },
     {
-      field: "image",
+      field: "images",
       headerName: "Image",
       width: 160,
       renderCell: (params) => (
         <Button
           onClick={() =>
-            handleOpenImageDialog(params.value || "Image not found")
+            handleOpenImageDialog(params.row.images || ["Image not found"])
           }
         >
-          Show Image
+          Show Images
         </Button>
       ),
     },
@@ -164,13 +166,13 @@ export default function PendingUsers() {
     },
   ];
 
-const rows = users.length>0
-  ? users.map((user) => ({
-      ...user,
-      id: user._id,
-    }))
-  : [];
-
+  const rows =
+    users.length > 0
+      ? users.map((user) => ({
+          ...user,
+          id: user._id,
+        }))
+      : [];
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -187,46 +189,84 @@ const rows = users.length>0
             flexDirection: "column",
           }}
         >
-         {loading ? (
-  <CircularProgress />
-) : error ? (
-  <Typography color="error">
-    {error.message || "An unexpected error occurred"}
-  </Typography>
-) : users && users.length > 0 ? (
-  <DataGrid
-    rows={rows}
-    columns={columns}
-    checkboxSelection={false}
-    autoHeight
-    slots={{ toolbar: GridToolbar }}
-  />
-) : (
-  <Typography>No users found.</Typography>
-)}
+          {loading ? (
+            <CircularProgress />
+          ) : error ? (
+            <Typography color="error">
+              {error.message || "An unexpected error occurred"}
+            </Typography>
+          ) : users && users.length > 0 ? (
+            <DataGrid
+              rows={rows}
+              columns={columns}
+              checkboxSelection={false}
+              autoHeight
+              slots={{ toolbar: GridToolbar }}
+            />
+          ) : (
+            <Typography>No users found.</Typography>
+          )}
           <UpdateStatusDialog
             open={openUpdateDialog}
             handleClose={handleCloseUpdateDialog}
             handleUpdate={(newStatus) => {
-              dispatch(updatePendingUsers(selectedUser.id,newStatus))
-            console.log("user id:",selectedUser.id,"to status:",newStatus);
+              dispatch(updatePendingUsers(selectedUser.id, newStatus));
+              console.log("user id:", selectedUser.id, "to status:", newStatus);
               setOpenUpdateDialog(false);
             }}
             currentStatus={selectedUser.status}
             userId={selectedUser.id}
           />
-          <Dialog open={openImageDialog} onClose={handleCloseImageDialog}>
-            <DialogTitle>{"Image Display"}</DialogTitle>
+          <Dialog
+            open={openImageDialog}
+            onClose={handleCloseImageDialog}
+            fullWidth
+            maxWidth="md"
+          >
+            <DialogTitle>User Images</DialogTitle>
             <DialogContent>
-              {currentImage.startsWith("http") ? (
-                <img
-                  src={currentImage}
-                  alt="User"
-                  style={{ width: "100%", maxHeight: "400px" }}
-                />
-              ) : (
-                <DialogContentText>{currentImage}</DialogContentText>
-              )}
+              <Grid container spacing={2}>
+                {currentImage.length > 0 && (
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1" gutterBottom>
+                      Selfie
+                    </Typography>
+                    <img
+                      src={currentImage[0]}
+                      alt="Selfie"
+                      style={{
+                        width: "100%",
+                        maxHeight: "400px",
+                        objectFit: "contain",
+                        borderRadius: "4px",
+                      }}
+                    />
+                  </Grid>
+                )}
+                {currentImage.length > 1 && (
+                  <>
+                    <Grid item xs={12}>
+                      <Typography variant="subtitle1" gutterBottom>
+                        ID Photos
+                      </Typography>
+                    </Grid>
+                    {currentImage.slice(1).map((img, index) => (
+                      <Grid item xs={12} sm={6} key={index}>
+                        <img
+                          src={img}
+                          alt={`ID Photo ${index + 1}`}
+                          style={{
+                            width: "100%",
+                            maxHeight: "300px",
+                            objectFit: "contain",
+                            borderRadius: "4px",
+                          }}
+                        />
+                      </Grid>
+                    ))}
+                  </>
+                )}
+              </Grid>
             </DialogContent>
             <DialogActions>
               <Button onClick={handleCloseImageDialog}>Close</Button>

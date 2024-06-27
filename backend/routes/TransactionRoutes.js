@@ -10,7 +10,4 @@ router.post("/:accountId", createTransaction);
 router.get("/:id", getAllTransactions);
 router.get("/latest/:accountId", getLatestTransactions);
 
-
-
-
 module.exports = router;

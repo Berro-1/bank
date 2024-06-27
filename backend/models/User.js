@@ -51,7 +51,7 @@ const UserSchema = new Schema(
       default: "user",
     },
     images: {
-      type: String,
+      type: [String],
       required: false,
     },
   },
