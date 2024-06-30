@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
 const { startSession } = require("mongoose");
+const { sendEmailMobile } = require("./email");
 
 const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -136,8 +137,9 @@ const updatePendingUser = async (req, res) => {
       session.endSession();
       return res.status(404).json({ error: "No user found" });
     }
-
-    // Check if status is updated to "Approved"
+    subject = "Account activation";
+    text = "congratz on ur account,hop on the app to login";
+    to = user.email;
     if (updates.status === "Approved") {
       const newUser = new User({
         name: user.name,
@@ -153,7 +155,8 @@ const updatePendingUser = async (req, res) => {
 
       await newUser.save({ session }); // Include this operation in the transaction
 
-      await pendingUser.findByIdAndDelete(user._id, { session }); // Delete approved user
+      await pendingUser.findByIdAndDelete(user._id, { session });
+      sendEmailMobile(to, subject, text);
     }
 
     await session.commitTransaction(); // Commit the transaction

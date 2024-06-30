@@ -13,11 +13,20 @@ const OTP = require("../models/OTP");
 async function sendOTP(targetEmail) {
   try {
     // Check if an active OTP already exists for this email
-    const existingOTP = await OTP.findOne({ email: targetEmail, is_usable: true });
+    const existingOTP = await OTP.findOne({
+      email: targetEmail,
+      is_usable: true,
+    });
     if (existingOTP) {
       // If OTP exists and is active, return an error response instead of throwing an error
-      console.error("An OTP has already been sent to this email and is still active.");
-      return { success: false, message: "An OTP has already been sent to this email and is still active." };
+      console.error(
+        "An OTP has already been sent to this email and is still active."
+      );
+      return {
+        success: false,
+        message:
+          "An OTP has already been sent to this email and is still active.",
+      };
     }
 
     // Generate a new OTP
@@ -40,11 +49,34 @@ async function sendOTP(targetEmail) {
     return { success: true, message: "OTP sent successfully" };
   } catch (error) {
     console.error("Failed to send OTP", error);
-    return { success: false, message: error.message || "Failed to send OTP due to an error." };
+    return {
+      success: false,
+      message: error.message || "Failed to send OTP due to an error.",
+    };
   }
 }
+async function sendEmailMobile(to, subject, text) {
+  console.log("to:", to, "subject", subject, "text", text);
+  let transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.GMAIL_USER, // Use environment variables
+      pass: process.env.GMAIL_PASS, // Use environment variables
+    },
+  });
 
+  let info = await transporter.sendMail({
+    from: `"SafeStream" <Hadikarnib03@gmail.com>`, // Use the Gmail user from the environment
+    to: to,
+    subject: subject,
+    text: text,
+    // html: "<b>Hello world?</b>" // Optional HTML content
+  });
+
+  console.log("Message sent: %s", info.messageId);
+}
 async function sendEmail({ to, subject, text }) {
+  console.log("to:", to, "subject", subject, "text", text);
   let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -91,4 +123,6 @@ async function verifyOTP(email, otpCode) {
 module.exports = {
   sendOTP,
   verifyOTP,
+  sendEmail,
+  sendEmailMobile,
 };

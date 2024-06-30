@@ -1,5 +1,5 @@
 // UpdateStatusDialog.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogActions,
@@ -24,6 +24,10 @@ const UpdateStatusDialog = ({
   const handleChange = (event) => {
     setStatus(event.target.value);
   };
+  useEffect(() => {
+    // Update the local state whenever the currentStatus changes
+    setStatus(currentStatus);
+  }, [currentStatus]);
 
   const handleSubmit = () => {
     handleUpdate(status);

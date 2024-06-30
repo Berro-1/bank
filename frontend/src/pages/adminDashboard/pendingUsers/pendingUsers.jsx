@@ -105,7 +105,7 @@ export default function PendingUsers() {
   }
 
   const columns = [
-    { field: "id", headerName: "Name", width: 150 },
+    { field: "name", headerName: "Name", width: 150 },
     { field: "email", headerName: "Email", width: 250 },
     { field: "phone_number", headerName: "Phone Number", width: 130 },
     {
