@@ -34,7 +34,6 @@ export const getPendingUsers = () => async (dispatch) => {
 
   try {
     const response = await axios.get("http://localhost:4000/api/auth/pending");
-    const response = await axios.get("http://localhost:4000/api/auth/pending");
     dispatch(userActions.fetchSuccess(response.data));
   } catch (error) {
     if (error.response) {
