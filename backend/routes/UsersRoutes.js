@@ -7,11 +7,11 @@ const {
   deleteUser,
   updateUser,
 } = require("../controllers/userController");
-const  adminAuth  = require("../middleware/adminAuth");  // Make sure this is uncommented and correctly pathed
+const adminAuth = require("../middleware/adminAuth");
 
 // Routes configuration
 // Get all users, only accessible to admins
-router.get("/" ,getUsers);  // Apply adminAuth middleware here
+router.get("/" ,adminAuth,getUsers);  // Apply adminAuth middleware here
 
 // Get a single user by id
 router.get("/:id", getUser);
