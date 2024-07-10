@@ -29,6 +29,7 @@ import ServiceDetail from "./pages/Services/servicesDetails/serviceDetails.jsx";
 import AboutUs from "./pages/aboutUs/aboutUs.jsx";
 import ContactUsSection from "./pages/contactPage/contact.jsx";
 import PendingUsers from "./pages/adminDashboard/pendingUsers/pendingUsers.jsx";
+import ChatbotComponent from "./chatbotComponent.js";
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -153,7 +154,7 @@ function App() {
   return (
     <div className="App h-full">
       <ToastContainer position="top-right"></ToastContainer>
-
+      <ChatbotComponent />
       <RouterProvider router={router} />
     </div>
   );
@@ -161,7 +162,7 @@ function App() {
 
 const Root = () => {
   return (
-    <div className=" text-gray-200 h-full" >
+    <div className=" text-gray-200 h-full">
       <div>
         <Navbar />
       </div>
