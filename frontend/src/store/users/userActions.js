@@ -1,5 +1,6 @@
 import axios from "axios";
 import { userActions } from "./userSlice";
+import { sendEmail } from "../emails/emailActions";
 
 export const getAllUsers = () => async (dispatch) => {
   dispatch(userActions.fetchRequest());
@@ -32,6 +33,7 @@ export const getPendingUsers = () => async (dispatch) => {
   dispatch(userActions.fetchRequest());
 
   try {
+    const response = await axios.get("http://localhost:4000/api/auth/pending");
     const response = await axios.get("http://localhost:4000/api/auth/pending");
     dispatch(userActions.fetchSuccess(response.data));
   } catch (error) {
