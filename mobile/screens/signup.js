@@ -15,6 +15,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import LottieView from "lottie-react-native";
 import { sendOTP, verifyOTP, resetSuccess } from "../store/OTP/OTPActions";
 import { useDispatch, useSelector } from "react-redux";
+import { signupUser } from "../store/users/userAction";
 
 const SignUpScreen = () => {
   const [step, setStep] = useState(1);
@@ -25,6 +26,7 @@ const SignUpScreen = () => {
     confirmPassword: "",
     address: "",
     phoneNumber: "",
+    DOB: "",
     selfie: null,
     idFront: null,
     idBack: null,
@@ -53,6 +55,8 @@ const SignUpScreen = () => {
       if (step === 1 || step === 3) {
         setStep(step + 1);
         dispatch(resetSuccess());
+      } else if (step === 7) {
+        setStep(step + 1);
       }
     }
   }, [success, error, step]);
@@ -69,7 +73,6 @@ const SignUpScreen = () => {
       dispatch(verifyOTP(formData.email, formData.otp));
     } else {
       setStep(step + 1);
-      console.log(formData);
     }
   };
 
@@ -84,7 +87,6 @@ const SignUpScreen = () => {
       const uri = result.assets[0].uri;
       setFormData({ ...formData, [field]: uri });
       setErrors({ ...errors, [field]: null });
-      console.log(formData);
     }
   };
 
@@ -108,17 +110,13 @@ const SignUpScreen = () => {
   const handleSubmit = () => {
     if (validate()) {
       setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-        setSuccess1(true);
-        // Handle form submission
-      }, 2000);
+      dispatch(signupUser(formData));
     }
   };
 
   const renderProgressBar = () => (
     <View style={styles.progressBarContainer}>
-      {[1, 2, 3, 4, 5, 6, 7].map((num, index) => (
+      {[1, 2, 3, 4, 5, 6, 7, 8].map((num, index) => (
         <React.Fragment key={num}>
           <Animated.View
             style={[
@@ -134,7 +132,7 @@ const SignUpScreen = () => {
           >
             <Text style={styles.progressBarText}>{num}</Text>
           </Animated.View>
-          {index < 6 && (
+          {index < 7 && (
             <Animated.View
               style={[
                 styles.progressBarLine,
@@ -177,6 +175,7 @@ const SignUpScreen = () => {
                 style={styles.input}
                 mode="outlined"
                 error={!!errors.fullName}
+                theme={{ colors: { primary: '#0c7076' }}}
               />
               {errors.fullName && (
                 <Text style={styles.errorText}>{errors.fullName}</Text>
@@ -190,6 +189,7 @@ const SignUpScreen = () => {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 error={!!errors.email}
+                theme={{ colors: { primary: '#0c7076' }}}
               />
               {errors.email && (
                 <Text style={styles.errorText}>{errors.email}</Text>
@@ -220,6 +220,7 @@ const SignUpScreen = () => {
                 style={styles.input}
                 mode="outlined"
                 error={!!errors.address}
+                theme={{ colors: { primary: '#0c7076' }}}
               />
               {errors.address && (
                 <Text style={styles.errorText}>{errors.address}</Text>
@@ -232,9 +233,23 @@ const SignUpScreen = () => {
                 mode="outlined"
                 keyboardType="phone-pad"
                 error={!!errors.phoneNumber}
+                theme={{ colors: { primary: '#0c7076' }}}
               />
               {errors.phoneNumber && (
                 <Text style={styles.errorText}>{errors.phoneNumber}</Text>
+              )}
+              <TextInput
+                label="Date of Birth"
+                value={formData.DOB}
+                onChangeText={(text) => handleChange("DOB", text)}
+                style={styles.input}
+                mode="outlined"
+                placeholder="YYYY-MM-DD"
+                error={!!errors.DOB}
+                theme={{ colors: { primary: '#0c7076' }}}
+              />
+              {errors.DOB && (
+                <Text style={styles.errorText}>{errors.DOB}</Text>
               )}
               <Divider style={styles.divider} />
             </Card.Content>
@@ -263,6 +278,7 @@ const SignUpScreen = () => {
                 mode="outlined"
                 keyboardType="numeric"
                 error={!!errors.otp}
+                theme={{ colors: { primary: '#0c7076' }}}
               />
               {errors.otp && <Text style={styles.errorText}>{errors.otp}</Text>}
               <Divider style={styles.divider} />
@@ -292,6 +308,7 @@ const SignUpScreen = () => {
                 style={styles.input}
                 mode="outlined"
                 error={!!errors.password}
+                theme={{ colors: { primary: '#0c7076' }}}
               />
               {errors.password && (
                 <Text style={styles.errorText}>{errors.password}</Text>
@@ -304,6 +321,7 @@ const SignUpScreen = () => {
                 style={styles.input}
                 mode="outlined"
                 error={!!errors.confirmPassword}
+                theme={{ colors: { primary: '#0c7076' }}}
               />
               {errors.confirmPassword && (
                 <Text style={styles.errorText}>{errors.confirmPassword}</Text>
@@ -442,6 +460,23 @@ const SignUpScreen = () => {
             </Card.Content>
           </Card>
         );
+      case 8:
+        return (
+          <Card style={styles.card}>
+            <View style={styles.descriptionContainer}>
+              <Icon
+                name="info"
+                size={24}
+                color="#0c7076"
+                style={styles.descriptionIcon}
+              />
+              <Text style={styles.description}>
+                Your registration is complete. Please wait at least 2 days for
+                the confirmation of your account.
+              </Text>
+            </View>
+          </Card>
+        );
       default:
         return null;
     }
@@ -455,7 +490,7 @@ const SignUpScreen = () => {
       {renderProgressBar()}
       {renderStepContent()}
       <View style={styles.fabContainer}>
-        {step > 1 && (
+        {step > 1 && step < 8 && (
           <TouchableOpacity style={styles.fab} onPress={prevStep}>
             <Icon name="arrow-back" size={24} color="#fff" />
             <Text style={styles.fabText}>Back</Text>
@@ -466,7 +501,7 @@ const SignUpScreen = () => {
             <Icon name="arrow-forward" size={24} color="#fff" />
             <Text style={styles.fabText}>Next</Text>
           </TouchableOpacity>
-        ) : (
+        ) : step === 7 ? (
           <TouchableOpacity style={styles.fab} onPress={handleSubmit}>
             {loading ? (
               <ActivityIndicator color="#fff" />
@@ -477,7 +512,7 @@ const SignUpScreen = () => {
               </>
             )}
           </TouchableOpacity>
-        )}
+        ) : null}
       </View>
       {success1 && (
         <LottieView
@@ -489,7 +524,7 @@ const SignUpScreen = () => {
           onAnimationFinish={() => {
             setTimeout(() => {
               setSuccess1(false);
-            }, 1000); // Show the success1 animation for 1 second after it finishes
+            }, 1000);
           }}
           style={styles.lottieView}
         />
@@ -578,11 +613,7 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 10,
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#0c7076",
-    borderRadius: 10,
-    padding: 10,
+    borderColor: "#000",
   },
   buttonLabel: {
     fontSize: 18,

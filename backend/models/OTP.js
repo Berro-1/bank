@@ -7,13 +7,11 @@ const OTPSchema = new Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
       lowercase: true,
       validate: {
         validator: (email) => validator.isEmail(email),
         message: "Please provide a valid email",
       },
-      unique: true,
     },
 
     OTP: {

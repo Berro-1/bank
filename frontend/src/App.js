@@ -33,121 +33,124 @@ import ChatbotComponent from "./chatbotComponent.js";
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/" element={<Root />}>
-        <Route index element={<Home />} />
-        <Route path="/Services" element={<ServicesSection />} />
-        <Route path="/services/:serviceId" element={<ServiceDetail />} />
-        <Route path="/AboutUs" element={<AboutUs />} />
-        <Route path="/contact" element={<ContactUsSection />} />
+      <>
+        <Route element={<WithNavbarLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/Services" element={<ServicesSection />} />
+          <Route path="/services/:serviceId" element={<ServiceDetail />} />
+          <Route path="/AboutUs" element={<AboutUs />} />
+          <Route path="/contact" element={<ContactUsSection />} />
+          <Route path="/Login" exact element={<Login />} />
+        </Route>
 
-        <Route path="/Login" exact element={<Login />} />
+        <Route element={<WithoutNavbarLayout />}>
+          <Route
+            path="/mainPage"
+            element={
+              <ProtectedRoute requiredRole="user">
+                <MainPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/allAccounts"
+            element={
+              <ProtectedRoute requiredRole="user">
+                <AllAccounts />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/transactions"
+            element={
+              <ProtectedRoute requiredRole="user">
+                <AllTransactionsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/loans"
+            element={
+              <ProtectedRoute requiredRole="user">
+                <LoansPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cards"
+            element={
+              <ProtectedRoute requiredRole="user">
+                <Cards />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/submissions"
+            element={
+              <ProtectedRoute requiredRole="user">
+                <Submissions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/transfers"
+            element={
+              <ProtectedRoute requiredRole="user">
+                <Transfers />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/mainPage"
-          element={
-            <ProtectedRoute requiredRole="user">
-              <MainPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/allAccounts"
-          element={
-            <ProtectedRoute requiredRole="user">
-              <AllAccounts />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/transactions"
-          element={
-            <ProtectedRoute requiredRole="user">
-              <AllTransactionsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/loans"
-          element={
-            <ProtectedRoute requiredRole="user">
-              <LoansPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/cards"
-          element={
-            <ProtectedRoute requiredRole="user">
-              <Cards />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/submissions"
-          element={
-            <ProtectedRoute requiredRole="user">
-              <Submissions />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/transfers"
-          element={
-            <ProtectedRoute requiredRole="user">
-              <Transfers />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/admin/dashboard"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <AdminMainPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/users"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <AllUsers />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/manage-account/:accountId"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <ManageAccountPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/Loans"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <AdminLoans />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/credit-cards"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <CreditCardSubmissionsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/pendingUsers"
-          element={
-            <ProtectedRoute requiredRole="admin">
-              <PendingUsers />
-            </ProtectedRoute>
-          }
-        />
-      </Route>
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminMainPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AllUsers />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/manage-account/:accountId"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <ManageAccountPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/Loans"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminLoans />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/credit-cards"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <CreditCardSubmissionsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/pendingUsers"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <PendingUsers />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
+      </>
     )
   );
 
@@ -160,7 +163,7 @@ function App() {
   );
 }
 
-const Root = () => {
+const WithNavbarLayout = () => {
   return (
     <div className=" text-gray-200 h-full">
       <div>
@@ -172,4 +175,15 @@ const Root = () => {
     </div>
   );
 };
+
+const WithoutNavbarLayout = () => {
+  return (
+    <div className="text-gray-200 h-full">
+      <div className="">
+        <Outlet />
+      </div>
+    </div>
+  );
+};
+
 export default App;
