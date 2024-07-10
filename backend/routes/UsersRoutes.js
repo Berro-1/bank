@@ -9,7 +9,6 @@ const {
 } = require("../controllers/userController");
 const adminAuth = require("../middleware/adminAuth");
 
-const adminAuth = require("../middleware/adminAuth"); // Make sure this is uncommented and correctly pathed
 const userAuth = require("../middleware/userAuth"); // Make sure this is uncommented and correctly pathed
 const adminOrUserAuth = require("../middleware/adminOrUserAuth");
 // Routes configuration
