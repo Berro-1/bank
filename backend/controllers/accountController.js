@@ -15,13 +15,11 @@ const ensureSingleAccountType = async (userId, accountType) => {
   return !existingAccount; // Return true if no account exists, false otherwise
 };
 
-// Fetch all accounts sorted by creation date
 const getAccounts = async (req, res) => {
   const accounts = await Account.find({}).sort({ createdAt: -1 });
   res.status(200).json(accounts);
 };
 
-// Fetch accounts for a specific user
 const getUserAccounts = async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -29,7 +27,7 @@ const getUserAccounts = async (req, res) => {
   }
   const accounts = await Account.find({ user: id });
   if (!accounts || accounts.length === 0) {
-    return res.status(200).json([]); // Correct response for no accounts
+    return res.status(200).json([]); 
   }
   res.status(200).json(accounts);
 };

@@ -12,6 +12,7 @@ const {
 
 router.get("/", getAccounts);
 router.get("/:id",getUserAccounts);
+
 router.get("/singleAccount/:accountId",getAccountById);
 
 router.post("/loan/:user", createLoanAccount);
