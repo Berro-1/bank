@@ -12,6 +12,7 @@ import Sidebar from "../../../components/layout/Sidebar/Sidebar";
 import "./allAccounts.css";
 import { getAllAccounts } from "../../../store/accounts/accountsActions";
 import { getAllLoans } from "../../../store/Loans/loansActions";
+import { Link } from "react-router-dom";
 
 const typeToImage = {
   Auto: "./loans.webp",
@@ -78,7 +79,11 @@ export default function AllAccounts() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-4xl mx-auto">
               {accounts.length === 0 && activeLoans.length === 0 ? (
-                <Typography variant="h6" component="div" className="text-center">
+                <Typography
+                  variant="h6"
+                  component="div"
+                  className="text-center"
+                >
                   No accounts or active loans available.
                 </Typography>
               ) : (
@@ -93,7 +98,9 @@ export default function AllAccounts() {
                         <CardMedia
                           component="img"
                           height="140"
-                          image={typeToImage[account.type] || "default_image_path"}
+                          image={
+                            typeToImage[account.type] || "default_image_path"
+                          }
                           alt={account.type}
                         />
                         <CardContent>
@@ -110,13 +117,14 @@ export default function AllAccounts() {
                             color="text.secondary"
                             className="text-center"
                           >
-                            Balance: ${account.balance} - Status: {account.status}
+                            Balance: ${account.balance} - Status:{" "}
+                            {account.status}
                           </Typography>
                         </CardContent>
                       </CardActionArea>
                       <CardActions className="justify-center">
                         <Button size="small" color="primary">
-                          View
+                          <Link to="/transactions">View</Link>
                         </Button>
                       </CardActions>
                     </Card>
@@ -154,7 +162,7 @@ export default function AllAccounts() {
                       </CardActionArea>
                       <CardActions className="justify-center">
                         <Button size="small" color="primary">
-                          View
+                          <Link to="/transactions">View</Link>
                         </Button>
                       </CardActions>
                     </Card>

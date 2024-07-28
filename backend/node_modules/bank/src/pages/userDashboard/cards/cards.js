@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Card,
@@ -13,6 +13,7 @@ import {
 import Sidebar from "../../../components/layout/Sidebar/Sidebar";
 import "./cards.css"; // Make sure to have appropriate CSS styles
 import { getCards } from "../../../store/cards/cardsActions";
+import { Link } from "react-router-dom";
 
 // Function to get image path based on card name
 const getImagePath = (cardName) => {
@@ -29,14 +30,14 @@ const getImagePath = (cardName) => {
 };
 
 export default function CreditCards() {
-const [userId, setUserId] = useState(null);
+  const [userId, setUserId] = useState(null);
 
-useEffect(() => {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (user && user.id) {
-    setUserId(user.id);
-  }
-}, []);
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.id) {
+      setUserId(user.id);
+    }
+  }, []);
   const dispatch = useDispatch();
   const { loading, cards } = useSelector(
     (state) => state.cards || { cards: [], loading: false }
@@ -104,7 +105,7 @@ useEffect(() => {
                   </CardActionArea>
                   <CardActions className="justify-center">
                     <Button size="small" color="primary">
-                      View
+                      <Link to="/transactions">View</Link>
                     </Button>
                   </CardActions>
                 </Card>
