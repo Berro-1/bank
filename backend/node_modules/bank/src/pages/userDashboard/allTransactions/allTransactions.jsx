@@ -281,8 +281,8 @@ const AllTransactionsPage = () => {
                 rows={rows}
                 columns={columns}
                 pageSize={5}
-                components={{
-                  Toolbar: GridToolbar,
+                slots={{
+                  toolbar: GridToolbar,
                 }}
               />
             </Paper>
